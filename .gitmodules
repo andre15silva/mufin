@@ -1,3 +1,15 @@
 [submodule "data/defects4j"]
 	path = data/defects4j
 	url = https://github.com/rjust/defects4j
+[submodule "data/bears-benchmark"]
+	path = data/bears-benchmark
+	url = https://github.com/bears-bugs/bears-benchmark
+[submodule "data/bugs-dot-jar"]
+	path = data/bugs-dot-jar
+	url = https://github.com/bugs-dot-jar/bugs-dot-jar
+[submodule "data/QuixBugs"]
+	path = data/QuixBugs
+	url = https://github.com/jkoppel/QuixBugs
+[submodule "data/IntroClassJava"]
+	path = data/IntroClassJava
+	url = https://github.com/Spirals-Team/IntroClassJava
