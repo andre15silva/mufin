@@ -13,3 +13,7 @@ git submodule update
 ### Defects4J
 
 To setup Defects4J, follow the instructions under [data/defects4j/README.md#setting-up-defects4j](data/defects4j/README.md#setting-up-defects4j)
+
+### Bugs.jar
+
+To setup Bugs.jar, follow the instructions under [data/bugs-dot-jat/README.md#directory--file-structure](data/bugs-dot-jat/README.md#directory--file-structure)
