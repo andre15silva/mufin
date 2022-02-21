@@ -26,21 +26,30 @@ if __name__ == "__main__":
     # Checkout all buggy and fixed versions
     for pid in pids:
         for bid in bugs[pid]:
-            print("Checking out buggy %s-%s..." % (pid, bid))
             buggy_path = os.path.join(args.storage, pid, bid, "buggy")
             if not os.path.exists(buggy_path):
                 os.makedirs(buggy_path)
             else:
                 continue
+            print("Checking out buggy %s-%s..." % (pid, bid))
             run = subprocess.run([defects4j_bin, "checkout", "-p", pid, "-v", bid + "b", "-w", buggy_path], capture_output=True)
-            run.check_returncode()
+            try:
+                run.check_returncode()
+            except subprocess.CalledProcessError:
+                print(run)
+                os.rmdir(buggy_path)
+                continue
             print("Checked-out out buggy %s-%s" % (pid, bid))
 
-            print("Checking out fixed %s-%s..." % (pid, bid))
             fixed_path = os.path.join(args.storage, pid, bid, "fixed")
             if not os.path.exists(buggy_path):
                 os.makedirs(fixed_path)
+            print("Checking out fixed %s-%s..." % (pid, bid))
             run = subprocess.run([defects4j_bin, "checkout", "-p", pid, "-v", bid + "f", "-w", fixed_path], capture_output=True)
-            run.check_returncode()
+            try:
+                run.check_returncode()
+            except subprocess.CalledProcessError:
+                os.rmdir(buggy_path)
+                os.rmdir(fixed_path)
+                break
             print("Checked-out out fixed %s-%s" % (pid, bid))
-            pass
