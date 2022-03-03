@@ -26,6 +26,7 @@ if __name__ == "__main__":
             # checkout buggy branch and copy to the bug folder
             bug = branch
             if "/" in branch: bug = branch.split("/")[2]
+            if not bug.startswith("bugs-dot-jar_"): continue
             buggy_path = os.path.abspath(os.path.join(args.storage, bug, "buggy"))
             if not os.path.exists(buggy_path): os.makedirs(buggy_path)
             cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, buggy_path)
