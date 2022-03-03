@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import os
 import json
+import sys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to checkout all bugs (buggy and fixed versions) from Bears")
@@ -28,6 +29,7 @@ if __name__ == "__main__":
 
     # Checkout all buggy and fixed versions
     count = 0
+    missing = set()
     if bugs is not None:
         for bug in bugs:
             bug_id = bug["bugId"]
