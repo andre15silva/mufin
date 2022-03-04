@@ -17,6 +17,8 @@ if __name__ == "__main__":
     bugs = None
     directories = [x for x in os.listdir(bugs_path) if os.path.isdir(os.path.join(bugs_path, x))]
 
+    count = 0
+    missing = set()
     for project in directories:
         # get all bug branches
         project_path = os.path.join(bugs_path, project)
@@ -25,22 +27,22 @@ if __name__ == "__main__":
 
         for branch in bug_branches:
             # checkout buggy branch and copy to the bug folder
+            count += 1
             bug = branch
             if "/" in branch: bug = branch.split("/")[-1]
             if not bug.startswith("bugs-dot-jar_"): continue
 
             # copy to buggy path
-            buggy_path = os.path.abspath(os.path.join(args.storage, bug, "buggy"))
-            if not os.path.exists(buggy_path): os.makedirs(buggy_path)
-            cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, buggy_path)
-            subprocess.call(cmd, shell=True)
+            buggy_path = os.path.abspath(os.path.join(args.storage, bug, "buggy", ".bugs-dot-jar"))
+            fixed_path = os.path.abspath(os.path.join(args.storage, bug, "fixed", ".bugs-dot-jar" ))
+            if not os.path.exists(buggy_path) or not os.path.exists(fixed_path):
+                missing.add(bug)
 
-            # copy to fixed path
-            fixed_path = os.path.abspath(os.path.join(args.storage, bug, "fixed"))
-            if not os.path.exists(buggy_path): os.makedirs(buggy_path)
-            cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, fixed_path)
-            subprocess.call(cmd, shell=True)
-
-            # apply patch in fixed version
-            cmd = "cd %s; patch -p1 < .bugs-dot-jar/developer-patch.diff;" % fixed_path
-            subprocess.call(cmd, shell=True)
+    if len(missing) > 0:
+        print("There is/are " + str(len(missing)) + " bug(s) missing or with compromised integrity.")
+        for bug in missing:
+            print(bug)
+        sys.exit(1)
+    else:
+        print("There are no bugs missing or with compromised integrity.")
+        sys.exit(0)
