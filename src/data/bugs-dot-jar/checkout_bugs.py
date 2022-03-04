@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import os
 import json
+import sys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to checkout all bugs (buggy and fixed versions) from Bugs.jar")
@@ -27,7 +28,19 @@ if __name__ == "__main__":
             bug = branch
             if "/" in branch: bug = branch.split("/")[2]
             if not bug.startswith("bugs-dot-jar_"): continue
+
+            # copy to buggy path
             buggy_path = os.path.abspath(os.path.join(args.storage, bug, "buggy"))
             if not os.path.exists(buggy_path): os.makedirs(buggy_path)
             cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, buggy_path)
+            subprocess.call(cmd, shell=True)
+
+            # copy to fixed path
+            fixed_path = os.path.abspath(os.path.join(args.storage, bug, "fixed"))
+            if not os.path.exists(buggy_path): os.makedirs(buggy_path)
+            cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, fixed_path)
+            subprocess.call(cmd, shell=True)
+
+            # apply patch in fixed version
+            cmd = "cd %s; patch -p1 < .bugs-dot-jar/developer-patch.diff;" % fixed_path
             subprocess.call(cmd, shell=True)
