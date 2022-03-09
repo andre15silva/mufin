@@ -1,4 +1,6 @@
 import pathlib
+import subprocess
+import re
 
 from bug import Bug
 
@@ -12,11 +14,14 @@ class Defects4JBug(Bug):
         self.pid = pid
         self.bid = bid
 
-    def compile(self) -> int:
-        raise NotImplementedError
+    def compile(self) -> bool:
+        run = subprocess.run("cd %s; defects4j compile" % self.path.absolute(), shell=True, capture_output=True)
+        return run.returncode == 0
 
-    def test(self) -> int:
-        raise NotImplementedError
+    def test(self) -> bool:
+        run = subprocess.run("cd %s; defects4j test" % self.path.absolute(), shell=True, capture_output=True)
+        m = re.search(r"Failing tests: ([0-9]+)", run.stdout.decode("utf-8"))
+        return run.returncode == 0 and m != None and int(m.group(1)) == 0
 
     def apply_diff(self, diff: pathlib.Path) -> bool:
         raise NotImplementedError

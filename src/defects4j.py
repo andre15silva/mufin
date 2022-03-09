@@ -31,11 +31,11 @@ class Defects4J(Dataset):
         for pid in pids:
             for bid in bugs[pid]:
                 print("Checking out %s-%d" % (pid, bid))
-                buggy_path = pathlib.Path(storage, "%s-%d-buggy" % (pid, bid)).absolute()
-                fixed_path = pathlib.Path(storage, "%s-%d-fixed" % (pid, bid)).absolute()
+                buggy_path = pathlib.Path(storage, self.identifier, "%s-%d-buggy" % (pid, bid)).absolute()
+                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d-fixed" % (pid, bid)).absolute()
                 if buggy_path.exists() or fixed_path.exists(): continue
-                buggy_path.mkdir()
-                fixed_path.mkdir()
+                buggy_path.mkdir(parents=True)
+                fixed_path.mkdir(parents=True)
 
                 try:
                     run = subprocess.run("%s checkout -p %s -v %db -w %s" % (self.bin, pid, bid, buggy_path), shell=True, capture_output=True, check=True)

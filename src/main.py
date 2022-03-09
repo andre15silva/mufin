@@ -11,4 +11,8 @@ if __name__ == "__main__":
 
     defects4j = Defects4J(Path(args.defects4j).absolute())
     defects4j.checkout_all(Path(args.storage).absolute())
-    print(defects4j.get_bugs())
+
+    for bug in defects4j.get_bugs():
+        print(bug)
+        print(bug.compile())
+        print(bug.test())
