@@ -18,7 +18,6 @@ class Defects4J(Dataset):
         # Get all project ids
         run = subprocess.run("%s pids" % self.bin, shell=True, capture_output=True, check=True)
         pids = {pid.decode("utf-8") for pid in run.stdout.split()}
-        pids = {"Collections"}
 
         # Get all bug ids for all pids
         bugs = {}
