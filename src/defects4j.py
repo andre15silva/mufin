@@ -48,5 +48,25 @@ class Defects4J(Dataset):
                     continue
 
 
-    def check_integrity(self) -> bool:
-        raise NotImplementedError
+    def check_integrity(self, storage: pathlib.Path) -> bool:
+        # Get all project ids
+        run = subprocess.run("%s pids" % self.bin, shell=True, capture_output=True, check=True)
+        pids = {pid.decode("utf-8") for pid in run.stdout.split()}
+
+        # Get all bug ids for all pids
+        bugs = {}
+        for pid in pids:
+            run = subprocess.run("%s bids -p %s" % (self.bin, pid), shell=True, capture_output=True, check=True)
+            bugs[pid] = {int(bid.decode("utf-8")) for bid in run.stdout.split()}
+            print("Found %3d bugs for project %s" % (len(bugs[pid]), pid))
+
+        missing = set()
+        # Checkout all buggy and fixed versions
+        for pid in pids:
+            for bid in bugs[pid]:
+                buggy_path = pathlib.Path(storage, self.identifier, "%s-%d-buggy" % (pid, bid), "defects4j.build.properties").absolute()
+                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d-fixed" % (pid, bid), "defects4j.build.properties").absolute()
+                if not buggy_path.exists() or not fixed_path.exists():
+                    missing.add(pid + "-" + bid)
+
+        return len(missing) == 0
