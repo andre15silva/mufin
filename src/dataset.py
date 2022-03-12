@@ -11,7 +11,7 @@ class Dataset(ABC):
 
     def __init__(self, identifier: str, path: pathlib.Path) -> None:
         self.identifier = identifier
-        self.path = path
+        self.path = path.absolute()
         self.bugs = set()
 
     def get_identifier(self) -> int:
