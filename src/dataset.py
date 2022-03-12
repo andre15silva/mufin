@@ -26,9 +26,8 @@ class Dataset(ABC):
     def cwd(self) -> None:
         Path.cwd()
 
-    @abstractmethod
     def add_bug(self, bug: Bug) -> None:
-        pass
+        self.bugs.add(bug)
 
     @abstractmethod
     def checkout_all(self, storage: pathlib.Path) -> None:

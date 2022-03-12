@@ -11,9 +11,6 @@ class Defects4J(Dataset):
         super().__init__("defects4j", path)
         self.bin = path.joinpath("framework/bin/defects4j")
 
-    def add_bug(self, bug: Defects4JBug) -> None:
-        self.bugs.add(bug)
-
     def checkout_all(self, storage: pathlib.Path) -> None:
         # Get all project ids
         run = subprocess.run("%s pids" % self.bin, shell=True, capture_output=True, check=True)
