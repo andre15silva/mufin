@@ -5,6 +5,7 @@ from pathlib import Path
 from defects4j import Defects4J
 from bugsdotjar import BugsDotJar
 from bears import Bears
+from quixbugs import QuixBugs
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to checkout all bugs (buggy and fixed versions) from Defects4J")
@@ -12,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("--defects4j", help="Path to the defects4j directory", required=False, metavar="<path_to_defects4j>")
     parser.add_argument("--bugs-dot-jar", help="Path to the Bugs.jar directory", required=False, metavar="<path_to_bears>")
     parser.add_argument("--bears", help="Path to the bears directory", required=False, metavar="<path_to_bears>")
+    parser.add_argument("--quixbugs", help="Path to the QuixBugs directory", required=False, metavar="<path_to_quixbugs>")
     args = parser.parse_args()
 
     if args.defects4j != None:
@@ -58,3 +60,18 @@ if __name__ == "__main__":
 
         with open(Path(args.storage, "bears.pickle").absolute(), "wb") as f:
             pickle.dump(bears, f)
+
+    if args.quixbugs != None:
+        quixbugs = None
+        if Path(args.storage, "quixbugs.pickle").exists():
+            with open(Path(args.storage, "quixbugs.pickle").absolute(), "rb") as f:
+                quixbugs = pickle.load(f)
+        else:
+            quixbugs = QuixBugs(Path(args.quixbugs).absolute())
+            quixbugs.checkout_all(Path(args.storage).absolute())
+            print(quixbugs.check_integrity(Path(args.storage).absolute()))
+
+        # TODO: do stuff
+
+        with open(Path(args.storage, "quixbugs.pickle").absolute(), "wb") as f:
+            pickle.dump(quixbugs, f)
