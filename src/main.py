@@ -1,11 +1,14 @@
 import argparse
 import pickle
+import json
 from pathlib import Path
 
 from defects4j.defects4j import Defects4J
 from bugsdotjar.bugsdotjar import BugsDotJar
 from bears.bears import Bears
 from quixbugs.quixbugs import QuixBugs
+
+from serialization.encoders import BugEncoder, DatasetEncoder
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to checkout all bugs (buggy and fixed versions) from Defects4J")
@@ -73,5 +76,5 @@ if __name__ == "__main__":
 
         # TODO: do stuff
 
-        with open(Path(args.storage, "quixbugs.pickle").absolute(), "wb") as f:
-            pickle.dump(quixbugs, f)
+        with open(Path(args.storage, "quixbugs.json").absolute(), "w+") as f:
+            json.dump(quixbugs, f, cls=DatasetEncoder)
