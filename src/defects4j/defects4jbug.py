@@ -9,11 +9,6 @@ class Defects4JBug(Bug):
     The class for representing Defects4J bugs
     """
 
-    def __init__(self, pid: str, bid: int, path: pathlib.Path, buggy: bool) -> None:
-        super().__init__("%s-%d" % (pid, bid), path, buggy)
-        self.pid = pid
-        self.bid = bid
-
     def compile(self) -> bool:
         run = subprocess.run("cd %s; defects4j compile" % self.path.absolute(), shell=True, capture_output=True)
         return run.returncode == 0

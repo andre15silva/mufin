@@ -36,8 +36,8 @@ class Defects4J(Dataset):
                 try:
                     run = subprocess.run("%s checkout -p %s -v %db -w %s" % (self.bin, pid, bid, buggy_path), shell=True, capture_output=True, check=True)
                     run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
-                    self.add_bug(Defects4JBug(pid, bid, buggy_path, True))
-                    self.add_bug(Defects4JBug(pid, bid, fixed_path, False))
+                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), buggy_path, True))
+                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, False))
                 except subprocess.CalledProcessError:
                     finished = False
                     buggy_path.rmdir()

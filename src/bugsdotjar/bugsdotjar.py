@@ -9,7 +9,7 @@ from bugsdotjar.bugsdotjarbug import BugsDotJarBug
 class BugsDotJar(Dataset):
 
     def __init__(self, path: pathlib.Path) -> None:
-        super().__init__("bugs-dot-jar", path)
+        super().__init__("bugsdotjar", path)
 
     def checkout_all(self, storage: pathlib.Path) -> None:
         bugs = None
