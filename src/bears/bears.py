@@ -28,9 +28,6 @@ class Bears(Dataset):
                 bug_id = bug["bugId"]
                 bug_branch = bug["bugBranch"]
 
-                if int(bug_id.split("-")[1]) >= 5:
-                    continue
-
                 buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % bug_id).absolute()
                 fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % bug_id).absolute()
                 if not buggy_path.exists() and not fixed_path.exists():
