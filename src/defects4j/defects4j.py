@@ -3,7 +3,7 @@ import subprocess
 
 from bug import Bug
 from dataset import Dataset
-from defects4jbug import Defects4JBug
+from defects4j.defects4jbug import Defects4JBug
 
 class Defects4J(Dataset):
 

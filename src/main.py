@@ -2,10 +2,10 @@ import argparse
 import pickle
 from pathlib import Path
 
-from defects4j import Defects4J
-from bugsdotjar import BugsDotJar
-from bears import Bears
-from quixbugs import QuixBugs
+from defects4j.defects4j import Defects4J
+from bugsdotjar.bugsdotjar import BugsDotJar
+from bears.bears import Bears
+from quixbugs.quixbugs import QuixBugs
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to checkout all bugs (buggy and fixed versions) from Defects4J")

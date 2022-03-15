@@ -4,7 +4,7 @@ import json
 
 from bug import Bug
 from dataset import Dataset
-from bearsbug import BearsBug
+from bears.bearsbug import BearsBug
 
 class Bears(Dataset):
     

@@ -4,7 +4,7 @@ import os
 
 from bug import Bug
 from dataset import Dataset
-from bugsdotjarbug import BugsDotJarBug
+from bugsdotjar.bugsdotjarbug import BugsDotJarBug
 
 class BugsDotJar(Dataset):
 

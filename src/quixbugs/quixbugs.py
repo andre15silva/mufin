@@ -3,7 +3,7 @@ import subprocess
 
 from bug import Bug
 from dataset import Dataset
-from quixbugsbug import QuixBugsBug
+from quixbugs.quixbugsbug import QuixBugsBug
 
 class QuixBugs(Dataset):
 
