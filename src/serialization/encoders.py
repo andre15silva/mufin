@@ -20,5 +20,7 @@ class DatasetEncoder(json.JSONEncoder):
             dataset = obj.__dict__
             dataset["bugs"] = [BugEncoder.default(self, x) for x in dataset["bugs"]]
             dataset["path"] = str(dataset["path"])
+            if "bin" in dataset:
+                del dataset["bin"]
             return dataset
         return json.JSONEncoder.default(self, obj)
