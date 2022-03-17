@@ -2,10 +2,10 @@ import pathlib
 import subprocess
 import os
 
-from utils import *
-from bug import Bug
-from dataset import Dataset
-from bugsdotjar.bugsdotjarbug import BugsDotJarBug
+import utils
+from models.bug import Bug
+from models.dataset import Dataset
+from models.bugsdotjar.bugsdotjarbug import BugsDotJarBug
 
 class BugsDotJar(Dataset):
 
@@ -48,8 +48,8 @@ class BugsDotJar(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # add bug
-                self.add_bug(BugsDotJarBug(bug, buggy_path, True, get_diff(buggy_path, fixed_path)))
-                self.add_bug(BugsDotJarBug(bug, fixed_path, False, get_diff(fixed_path, buggy_path)))
+                self.add_bug(BugsDotJarBug(bug, buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
+                self.add_bug(BugsDotJarBug(bug, fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:

@@ -2,14 +2,14 @@ import json
 
 from pathlib import Path
 
-from defects4j.defects4j import Defects4J
-from defects4j.defects4jbug import Defects4JBug
-from bugsdotjar.bugsdotjar import BugsDotJar
-from defects4j.defects4jbug import Defects4JBug
-from bears.bears import Bears
-from bears.bearsbug import BearsBug
-from quixbugs.quixbugs import QuixBugs
-from quixbugs.quixbugsbug import QuixBugsBug
+from models.defects4j.defects4j import Defects4J
+from models.defects4j.defects4jbug import Defects4JBug
+from models.bugsdotjar.bugsdotjar import BugsDotJar
+from models.defects4j.defects4jbug import Defects4JBug
+from models.bears.bears import Bears
+from models.bears.bearsbug import BearsBug
+from models.quixbugs.quixbugs import QuixBugs
+from models.quixbugs.quixbugsbug import QuixBugsBug
 
 
 class BugDecoder:
@@ -19,13 +19,13 @@ class BugDecoder:
         bug = None
 
         if dataset == "bears":
-            return BearsBug(data["identifier"], Path(data["path"]), data["buggy"])
+            return BearsBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
         elif dataset == "bugsdotjar":
-            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["buggy"])
+            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
         elif dataset == "defects4j":
-            return Defects4JBug(data["identifier"], Path(data["path"]), data["buggy"])
+            return Defects4JBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
         elif dataset == "quixbugs":
-            return QuixBugsBug(data["identifier"], Path(data["path"]), data["buggy"])
+            return QuixBugsBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
         else:
             raise NotImplementedError
 

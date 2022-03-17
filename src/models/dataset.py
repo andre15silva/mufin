@@ -1,7 +1,7 @@
 import pathlib
 from abc import ABC, abstractmethod
 
-from bug import Bug
+from models.bug import Bug
 from typing import Set
 
 class Dataset(ABC):
@@ -34,5 +34,5 @@ class Dataset(ABC):
         pass
 
     @abstractmethod
-    def check_integrity(self) -> bool:
+    def check_integrity(self, storage: pathlib.Path) -> bool:
         pass

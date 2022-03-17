@@ -1,7 +1,7 @@
 import json
 
-from bug import Bug
-from dataset import Dataset
+from models.bug import Bug
+from models.dataset import Dataset
 
 class BugEncoder(json.JSONEncoder):
     

@@ -2,7 +2,7 @@ import pathlib
 import subprocess
 import re
 
-from bug import Bug
+from models.bug import Bug
 
 class Defects4JBug(Bug):
     """
