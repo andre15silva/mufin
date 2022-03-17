@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 
+from utils import *
 from bug import Bug
 from dataset import Dataset
 from defects4j.defects4jbug import Defects4JBug
@@ -36,8 +37,8 @@ class Defects4J(Dataset):
                 try:
                     run = subprocess.run("%s checkout -p %s -v %db -w %s" % (self.bin, pid, bid, buggy_path), shell=True, capture_output=True, check=True)
                     run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
-                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), buggy_path, True))
-                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, False))
+                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), buggy_path, True, get_diff(buggy_path, fixed_path)))
+                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, False, get_diff(fixed_path, buggy_path)))
                 except subprocess.CalledProcessError:
                     finished = False
                     buggy_path.rmdir()
@@ -64,6 +65,6 @@ class Defects4J(Dataset):
                 buggy_path = pathlib.Path(storage, self.identifier, "%s-%d-buggy" % (pid, bid), "defects4j.build.properties").absolute()
                 fixed_path = pathlib.Path(storage, self.identifier, "%s-%d-fixed" % (pid, bid), "defects4j.build.properties").absolute()
                 if not buggy_path.exists() or not fixed_path.exists():
-                    missing.add(pid + "-" + bid)
+                    missing.add("%s-%d" % (pid, bid))
 
         return len(missing) == 0

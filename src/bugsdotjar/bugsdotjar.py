@@ -2,6 +2,7 @@ import pathlib
 import subprocess
 import os
 
+from utils import *
 from bug import Bug
 from dataset import Dataset
 from bugsdotjar.bugsdotjarbug import BugsDotJarBug
@@ -47,8 +48,8 @@ class BugsDotJar(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # add bug
-                self.add_bug(BugsDotJarBug(bug, buggy_path, True))
-                self.add_bug(BugsDotJarBug(bug, fixed_path, False))
+                self.add_bug(BugsDotJarBug(bug, buggy_path, True, get_diff(buggy_path, fixed_path)))
+                self.add_bug(BugsDotJarBug(bug, fixed_path, False, get_diff(fixed_path, buggy_path)))
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:

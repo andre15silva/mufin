@@ -33,7 +33,7 @@ if __name__ == "__main__":
         print(len(defects4j.get_bugs()))
 
         with open(Path(args.storage, "defects4j.json").absolute(), "w+") as f:
-            json.dump(defects4j, f, cls=DatasetEncoder)
+            json.dump(defects4j, f, cls=DatasetEncoder, indent=4)
 
     if args.bugsdotjar != None:
         bugsdotjar = None
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         print(len(bugsdotjar.get_bugs()))
 
         with open(Path(args.storage, "bugsdotjar.json").absolute(), "w+") as f:
-            json.dump(bugsdotjar, f, cls=DatasetEncoder)
+            json.dump(bugsdotjar, f, cls=DatasetEncoder, indent=4)
 
     if args.bears != None:
         bears = None
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         print(len(bears.get_bugs()))
 
         with open(Path(args.storage, "bears.json").absolute(), "w+") as f:
-            json.dump(bears, f, cls=DatasetEncoder)
+            json.dump(bears, f, cls=DatasetEncoder, indent=4)
 
     if args.quixbugs != None:
         quixbugs = None
@@ -78,4 +78,4 @@ if __name__ == "__main__":
         print(len(quixbugs.get_bugs()))
 
         with open(Path(args.storage, "quixbugs.json").absolute(), "w+") as f:
-            json.dump(quixbugs, f, cls=DatasetEncoder)
+            json.dump(quixbugs, f, cls=DatasetEncoder, indent=4)

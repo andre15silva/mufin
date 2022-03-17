@@ -2,6 +2,7 @@ import pathlib
 import subprocess
 import json
 
+from utils import *
 from bug import Bug
 from dataset import Dataset
 from bears.bearsbug import BearsBug
@@ -63,8 +64,8 @@ class Bears(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # add bug
-                self.add_bug(BearsBug(bug_id, buggy_path, True))
-                self.add_bug(BearsBug(bug_id, fixed_path, False))
+                self.add_bug(BearsBug(bug_id, buggy_path, True, get_diff(buggy_path, fixed_path)))
+                self.add_bug(BearsBug(bug_id, fixed_path, False, get_diff(fixed_path, buggy_path)))
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:

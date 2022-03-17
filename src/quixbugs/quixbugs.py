@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 
+from utils import *
 from bug import Bug
 from dataset import Dataset
 from quixbugs.quixbugsbug import QuixBugsBug
@@ -57,8 +58,8 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
             subprocess.call(cmd, shell=True)
 
-            self.add_bug(QuixBugsBug(algo.lower(), buggy_path, True))
-            self.add_bug(QuixBugsBug(algo.lower(), fixed_path, False))
+            self.add_bug(QuixBugsBug(algo.lower(), buggy_path, True, get_diff(buggy_path, fixed_path)))
+            self.add_bug(QuixBugsBug(algo.lower(), fixed_path, False, get_diff(fixed_path, buggy_path)))
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
         algos = [x.stem for x in pathlib.Path(self.path, "java_programs").iterdir() if ".java" in str(x) and x.stem.isupper()]

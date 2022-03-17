@@ -6,16 +6,23 @@ class Bug(ABC):
     The abstract class for representing a bug.
     """
     
-    def __init__(self, identifier: str, path: pathlib.Path, buggy: bool) -> None:
+    def __init__(self, identifier: str, path: pathlib.Path, buggy: bool, diff: str) -> None:
         self.identifier = identifier
         self.path = path
         self.buggy = buggy
+        self.diff = diff
 
     def get_identifier(self) -> str:
         return "%s-%s" % (self.identifier, "buggy" if self.buggy else "fixed")
 
     def get_path(self) -> pathlib.Path:
         return self.path
+
+    def is_buggy(self) -> bool:
+        return self.buggy
+
+    def get_diff(self) -> str:
+        return self.diff
 
     def cwd(self) -> None:
         raise NotImplementedError
