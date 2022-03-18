@@ -5,6 +5,7 @@ from pathlib import Path
 from models.defects4j.defects4j import Defects4J
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJar
+from models.bugsdotjar.bugsdotjar import BugsDotJarBug
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bears.bears import Bears
 from models.bears.bearsbug import BearsBug
