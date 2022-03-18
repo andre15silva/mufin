@@ -14,7 +14,7 @@ class Dataset(ABC):
         self.path = path.absolute()
         self.bugs = set()
 
-    def get_identifier(self) -> int:
+    def get_identifier(self) -> str:
         return self.identifier
 
     def get_path(self) -> pathlib.Path:
