@@ -13,4 +13,4 @@ if __name__ == "__main__":
 
     # Print stats
     print("Identifier: " + dataset.get_identifier())
-    print("Number of bugs: " + len(dataset.get_bugs()))
+    print("Number of bugs: " + str(len(dataset.get_bugs())))
