@@ -54,8 +54,8 @@ def load_dataset(args):
 def add_core_args(parser):
     # Storage args
     parser.add_argument("--storage", help="Path to the storage directory", required=True, metavar="<path_to_storage>")
-    parser.add_argument("--model_input", help="Path to the input json dump of the model. Defaults to <path_to_storage>/<dataset>.json", required=False, metavar="<path_to_input_json_file>")
-    parser.add_argument("--model_output", help="Path to the output json dump of the model. Defaults to <path_to_storage>/<dataset>.json", required=False, metavar="<path_to_output_json_file>")
+    parser.add_argument("--model_input", help="Name of the input json dump of the model. Defaults to <path_to_storage>/<dataset>.json", required=False, metavar="<model_input.json>")
+    parser.add_argument("--model_output", help="Name of the output json dump of the model. Defaults to <path_to_storage>/<dataset>.json", required=False, metavar="<model_output.json>")
 
     # Dataset to analyze args
     dataset_arg = parser.add_mutually_exclusive_group(required=True)
