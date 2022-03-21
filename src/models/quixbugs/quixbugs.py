@@ -42,7 +42,7 @@ class QuixBugs(Dataset):
 
             # Copy files to fixed path
             # Copy java files
-            cmd = "cd %s; mkdir %s/java_programs; mkdir %s/correct_java_programs; cp correct_java_programs/%s.java %s/correct_java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, fixed_path, fixed_path, algo, fixed_path, fixed_path, fixed_path)
+            cmd = "cd %s; mkdir %s/java_programs; sed -i \"1s/.*/package java_programs;/\" correct_java_programs/%s.java; cp correct_java_programs/%s.java %s/java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, fixed_path, algo, algo, fixed_path, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
             if pathlib.Path(self.path, "java_testcases", algo + ".java").exists():
                 cmd = "cd %s, mkdir %s/java_testcases; cp java_testcases/%s.java %s/java_testcases/" % (self.path, fixed_path, algo, fixed_path)

@@ -9,7 +9,7 @@
 	url = https://github.com/bugs-dot-jar/bugs-dot-jar
 [submodule "data/QuixBugs"]
 	path = data/QuixBugs
-	url = https://github.com/jkoppel/QuixBugs
+	url = https://github.com/andre15silva/QuixBugs
 [submodule "data/IntroClassJava"]
 	path = data/IntroClassJava
 	url = https://github.com/Spirals-Team/IntroClassJava
