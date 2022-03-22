@@ -29,12 +29,15 @@ class QuixBugs(Dataset):
             if pathlib.Path(self.path, "java_testcases", algo + ".java").exists():
                 cmd = "cd %s, mkdir %s/java_testcases; cp java_testcases/%s.java %s/java_testcases/" % (self.path, buggy_path, algo, buggy_path)
                 subprocess.call(cmd, shell=True)
-            # Copy json
+            # Copy json and JavaDeserialization
             if pathlib.Path(self.path, "json_testcases", algo.lower() + ".json").exists():
                 cmd = "cd %s; mkdir %s/json_testcases; cp -r json_testcases/%s.json %s/json_testcases/" % (self.path, buggy_path, algo.lower(), buggy_path)
                 subprocess.call(cmd, shell=True)
+                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, buggy_path)
+                subprocess.call(cmd, shell=True)
+
             # Copy gson dependency
-            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/com/" % (self.path, buggy_path, buggy_path)
+            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, buggy_path, buggy_path)
             subprocess.call(cmd, shell=True)
             # Copy python programs
             cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s.py %s/correct_python_programs/" % (self.path, buggy_path, algo.lower(), buggy_path)
@@ -47,12 +50,14 @@ class QuixBugs(Dataset):
             if pathlib.Path(self.path, "java_testcases", algo + ".java").exists():
                 cmd = "cd %s, mkdir %s/java_testcases; cp java_testcases/%s.java %s/java_testcases/" % (self.path, fixed_path, algo, fixed_path)
                 subprocess.call(cmd, shell=True)
-            # Copy json
+            # Copy json and JavaDeserialization
             if pathlib.Path(self.path, "json_testcases", algo.lower() + ".json").exists():
                 cmd = "cd %s; mkdir %s/json_testcases; cp -r json_testcases/%s.json %s/json_testcases/" % (self.path, fixed_path, algo.lower(), fixed_path)
                 subprocess.call(cmd, shell=True)
+                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, buggy_path)
+                subprocess.call(cmd, shell=True)
             # Copy gson dependency
-            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/com/" % (self.path, fixed_path, fixed_path)
+            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
             # Copy python programs
             cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
