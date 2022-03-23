@@ -14,7 +14,7 @@ class Bears(Dataset):
 
     def checkout_all(self, storage: pathlib.Path) -> None:
         # check out master
-        cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout master;" % self.path
+        cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout andre;" % self.path
         subprocess.call(cmd, shell=True)
 
         # get all bugs
@@ -60,11 +60,12 @@ class Bears(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # check out master
-                cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout master;" % self.path
+                cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout andre;" % self.path
                 subprocess.call(cmd, shell=True)
 
                 # copy compilation and testing scripts
-                cmd = "cd %s; cp compile_bug.py %s; cp compile_bug.py %s; cp run_tests_bug.py %s; cp run_tests_bug.py %s" % (pathlib.path(self.path, "scripts"), buggy_path, fixed_path, buggy_path, fixed_path)
+                cmd = "cd %s; cp compile_bug.py %s; cp compile_bug.py %s; cp run_tests_bug.py %s; cp run_tests_bug.py %s" % (pathlib.Path(self.path, "scripts"), buggy_path, fixed_path, buggy_path, fixed_path)
+                subprocess.call(cmd, shell=True)
 
                 # add bug
                 self.add_bug(BearsBug(bug_id, buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
@@ -73,7 +74,7 @@ class Bears(Dataset):
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
         # check out master
-        cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout master;" % self.path
+        cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout andre;" % self.path
         subprocess.call(cmd, shell=True)
 
         # get all bugs
