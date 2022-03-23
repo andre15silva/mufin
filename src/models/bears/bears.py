@@ -63,6 +63,9 @@ class Bears(Dataset):
                 cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout master;" % self.path
                 subprocess.call(cmd, shell=True)
 
+                # copy compilation and testing scripts
+                cmd = "cd %s; cp compile_bug.py %s; cp compile_bug.py %s; cp run_tests_bug.py %s; cp run_tests_bug.py %s" % (pathlib.path(self.path, "scripts"), buggy_path, fixed_path, buggy_path, fixed_path)
+
                 # add bug
                 self.add_bug(BearsBug(bug_id, buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
                 self.add_bug(BearsBug(bug_id, fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
