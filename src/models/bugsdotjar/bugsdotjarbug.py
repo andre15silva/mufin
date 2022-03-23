@@ -11,11 +11,11 @@ class BugsDotJarBug(Bug):
     """
 
     def compile(self) -> bool:
-        run = subprocess.run("cd %s; mvn compile" % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; mvn clean compile" % self.path.absolute(), shell=True, capture_output=True)
         return run.returncode == 0
 
     def test(self) -> TestResult:
-        run = subprocess.run("cd %s; mvn test" % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; mvn clean test" % self.path.absolute(), shell=True, capture_output=True)
         return TestResult(True, run.returncode == 0)
 
     def apply_diff(self, diff: pathlib.Path) -> bool:
