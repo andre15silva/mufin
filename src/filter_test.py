@@ -23,10 +23,9 @@ if __name__ == "__main__":
 
     # Remove bugs that don't compile
     for bug in to_remove:
-        #dataset.get_bugs().remove(bug)
-        pass
+        dataset.get_bugs().remove(bug)
 
-    print("\n\nRemoved %d bugs whose tests don't run." % len(to_remove))
+    print("\n\nRemoved %d bugs whose tests didn't execute." % len(to_remove))
 
     # Save the metadata
     utils.save_dataset(args, dataset)
