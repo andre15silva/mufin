@@ -5,6 +5,7 @@ import json
 import copy
 
 from models.bug import Bug
+from models.test_result import TestResult
 
 class QuixBugsBug(Bug):
     """
@@ -15,7 +16,7 @@ class QuixBugsBug(Bug):
         run = subprocess.run("cd %s/java_programs; javac *.java" % self.path.absolute(), shell=True, capture_output=True)
         return run.returncode == 0
 
-    def test(self) -> bool:
+    def test(self) -> TestResult:
         # Not a graph based bug, so we need to run both the python and Java versions
         if pathlib.Path(self.path, "JavaDeserialization.java").exists():
             # Code adapted from QuixBugs tester.py script
@@ -29,15 +30,18 @@ class QuixBugsBug(Bug):
                     test_in = [test_in]
                     # unsure how to make immutable; previous versions just used copy.deepcopy
 
-                cmd = "cd %s; java JavaDeserialization %s %s" % (self.path, self.identifier, " ".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
                 try:
-                    run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True, timeout=10)
-                    # TODO: Compare output with right version
-                    return run.returncode == 0
+                    cmd = "cd %s; java JavaDeserialization %s %s" % (self.path, self.identifier, " ".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
+                    java_run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True, timeout=10)
+
+                    cmd = "cd %s; python -c \"from %s import *; print(%s(%s))\"" % (pathlib.Path(self.path, "correct_python_programs"), self.identifier, self.identifier, ",".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
+                    python_run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True, timeout=10)
+
+                    return TestResult(True, java_run.returncode == 0 and python_run.returncode and java_run.stdout == python_run.stdout)
                 except subprocess.TimeoutExpired:
-                    return False
+                    return TestResult(True, False)
         else:
-            return True
+            return TestResult(False, False)
 
 
     def apply_diff(self, diff: pathlib.Path) -> bool:

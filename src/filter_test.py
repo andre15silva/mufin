@@ -3,6 +3,8 @@ import sys
 
 import utils
 
+from models.test_result import TestResult
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to remove all bugs whose tests don't run.")
     parser = utils.add_core_args(parser)
@@ -15,8 +17,8 @@ if __name__ == "__main__":
     to_remove = set()
     for bug in dataset.get_bugs():
         comp = bug.test()
-        if not comp:
-            print("Bug %s tests didn't run." % bug.get_identifier())
+        if not comp.is_executes():
+            print("Bug %s tests didn't execute." % bug.get_identifier())
             to_remove.add(bug)
 
     # Remove bugs that don't compile

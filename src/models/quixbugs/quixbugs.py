@@ -40,7 +40,7 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, buggy_path, buggy_path)
             subprocess.call(cmd, shell=True)
             # Copy python programs
-            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s.py %s/correct_python_programs/" % (self.path, buggy_path, algo.lower(), buggy_path)
+            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s*.py %s/correct_python_programs/" % (self.path, buggy_path, algo.lower(), buggy_path)
             subprocess.call(cmd, shell=True)
 
             # Copy files to fixed path
@@ -60,7 +60,7 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
             # Copy python programs
-            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
+            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s*.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
             subprocess.call(cmd, shell=True)
 
             self.add_bug(QuixBugsBug(algo.lower(), buggy_path, True, utils.get_diff(buggy_path, fixed_path)))

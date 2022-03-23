@@ -1,6 +1,8 @@
 import pathlib
 from abc import ABC, abstractmethod
 
+from models.test_result import TestResult
+
 class Bug(ABC):
     """
     The abstract class for representing a bug.
@@ -32,7 +34,7 @@ class Bug(ABC):
         pass
 
     @abstractmethod
-    def test(self) -> bool:
+    def test(self) -> TestResult:
         pass
 
     @abstractmethod

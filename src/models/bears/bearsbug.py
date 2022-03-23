@@ -3,6 +3,7 @@ import subprocess
 import re
 
 from models.bug import Bug
+from models.test_result import TestResult
 
 class BearsBug(Bug):
     """
@@ -13,7 +14,7 @@ class BearsBug(Bug):
         # TODO: We need access to the bears repo
         raise NotImplementedError
 
-    def test(self) -> bool:
+    def test(self) -> TestResult:
         # TODO: We need access to the bears repo
         raise NotImplementedError
 

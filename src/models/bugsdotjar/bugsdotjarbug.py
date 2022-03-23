@@ -3,6 +3,7 @@ import subprocess
 import re
 
 from models.bug import Bug
+from models.test_result import TestResult
 
 class BugsDotJarBug(Bug):
     """
@@ -13,9 +14,9 @@ class BugsDotJarBug(Bug):
         run = subprocess.run("cd %s; mvn compile" % self.path.absolute(), shell=True, capture_output=True)
         return run.returncode == 0
 
-    def test(self) -> bool:
+    def test(self) -> TestResult:
         run = subprocess.run("cd %s; mvn test" % self.path.absolute(), shell=True, capture_output=True)
-        return run.returncode == 0
+        return TestResult(True, run.returncode == 0)
 
     def apply_diff(self, diff: pathlib.Path) -> bool:
         raise NotImplementedError
