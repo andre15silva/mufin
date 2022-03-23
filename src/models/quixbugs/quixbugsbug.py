@@ -37,7 +37,7 @@ class QuixBugsBug(Bug):
                     cmd = "cd %s; python -c \"from %s import *; print(%s(%s))\"" % (pathlib.Path(self.path, "correct_python_programs"), self.identifier, self.identifier, ",".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
                     python_run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True, timeout=10)
 
-                    return TestResult(True, java_run.returncode == 0 and python_run.returncode and java_run.stdout == python_run.stdout)
+                    return TestResult(True, java_run.returncode == 0 and python_run.returncode == 0 and java_run.stdout == python_run.stdout)
                 except subprocess.TimeoutExpired:
                     return TestResult(True, False)
         else:

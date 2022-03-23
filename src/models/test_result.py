@@ -4,8 +4,8 @@ class TestResult:
         self.executes = executes
         self.result = result
 
-    def is_executes(self) -> bool:
+    def is_executing(self) -> bool:
         return self.executes
 
-    def is_result(self) -> bool:
+    def is_passing(self) -> bool:
         return self.result

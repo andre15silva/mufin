@@ -17,8 +17,14 @@ if __name__ == "__main__":
     to_remove = set()
     for bug in dataset.get_bugs():
         comp = bug.test()
-        if not comp.is_executes():
+        if not comp.is_executing():
             print("Bug %s tests didn't execute." % bug.get_identifier())
+            to_remove.add(bug)
+        elif bug.is_buggy() and comp.is_passing():
+            print("Bug %s is buggy but the tests pass." % bug.get_identifier())
+            to_remove.add(bug)
+        elif not bug.is_buggy() and not comp.is_passing():
+            print("Bug %s is fixed but the tests fail." % bug.get_identifier())
             to_remove.add(bug)
 
     # Remove bugs that don't compile
