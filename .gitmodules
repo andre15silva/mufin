@@ -3,7 +3,7 @@
 	url = https://github.com/rjust/defects4j
 [submodule "data/bears-benchmark"]
 	path = data/bears-benchmark
-	url = https://github.com/bears-bugs/bears-benchmark
+	url = https://github.com/andre15silva/bears-benchmark
 [submodule "data/bugs-dot-jar"]
 	path = data/bugs-dot-jar
 	url = https://github.com/bugs-dot-jar/bugs-dot-jar
