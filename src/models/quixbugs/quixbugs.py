@@ -54,7 +54,7 @@ class QuixBugs(Dataset):
             if pathlib.Path(self.path, "json_testcases", algo.lower() + ".json").exists():
                 cmd = "cd %s; mkdir %s/json_testcases; cp -r json_testcases/%s.json %s/json_testcases/" % (self.path, fixed_path, algo.lower(), fixed_path)
                 subprocess.call(cmd, shell=True)
-                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, buggy_path)
+                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, fixed_path)
                 subprocess.call(cmd, shell=True)
             # Copy gson dependency
             cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, fixed_path, fixed_path)
