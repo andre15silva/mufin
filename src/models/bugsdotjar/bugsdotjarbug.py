@@ -11,12 +11,18 @@ class BugsDotJarBug(Bug):
     """
 
     def compile(self) -> bool:
-        run = subprocess.run("cd %s; mvn clean compile" % self.path.absolute(), shell=True, capture_output=True)
-        return run.returncode == 0
+        try:
+            run = subprocess.run("cd %s; mvn clean compile" % self.path.absolute(), shell=True, capture_output=True, timeout=60*10)
+            return run.returncode == 0
+        except subprocess.TimeoutExpired:
+            return False
 
     def test(self) -> TestResult:
-        run = subprocess.run("cd %s; mvn clean test" % self.path.absolute(), shell=True, capture_output=True)
-        return TestResult(True, run.returncode == 0)
+        try:
+            run = subprocess.run("cd %s; mvn clean test" % self.path.absolute(), shell=True, capture_output=True, timeout=60*10)
+            return TestResult(True, run.returncode == 0)
+        except subprocess.TimeoutExpired:
+            return TestResult(False, False)
 
     def apply_diff(self, diff: pathlib.Path) -> bool:
         raise NotImplementedError

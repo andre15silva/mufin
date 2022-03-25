@@ -13,8 +13,11 @@ class QuixBugsBug(Bug):
     """
 
     def compile(self) -> bool:
-        run = subprocess.run("cd %s/java_programs; javac *.java" % self.path.absolute(), shell=True, capture_output=True)
-        return run.returncode == 0
+        try:
+            run = subprocess.run("cd %s/java_programs; javac *.java" % self.path.absolute(), shell=True, capture_output=True, timeout=10)
+            return run.returncode == 0
+        except:
+            return False
 
     def test(self) -> TestResult:
         # Not a graph based bug, so we need to run both the python and Java versions
