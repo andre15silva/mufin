@@ -1,5 +1,7 @@
 import argparse
 import sys
+import pandas as pd
+import pathlib
 
 import utils
 
@@ -11,6 +13,13 @@ if __name__ == "__main__":
     # Load the dataset
     dataset = utils.load_dataset(args)
 
-    # Print stats
-    print("Identifier: " + dataset.get_identifier())
-    print("Number of bugs: " + str(len(dataset.get_bugs())))
+    # Compute stats
+    key = utils.get_json_input_file(args).stem
+    data = {key : {}}
+    data[key]["n_bugs"] = len(dataset.get_bugs())
+    data[key]["n_bugs_buggy"] = len([x for x in dataset.get_bugs() if x.is_buggy()])
+    data[key]["n_bugs_fixed"] = len([x for x in dataset.get_bugs() if not x.is_buggy()])
+
+    # Save stats to csv file
+    df = pd.DataFrame.from_dict(data, orient="index")
+    df.to_csv(pathlib.Path(args.storage, key + ".csv"))
