@@ -30,7 +30,7 @@ class Bears(Dataset):
                 bug_branch = bug["bugBranch"]
 
                 buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % bug_id).absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % bug_id).absolute()
+                fixed_path = pathlib.Path(storage, self.identifier, "%s" % bug_id).absolute()
                 if not buggy_path.exists() and not fixed_path.exists():
                     buggy_path.mkdir(parents=True)
                     fixed_path.mkdir(parents=True)
@@ -68,8 +68,7 @@ class Bears(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # add bug
-                self.add_bug(BearsBug(bug_id, buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
-                self.add_bug(BearsBug(bug_id, fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
+                self.add_bug(BearsBug(bug_id, fixed_path, utils.get_diff(fixed_path, buggy_path)))
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
@@ -93,9 +92,8 @@ class Bears(Dataset):
                 if int(bug_id.split("-")[1]) >= 5:
                     continue
 
-                buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % bug_id).absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % bug_id).absolute()
-                if not buggy_path.exists() or not fixed_path.exists():
+                fixed_path = pathlib.Path(storage, self.identifier, "%s" % bug_id).absolute()
+                if not fixed_path.exists():
                     missing.add(bug_id)
 
         return len(missing) == 0

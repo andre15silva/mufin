@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 import os
+import shutil
 
 import utils
 from models.bug import Bug
@@ -30,7 +31,7 @@ class BugsDotJar(Dataset):
 
                 # compute paths
                 buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % bug).absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % bug).absolute()
+                fixed_path = pathlib.Path(storage, self.identifier, "%s" % bug).absolute()
                 if not buggy_path.exists() and not fixed_path.exists():
                     buggy_path.mkdir(parents=True)
                     fixed_path.mkdir(parents=True)
@@ -48,8 +49,10 @@ class BugsDotJar(Dataset):
                 subprocess.call(cmd, shell=True)
 
                 # add bug
-                self.add_bug(BugsDotJarBug(bug, buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
-                self.add_bug(BugsDotJarBug(bug, fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
+                self.add_bug(BugsDotJarBug(bug, fixed_path, utils.get_diff(fixed_path, buggy_path)))
+
+                # remove buggy code
+                shutil.rmtree(buggy_path)
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
@@ -68,9 +71,8 @@ class BugsDotJar(Dataset):
                 if not bug.startswith("bugs-dot-jar_"): continue
 
                 # copy to buggy path
-                buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % bug).absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % bug).absolute()
-                if not buggy_path.exists() or not fixed_path.exists():
+                fixed_path = pathlib.Path(storage, self.identifier, "%s" % bug).absolute()
+                if not fixed_path.exists():
                     missing.add(bug)
 
         return len(missing) == 0

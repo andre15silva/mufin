@@ -1,5 +1,6 @@
 import pathlib
 import subprocess
+import shutil
 
 import utils
 from models.bug import Bug
@@ -29,20 +30,23 @@ class Defects4J(Dataset):
             for bid in bugs[pid]:
                 print("Checking out %s-%d" % (pid, bid))
                 buggy_path = pathlib.Path(storage, self.identifier, "%s-%d-buggy" % (pid, bid)).absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d-fixed" % (pid, bid)).absolute()
+                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid)).absolute()
                 if buggy_path.exists() or fixed_path.exists(): continue
                 buggy_path.mkdir(parents=True)
                 fixed_path.mkdir(parents=True)
 
                 try:
+                    # Get both versions
                     run = subprocess.run("%s checkout -p %s -v %db -w %s" % (self.bin, pid, bid, buggy_path), shell=True, capture_output=True, check=True)
                     run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
-                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
-                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
+                    # Store bug patch pointing to the fixed version
+                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, utils.get_diff(fixed_path, buggy_path)))
+                    # Remove buggy codebase
+                    shutil.rmtree(buggy_path)
                 except subprocess.CalledProcessError:
                     finished = False
-                    buggy_path.rmdir()
-                    fixed_path.rmdir()
+                    shutil.rmtree(buggy_path)
+                    shutil.rmtree(fixed_path)
                     continue
 
 
@@ -62,9 +66,8 @@ class Defects4J(Dataset):
         # Checkout all buggy and fixed versions
         for pid in pids:
             for bid in bugs[pid]:
-                buggy_path = pathlib.Path(storage, self.identifier, "%s-%d-buggy" % (pid, bid), "defects4j.build.properties").absolute()
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d-fixed" % (pid, bid), "defects4j.build.properties").absolute()
-                if not buggy_path.exists() or not fixed_path.exists():
+                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid), "defects4j.build.properties").absolute()
+                if not fixed_path.exists():
                     missing.add("%s-%d" % (pid, bid))
 
         return len(missing) == 0

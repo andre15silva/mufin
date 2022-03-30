@@ -6,20 +6,21 @@ import copy
 
 from models.bug import Bug
 from models.test_result import TestResult
+from models.compile_result import CompileResult
 
 class QuixBugsBug(Bug):
     """
     The class for representing QuixBugs bugs
     """
 
-    def compile(self) -> bool:
+    def compile_impl(self) -> CompileResult:
         try:
             run = subprocess.run("cd %s/java_programs; javac *.java" % self.path.absolute(), shell=True, capture_output=True, timeout=10)
-            return run.returncode == 0
+            return CompileResult(True, run.returncode == 0)
         except:
-            return False
+            return CompileResult(False, False)
 
-    def test(self) -> TestResult:
+    def test_impl(self) -> TestResult:
         # Not a graph based bug, so we need to run both the python and Java versions
         if pathlib.Path(self.path, "JavaDeserialization.java").exists():
             # Code adapted from QuixBugs tester.py script
@@ -45,7 +46,3 @@ class QuixBugsBug(Bug):
                     return TestResult(True, False)
         else:
             return TestResult(False, False)
-
-
-    def apply_diff(self, diff: pathlib.Path) -> bool:
-        raise NotImplementedError

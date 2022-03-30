@@ -20,13 +20,13 @@ class BugDecoder:
         bug = None
 
         if dataset == "bears":
-            return BearsBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
+            return BearsBug(data["identifier"], Path(data["path"]), data["diff"])
         elif dataset == "bugsdotjar":
-            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
+            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["diff"])
         elif dataset == "defects4j":
-            return Defects4JBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
+            return Defects4JBug(data["identifier"], Path(data["path"]), data["diff"])
         elif dataset == "quixbugs":
-            return QuixBugsBug(data["identifier"], Path(data["path"]), data["buggy"], data["diff"])
+            return QuixBugsBug(data["identifier"], Path(data["path"]), data["diff"])
         else:
             raise NotImplementedError
 

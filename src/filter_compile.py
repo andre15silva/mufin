@@ -11,11 +11,15 @@ if __name__ == "__main__":
     # Load the dataset
     dataset = utils.load_dataset(args)
 
-    # Check bugs patches
+    # Check bugs and fixed versions
     to_remove = set()
     for bug in dataset.get_bugs():
-        comp = bug.compile()
-        if not comp:
+        comp_bug = bug.compile()
+        comp_fixed = bug.compile_fixed()
+        if not comp_bug.is_executing() or \
+            not comp_bug.is_passing() or \
+            not comp_fixed.is_executing() or \
+            not comp_fixed.is_passing():
             print("Bug %s failed to compile." % bug.get_identifier())
             to_remove.add(bug)
 

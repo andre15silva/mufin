@@ -1,5 +1,6 @@
 import pathlib
 import subprocess
+import shutil
 
 import utils
 from models.bug import Bug
@@ -17,7 +18,7 @@ class QuixBugs(Dataset):
 
         for algo in algos:
             buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % algo.lower()).absolute()
-            fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % algo.lower()).absolute()
+            fixed_path = pathlib.Path(storage, self.identifier, "%s" % algo.lower()).absolute()
             if buggy_path.exists() or fixed_path.exists(): continue
             buggy_path.mkdir(parents=True)
             fixed_path.mkdir(parents=True)
@@ -63,17 +64,18 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s*.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
             subprocess.call(cmd, shell=True)
 
-            self.add_bug(QuixBugsBug(algo.lower(), buggy_path, True, utils.get_diff(buggy_path, fixed_path)))
-            self.add_bug(QuixBugsBug(algo.lower(), fixed_path, False, utils.get_diff(fixed_path, buggy_path)))
+            self.add_bug(QuixBugsBug(algo.lower(), fixed_path, utils.get_diff(fixed_path, buggy_path)))
+
+            # Remove buggy codebase
+            shutil.rmtree(buggy_path)
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
         algos = [x.stem for x in pathlib.Path(self.path, "java_programs").iterdir() if ".java" in str(x) and x.stem.isupper()]
 
         missing = set()
         for algo in algos:
-            buggy_path = pathlib.Path(storage, self.identifier, "%s-buggy" % algo.lower()).absolute()
-            fixed_path = pathlib.Path(storage, self.identifier, "%s-fixed" % algo.lower()).absolute()
-            if not buggy_path.exists() or not fixed_path.exists():
+            fixed_path = pathlib.Path(storage, self.identifier, "%s" % algo.lower()).absolute()
+            if not fixed_path.exists():
                 missing.add(algo.lower())
 
         return len(missing) == 0

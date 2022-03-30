@@ -23,9 +23,6 @@ class Dataset(ABC):
     def get_bugs(self) -> Set[Bug]:
         return self.bugs
 
-    def cwd(self) -> None:
-        Path.cwd()
-
     def add_bug(self, bug: Bug) -> None:
         self.bugs.add(bug)
 
