@@ -2,6 +2,7 @@ import pathlib
 import subprocess
 from abc import ABC, abstractmethod
 from typing import final
+import tempfile
 
 from models.test_result import TestResult
 from models.compile_result import CompileResult
@@ -28,16 +29,34 @@ class Bug(ABC):
     @final
     def checkout(self) -> bool:
         if self.diff == "": return True
-        cmd = "cd %s; echo \"%s\" | patch -p0 -d /" % (self.path, self.diff)
-        run = subprocess.run(cmd, shell=True, capture_output=True)
-        return run.returncode == 0
+        try:
+            with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as tmp:
+                tmp.write(self.diff)
+                tmp.seek(0)
+                cmd = "patch -p0 -d / -i %s" % tmp.name
+                run = subprocess.run(cmd, shell=True, capture_output=True)
+                if run.returncode != 0:
+                    print("Failure in checkout of bug %s" % self.identifier)
+                return run.returncode == 0
+        except Exception as e:
+            print(e)
+            return False
 
     @final
     def restore(self) -> bool:
         if self.diff == "": return True
-        cmd = "cd %s; echo \"%s\" | patch -p0 -d / -R" % (self.path, self.diff)
-        run = subprocess.run(cmd, shell=True, capture_output=True)
-        return run.returncode == 0
+        try:
+            with tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8") as tmp:
+                tmp.write(self.diff)
+                tmp.seek(0)
+                cmd = "patch -p0 -d / -R -i %s" % tmp.name
+                run = subprocess.run(cmd, shell=True, capture_output=True)
+                if run.returncode != 0:
+                    print("Failure in restore of bug %s" % self.identifier)
+                return run.returncode == 0
+        except Exception as e:
+            print(e)
+            return False
 
     @final
     def compile(self) -> CompileResult:

@@ -23,6 +23,7 @@ class BearsBug(Bug):
         cmd = "cd %s; python2 run_tests_bug.py --bugId %s --workspace %s" % (self.path, self.get_identifier(), pathlib.Path(self.path, ".."))
         try:
             run = subprocess.run(cmd, shell=True, capture_output=True, timeout=60*10)
+            print(run.stdout[-250:])
             return TestResult(True, run.returncode == 0)
         except subprocess.TimeoutExpired:
             return TestResult(False, False)

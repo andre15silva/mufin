@@ -9,3 +9,6 @@ class CompileResult:
 
     def is_passing(self) -> bool:
         return self.result
+
+    def __str__(self) -> str:
+        return "CompileResult(%r, %r)" % (self.executes, self.result)

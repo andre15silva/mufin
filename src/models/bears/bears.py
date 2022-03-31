@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 import json
+import shutil
 
 import utils
 from models.bug import Bug
@@ -69,6 +70,9 @@ class Bears(Dataset):
 
                 # add bug
                 self.add_bug(BearsBug(bug_id, fixed_path, utils.get_diff(fixed_path, buggy_path)))
+
+                # remove buggy code
+                shutil.rmtree(buggy_path)
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
