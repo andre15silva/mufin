@@ -17,8 +17,6 @@ if __name__ == "__main__":
     key = utils.get_json_input_file(args).stem
     data = {key : {}}
     data[key]["n_bugs"] = len(dataset.get_bugs())
-    data[key]["n_bugs_buggy"] = len([x for x in dataset.get_bugs() if x.is_buggy()])
-    data[key]["n_bugs_fixed"] = len([x for x in dataset.get_bugs() if not x.is_buggy()])
 
     # Save stats to csv file
     df = pd.DataFrame.from_dict(data, orient="index")
