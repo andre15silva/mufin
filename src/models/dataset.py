@@ -27,6 +27,14 @@ class Dataset(ABC):
         self.bugs.add(bug)
 
     @abstractmethod
+    def checkout_oldests(self, storage: pathlib.Path) -> None:
+        pass
+
+    @abstractmethod
+    def check_oldests(self, storage: pathlib.Path) -> bool:
+        pass
+
+    @abstractmethod
     def checkout_all(self, storage: pathlib.Path) -> None:
         pass
 
