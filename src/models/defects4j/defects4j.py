@@ -1,6 +1,8 @@
 import pathlib
 import subprocess
 import shutil
+import re
+from datetime import datetime
 
 import utils
 from models.bug import Bug
@@ -26,25 +28,45 @@ class Defects4J(Dataset):
             bugs[pid] = {int(bid.decode("utf-8")) for bid in run.stdout.split()}
             print("Found %3d bugs for project %s" % (len(bugs[pid]), pid))
 
-        # TODO: choose the oldest for each pid
+        # Find the oldest bug of each project
+        oldest = {}
+        for pid in pids:
+            oldest[pid] = (None, None)
+            for bid in bugs[pid]:
+                run = subprocess.run("%s info -p %s -b %d" % (self.bin, pid, bid), shell=True, capture_output=True)
+
+                # extract revision date
+                m = re.search(r"Revision date \(fixed version\):[\r\n]+([^\r\n]+)", run.stdout.decode("utf-8"))
+                if m == None or len(m.groups()) == 0:
+                    continue
+                try:
+                    date = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S %z")
+                except:
+                    continue
+
+                # if older than the stored one replace
+                if None in oldest[pid] or oldest[pid][1] > date:
+                    oldest[pid] = (bid, date)
 
         # Checkout fixed version
         for pid in pids:
-            for bid in bugs[pid]:
-                print("Checking out %s-%d" % (pid, bid))
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid)).absolute()
-                if fixed_path.exists(): continue
-                fixed_path.mkdir(parents=True)
+            if None in oldest[pid]: continue
+            bid = oldest[pid][0]
+            date = oldest[pid][1]
+            print("Checking out %s-%d from %s" % (pid, bid, date))
+            fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid)).absolute()
+            if fixed_path.exists(): continue
+            fixed_path.mkdir(parents=True)
 
-                try:
-                    # Get fixed version
-                    run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
-                    # Store bug pointing to the fixed version
-                    self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, ""))
-                except subprocess.CalledProcessError as e:
-                    finished = False
-                    shutil.rmtree(fixed_path)
-                    continue
+            try:
+                # Get fixed version
+                run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
+                # Store bug pointing to the fixed version
+                self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, ""))
+            except subprocess.CalledProcessError as e:
+                finished = False
+                shutil.rmtree(fixed_path)
+                continue
 
 
     def check_oldests(self, storage: pathlib.Path) -> bool:
@@ -59,16 +81,32 @@ class Defects4J(Dataset):
             bugs[pid] = {int(bid.decode("utf-8")) for bid in run.stdout.split()}
             print("Found %3d bugs for project %s" % (len(bugs[pid]), pid))
 
-        # TODO: choose the oldest for each pid
+        # Find the oldest bug of each project
+        oldest = {}
+        for pid in pids:
+            oldest[pid] = (None, None)
+            for bid in bugs[pid]:
+                run = subprocess.run("%s bids -p %s -b %d" % (self.bin, pid, bid), shell=True, capture_output=True)
+
+                # extract revision date
+                m = re.search(r"Revision date \(fixed version\):[\r\n]+([^\r\n]+)", run.stdout.decode("utf-8"))
+                if m == None or len(m.groups()) == 0:
+                    continue
+                date = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S %z")
+
+                # if older than the stored one replace
+                if None in oldest[pid] or oldest[pid][1] > date:
+                    oldest[pid] = (bid, date)
 
         missing = set()
         # Check fixed versions
         for pid in pids:
-            for bid in bugs[pid]:
-                fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid), "defects4j.build.properties").absolute()
-                if not fixed_path.exists():
-                    print("Missing %s-%d" % (pid, bid))
-                    missing.add("%s-%d" % (pid, bid))
+            if None in oldest[pid]: continue
+            bid = oldest[pid][0]
+            fixed_path = pathlib.Path(storage, self.identifier, "%s-%d" % (pid, bid), "defects4j.build.properties").absolute()
+            if not fixed_path.exists():
+                print("Missing %s-%d" % (pid, bid))
+                missing.add("%s-%d" % (pid, bid))
 
         return len(missing) == 0
 
