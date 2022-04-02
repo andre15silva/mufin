@@ -40,7 +40,7 @@ class Defects4J(Dataset):
                 if m == None or len(m.groups()) == 0:
                     continue
                 try:
-                    date = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S %z")
+                    date = datetime.strptime(m.group(1).strip(), "%Y-%m-%d %H:%M:%S %z")
                 except:
                     continue
 
@@ -92,7 +92,7 @@ class Defects4J(Dataset):
                 m = re.search(r"Revision date \(fixed version\):[\r\n]+([^\r\n]+)", run.stdout.decode("utf-8"))
                 if m == None or len(m.groups()) == 0:
                     continue
-                date = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S %z")
+                date = datetime.strptime(m.group(1).strip(), "%Y-%m-%d %H:%M:%S %z")
 
                 # if older than the stored one replace
                 if None in oldest[pid] or oldest[pid][1] > date:
