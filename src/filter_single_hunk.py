@@ -16,7 +16,9 @@ if __name__ == "__main__":
     to_remove = set()
     for bug in dataset.get_bugs():
         diff = PatchSet(bug.get_diff())
-        if len(diff) != 1:
+        if args.ignore_empty_diff and len(diff) == 0:
+            print("Bug %s has %d files associated to its patch, but it will be included." % (bug.get_identifier(), len(diff)))
+        elif len(diff) != 1:
             print("Bug %s has %d files associated to its patch." % (bug.get_identifier(), len(diff)))
             to_remove.add(bug)
         elif len(diff[0]) != 1:

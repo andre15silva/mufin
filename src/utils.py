@@ -64,5 +64,7 @@ def add_core_args(parser):
     dataset_arg.add_argument("--bears", help="Path to the Bears directory", required=False, metavar="<path_to_bears>")
     dataset_arg.add_argument("--quixbugs", help="Path to the QuixBugs directory", required=False, metavar="<path_to_quixbugs>")
 
+    # Option for filtering
+    parser.add_argument("--ignore_empty_diff", help="Ignores empty diffs during diff-based filtering", required=False, action="store_true")
 
     return parser
