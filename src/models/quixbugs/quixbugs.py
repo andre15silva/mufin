@@ -13,6 +13,13 @@ class QuixBugs(Dataset):
         super().__init__("quixbugs", path)
 
 
+    def checkout_oldests(self, storage: pathlib.Path) -> None:
+        raise NotImplementedError
+
+    def check_oldests(self, storage: pathlib.Path) -> bool:
+        raise NotImplementedError
+
+
     def checkout_all(self, storage: pathlib.Path) -> None:
         algos = [x.stem for x in pathlib.Path(self.path, "java_programs").iterdir() if ".java" in str(x) and x.stem.isupper()]
 

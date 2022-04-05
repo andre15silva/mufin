@@ -13,6 +13,14 @@ class BugsDotJar(Dataset):
     def __init__(self, path: pathlib.Path) -> None:
         super().__init__("bugsdotjar", path)
 
+    
+    def checkout_oldests(self, storage: pathlib.Path) -> None:
+        raise NotImplementedError
+
+    def check_oldests(self, storage: pathlib.Path) -> bool:
+        raise NotImplementedError
+
+
     def checkout_all(self, storage: pathlib.Path) -> None:
         bugs = None
         directories = [x for x in self.path.iterdir() if pathlib.Path(self.path, x).is_dir()]
