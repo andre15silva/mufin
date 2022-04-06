@@ -64,7 +64,10 @@ def add_core_args(parser):
     dataset_arg.add_argument("--bears", help="Path to the Bears directory", required=False, metavar="<path_to_bears>")
     dataset_arg.add_argument("--quixbugs", help="Path to the QuixBugs directory", required=False, metavar="<path_to_quixbugs>")
 
-    # Option for filtering
+    # Options for filtering
     parser.add_argument("--ignore_empty_diff", help="Ignores empty diffs during diff-based filtering", required=False, action="store_true")
+
+    # Options for bug generation
+    parser.add_argument("--perturbation_model", help="Path to jar file of the perturbation model", required=False, metavar="<path_to_perturbation_model_jar>")
 
     return parser
