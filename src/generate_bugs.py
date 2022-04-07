@@ -6,6 +6,7 @@ import os
 import tempfile
 import shutil
 import uuid
+import time
 
 import utils
 from models.bug import Bug
@@ -19,7 +20,7 @@ def apply_bug(original_file, infos):
     perturbed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
 
     action = infos[0]
-    curruptCode =  infos[1]  
+    corrupt_code =  infos[1]  
     lineNo1 =  infos[2]
     lineNo2 =  infos[3]
     lineNo3 =  infos[4]
@@ -27,70 +28,81 @@ def apply_bug(original_file, infos):
     lineNo5 =  infos[6]
 
     # read and perturb code 
-    perturbStr = ""
+    perturbed_content = ""
     if "ADD" in action or "REPLACE" in action:
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
                 if i+1< int(lineNo1) or i+1> int(lineNo1)+4:
-                    perturbStr+=lines[i]
+                    perturbed_content+=lines[i]
                 elif i+1==int(lineNo1):
-                    perturbStr+=curruptCode+"\n"
+                    perturbed_content+=corrupt_code+"\n"
                 elif i+1==int(lineNo1)+1: 
                     if lineNo2=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+2:
                     if lineNo3=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+3:  
                     if lineNo4=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+4:
                     if lineNo5=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
     elif "REMOVE" in action :
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
                 if i+1< int(lineNo1) or i+1> int(lineNo1)+4:
-                    perturbStr+=lines[i]
+                    perturbed_content+=lines[i]
                 elif i+1==int(lineNo1):
-                    perturbStr+= lines[i]+" \n" +curruptCode
+                    perturbed_content+= lines[i]+" \n" +corrupt_code
                 elif i+1==int(lineNo1)+1: 
                     if lineNo2=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+2:
                     if lineNo3=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+3:  
                     if lineNo4=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
                 elif i+1==int(lineNo1)+4:
                     if lineNo5=='':
-                        perturbStr+=lines[i]
+                        perturbed_content+=lines[i]
                     else:
-                        perturbStr+=" \n"
+                        perturbed_content+=" \n"
 
     # Write the perturbed code back to the tmp file
-    perturbed_file.write(perturbStr)
+    perturbed_file.write(perturbed_content)
+    perturbed_file.flush()
     perturbed_file.close()
     
-    diff = utils.get_diff(original_file, perturbed_file)
-    os.remove(str(pathlib.Path(perturbed_file.name).absolute()))
+    diff = utils.get_diff(str(original_file), str(perturbed_file.name))
+    # TODO: there is some bug which is makes the diff return an empty diff most of the times
+    time.sleep(1)
+    if diff == "" and corrupt_code != "":
+        print(infos)
+        print(perturbed_file.name)
+    elif diff != "" and "REMOVE" in action:
+        print("WOW")
+    else:
+        pass
+        #print("great success")
+    #os.remove(str(pathlib.Path(perturbed_file.name).absolute()))
     return diff
 
 
@@ -157,14 +169,14 @@ if __name__ == "__main__":
                 cmd = "timeout 600 java -jar %s %s" % (args.perturbation_model, file)
                 run = subprocess.run(cmd, shell=True, capture_output=True)
 
-                generated_bug = construct_bug(args, bug, file, "perturbationFile.txt")
-                if generated_bug != None:
-                    bugs_to_add.extend(generated_bug)
+                generated_bugs = construct_bug(args, bug, file, "perturbationFile.txt")
+                if generated_bugs != None:
+                    bugs_to_add.extend(generated_bugs)
 
             # TODO: debug purposes only
             #break
         # TODO: debug purposes only
-        #break
+        break
 
     for bug in bugs_to_add:
         dataset.add_bug(bug)
