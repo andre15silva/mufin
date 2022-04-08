@@ -93,16 +93,9 @@ def apply_bug(original_file, infos):
     
     diff = utils.get_diff(str(original_file), str(perturbed_file.name))
     # TODO: there is some bug which is makes the diff return an empty diff most of the times
-    time.sleep(1)
     if diff == "" and corrupt_code != "":
-        print(infos)
-        print(perturbed_file.name)
-    elif diff != "" and "REMOVE" in action:
-        print("WOW")
-    else:
-        pass
-        #print("great success")
-    #os.remove(str(pathlib.Path(perturbed_file.name).absolute()))
+        print("A %s following perturbation didn't generate any diff." % (infos[0]))
+    os.remove(str(pathlib.Path(perturbed_file.name).absolute()))
     return diff
 
 
@@ -172,14 +165,16 @@ if __name__ == "__main__":
                 generated_bugs = construct_bug(args, bug, file, "perturbationFile.txt")
                 if generated_bugs != None:
                     bugs_to_add.extend(generated_bugs)
+                    print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
             # TODO: debug purposes only
             #break
+        for bug in bugs_to_add:
+            dataset.add_bug(bug)
+        print("Generated %d bugs for project %s\n\n\n" % (len(bugs_to_add), bug.get_identifier()))
+        bugs_to_add = []
         # TODO: debug purposes only
-        break
-
-    for bug in bugs_to_add:
-        dataset.add_bug(bug)
+        #break
 
     # Save the metadata
     utils.save_dataset(args, dataset)
