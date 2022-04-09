@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
                 generated_bugs = construct_bug(args, bug, file, "perturbationFile.txt")
                 if generated_bugs != None:
-                    counter += 1
+                    counter += len(generated_bugs)
                     bugs_to_add.extend(generated_bugs)
                     print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
