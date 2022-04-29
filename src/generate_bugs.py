@@ -144,6 +144,7 @@ def construct_bug(args, original_bug, original_file, perturbations_file):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to generate bugs for all projects of a dataset")
     parser = utils.add_core_args(parser)
+    parser = utils.add_generation_args(parser)
     args = parser.parse_args()
 
     # Load the dataset
@@ -174,6 +175,8 @@ if __name__ == "__main__":
         print("Generated %d bugs for project %s\n\n\n" % (counter, bug.get_identifier()))
         counter = 0
         # TODO: debug purposes only
+        if len(bugs_to_add) >= 20000:
+            break
         #break
     for bug in bugs_to_add:
         dataset.add_bug(bug)

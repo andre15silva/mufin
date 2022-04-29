@@ -64,10 +64,30 @@ def add_core_args(parser):
     dataset_arg.add_argument("--bears", help="Path to the Bears directory", required=False, metavar="<path_to_bears>")
     dataset_arg.add_argument("--quixbugs", help="Path to the QuixBugs directory", required=False, metavar="<path_to_quixbugs>")
 
+    return parser
+
+
+def add_filtering_args(parser):
     # Options for filtering
     parser.add_argument("--ignore_empty_diff", help="Ignores empty diffs during diff-based filtering", required=False, action="store_true")
+    parser.add_argument("--keep_single_line_only", help="Keeps only single line diffs during diff-based filtering", required=False, action="store_true")
 
+    return parser
+
+
+def add_generation_args(parser):
     # Options for bug generation
     parser.add_argument("--perturbation_model", help="Path to jar file of the perturbation model", required=False, metavar="<path_to_perturbation_model_jar>")
+
+    return parser
+
+
+def add_train_args(parser):
+    # Options for model training
+    parser.add_argument("--from_pretrained", help="Path to the pretrained model. If not used a new model will be trained from scratch.", required=False, metavar="<path_to_pretrained_model>")
+    parser.add_argument("--model_storage", help="Path to the location where to store the model in.", required=True, metavar="<path_to_save_dir>")
+
+    # TODO: arguments for relevant model hyper-parameters
+    # TODO: argument for setting fixed-to-buggy, or vice-verse
 
     return parser

@@ -8,6 +8,7 @@ from models.test_result import TestResult
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to remove all bugs whose tests don't run properly.")
     parser = utils.add_core_args(parser)
+    parser = utils.add_filtering_args(parser)
     args = parser.parse_args()
 
     # Load the dataset
