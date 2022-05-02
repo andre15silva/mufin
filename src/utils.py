@@ -91,3 +91,12 @@ def add_train_args(parser):
     # TODO: argument for setting fixed-to-buggy, or vice-verse
 
     return parser
+
+
+def add_eval_args(parser):
+    # Options for model training
+    parser.add_argument("--from_pretrained", help="Path to the pretrained model. If not used a new model will be trained from scratch.", required=True, metavar="<path_to_pretrained_model>")
+    
+    # TODO: argument for setting fixed-to-buggy, or vice-verse
+
+    return parser

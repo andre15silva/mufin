@@ -1,28 +1,12 @@
 import numpy as np
 import argparse
 import pathlib
-from unidiff import PatchSet
 
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
 from datasets import load_dataset, load_metric
 
 import utils
-
-
-# TODO: Change this to generate the definitive complex training sample
-def source_str(example):
-    diff = PatchSet(example)
-    for line in diff[0][0].source_lines():
-        if line.is_removed:
-            return line.value.strip()
-
-
-# TODO: Change this to generate the definitive complex training sample
-def target_str(example):
-    diff = PatchSet(example)
-    for line in diff[0][0].target_lines():
-        if line.is_added:
-            return line.value.strip() 
+import model_utils
 
 
 def train(args):
@@ -48,13 +32,13 @@ def train(args):
 
     # TODO: Change this to generate the definitive complex training sample
     def preprocess_buggy_to_fixed(examples):
-        inputs = [source_str(ex) for ex in examples["diff"]]
-        targets = [target_str(ex) for ex in examples["diff"]]
-        model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True)
+        inputs = [model_utils.source_str(ex) for ex in examples["diff"]]
+        targets = [model_utils.target_str(ex) for ex in examples["diff"]]
+        model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True, return_tensors='pt')
 
         # Set up the tokenizer for targets
         with tokenizer.as_target_tokenizer():
-            labels = tokenizer(targets, max_length=max_target_length, truncation=True)
+            labels = tokenizer(targets, max_length=max_target_length, truncation=True, return_tensors='pt')
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
@@ -62,8 +46,8 @@ def train(args):
 
     # TODO: Change this to generate the definitive complex training sample
     def preprocess_fixed_to_buggy(examples):
-        inputs = [target_str(ex) for ex in examples["diff"]]
-        targets = [source_str(ex) for ex in examples["diff"]]
+        inputs = [model_utils.target_str(ex) for ex in examples["diff"]]
+        targets = [model_utils.source_str(ex) for ex in examples["diff"]]
         model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True)
 
         # Set up the tokenizer for targets
