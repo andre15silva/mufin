@@ -15,7 +15,7 @@ def train(args):
         tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
         model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
     else:
-        tokenizer = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+        tokenizer = AutoTokenizer.from_pretrained("uclanlp/plbart-base")
         model = AutoModelForSeq2SeqLM.from_config(
                 T5Config(
                     vocab_size=tokenizer.vocab_size,
