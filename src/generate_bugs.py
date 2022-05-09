@@ -167,7 +167,7 @@ if __name__ == "__main__":
             relative_path = str(file.relative_to(pathlib.Path(bug.get_path())))
 
             if "test" not in relative_path and "Test" not in relative_path:
-                perturbations_file = "./perturbations-%s" % (relative_path.replace("/", "."))
+                perturbations_file = "./perturbations-%s-%s" % (relative_path.replace("/", "."), str(uuid.uuid4()))
                 cmd = "timeout 600 java -jar %s %s %s %s" % (args.perturbation_model, file, generation_strategy, perturbations_file)
                 run = subprocess.run(cmd, shell=True, capture_output=True)
 
@@ -178,13 +178,13 @@ if __name__ == "__main__":
                     print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
             # TODO: debug purposes only
-            break
+            #break
         print("Generated %d bugs for project %s\n\n\n" % (counter, bug.get_identifier()))
         counter = 0
         # TODO: debug purposes only
         #if len(bugs_to_add) >= 20000:
         #    break
-        break
+        #break
     for bug in bugs_to_add:
         dataset.add_bug(bug)
 
