@@ -29,7 +29,7 @@ def apply_bug(original_file, infos):
 
     # read and perturb code 
     perturbed_content = ""
-    if "ADD" in action or "REPLACE" in action:
+    if "ADD" in action or "REPLACE" in action.upper() or "BUGLAB" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -57,7 +57,7 @@ def apply_bug(original_file, infos):
                         perturbed_content+=lines[i]
                     else:
                         perturbed_content+=" \n"
-    elif "REMOVE" in action :
+    elif "REMOVE" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -150,8 +150,13 @@ if __name__ == "__main__":
     # Load the dataset
     dataset = utils.load_dataset(args)
 
-    if args.perturbation_model == None:
-        print("The perturbation_model option must be set.")
+    generation_strategy = None
+    if args.selfapr:
+        generation_strategy = "selfAPR"
+    elif args.buglab:
+        generation_strategy = "BugLab"
+    else:
+        print("You must set either SelfAPR ou BugLab as the bug generation strategy.")
         sys.exit(1)
 
     bugs_to_add = []
@@ -160,24 +165,26 @@ if __name__ == "__main__":
         for file in pathlib.Path(bug.get_path()).glob("**/*.java"):
             # We don't want to generate bugs on the tests
             relative_path = str(file.relative_to(pathlib.Path(bug.get_path())))
+
             if "test" not in relative_path and "Test" not in relative_path:
-                cmd = "timeout 600 java -jar %s %s" % (args.perturbation_model, file)
+                perturbations_file = "./perturbations-%s" % (relative_path.replace("/", "."))
+                cmd = "timeout 600 java -jar %s %s %s %s" % (args.perturbation_model, file, generation_strategy, perturbations_file)
                 run = subprocess.run(cmd, shell=True, capture_output=True)
 
-                generated_bugs = construct_bug(args, bug, file, "perturbationFile.txt")
+                generated_bugs = construct_bug(args, bug, file, perturbations_file)
                 if generated_bugs != None:
                     counter += len(generated_bugs)
                     bugs_to_add.extend(generated_bugs)
                     print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
             # TODO: debug purposes only
-            #break
+            break
         print("Generated %d bugs for project %s\n\n\n" % (counter, bug.get_identifier()))
         counter = 0
         # TODO: debug purposes only
-        if len(bugs_to_add) >= 20000:
-            break
-        #break
+        #if len(bugs_to_add) >= 20000:
+        #    break
+        break
     for bug in bugs_to_add:
         dataset.add_bug(bug)
 

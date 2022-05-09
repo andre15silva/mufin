@@ -77,7 +77,11 @@ def add_filtering_args(parser):
 
 def add_generation_args(parser):
     # Options for bug generation
-    parser.add_argument("--perturbation_model", help="Path to jar file of the perturbation model", required=False, metavar="<path_to_perturbation_model_jar>")
+    parser.add_argument("--perturbation_model", help="Path to jar file of the perturbation model", required=True, metavar="<path_to_perturbation_model_jar>")
+
+    generation_strategy = parser.add_mutually_exclusive_group(required=True)
+    generation_strategy.add_argument("--selfapr", help="Use the SelfAPR perturbation strategy", required=False, action="store_true")
+    generation_strategy.add_argument("--buglab", help="Use the BugLab perturbation strategy", required=False, action="store_true")
 
     return parser
 
