@@ -44,13 +44,15 @@ class BugsDotJar(Dataset):
                     buggy_path.mkdir(parents=True)
                     fixed_path.mkdir(parents=True)
 
-                # copy to buggy path
+                # copy to buggy path and convert dos2unix
                 cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, buggy_path)
                 subprocess.call(cmd, shell=True)
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % buggy_path, shell=True, capture_output=True, check=True)
 
                 # copy to fixed path
                 cmd = "cd %s; git checkout %s; cp -r . %s;" % (project_path, bug, fixed_path)
                 subprocess.call(cmd, shell=True)
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % fixed_path, shell=True, capture_output=True, check=True)
 
                 # apply patch in fixed version
                 cmd = "cd %s; patch -p1 < .bugs-dot-jar/developer-patch.diff;" % fixed_path

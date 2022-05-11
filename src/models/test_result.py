@@ -10,5 +10,8 @@ class TestResult:
     def is_passing(self) -> bool:
         return self.result
 
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def __str__(self) -> str:
         return "TestResult(%r, %r)" % (self.executes, self.result)

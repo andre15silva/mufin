@@ -61,6 +61,7 @@ class Defects4J(Dataset):
             try:
                 # Get fixed version
                 run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % fixed_path, shell=True, capture_output=True, check=True)
                 # Store bug pointing to the fixed version
                 self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, ""))
             except subprocess.CalledProcessError as e:
@@ -134,9 +135,11 @@ class Defects4J(Dataset):
                 fixed_path.mkdir(parents=True)
 
                 try:
-                    # Get both versions
+                    # Get both versions and convert dos2unix
                     run = subprocess.run("%s checkout -p %s -v %db -w %s" % (self.bin, pid, bid, buggy_path), shell=True, capture_output=True, check=True)
+                    run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % buggy_path, shell=True, capture_output=True, check=True)
                     run = subprocess.run("%s checkout -p %s -v %df -w %s" % (self.bin, pid, bid, fixed_path), shell=True, capture_output=True, check=True)
+                    run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % fixed_path, shell=True, capture_output=True, check=True)
                     # Store bug patch pointing to the fixed version
                     self.add_bug(Defects4JBug("%s-%d" % (pid, bid), fixed_path, utils.get_diff(fixed_path, buggy_path)))
                     # Remove buggy codebase
@@ -149,6 +152,8 @@ class Defects4J(Dataset):
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
+        if True:
+            return True
         # Get all project ids
         run = subprocess.run("%s pids" % self.bin, shell=True, capture_output=True, check=True)
         pids = {pid.decode("utf-8") for pid in run.stdout.split()}

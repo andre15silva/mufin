@@ -178,6 +178,8 @@ if __name__ == "__main__":
                     print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
             # TODO: debug purposes only
+            #if len(bugs_to_add) >= 20000:
+            #    break
             #break
         print("Generated %d bugs for project %s\n\n\n" % (counter, bug.get_identifier()))
         counter = 0

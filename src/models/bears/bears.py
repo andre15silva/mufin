@@ -61,6 +61,9 @@ class Bears(Dataset):
                 cmd = "cd %s; cp -r . %s;" % (self.path, fixed_path)
                 subprocess.call(cmd, shell=True)
 
+                # convert dos2unix
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % fixed_path, shell=True, capture_output=True, check=True)
+
                 # check out master
                 cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout andre;" % self.path
                 subprocess.call(cmd, shell=True)
@@ -146,6 +149,9 @@ class Bears(Dataset):
                 cmd = "cd %s; cp -r . %s;" % (self.path, fixed_path)
                 subprocess.call(cmd, shell=True)
 
+                # convert dos2unix
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % fixed_path, shell=True, capture_output=True, check=True)
+
                 # check out buggy commit from the branch containing the bug
                 cmd = "cd %s; git log --format=format:%%H --grep='Changes in the tests';" % self.path
                 buggy_commit = subprocess.check_output(cmd, shell=True).decode("utf-8")
@@ -159,6 +165,9 @@ class Bears(Dataset):
                 # copy all files to the bug folder
                 cmd = "cd %s; cp -r . %s;" % (self.path, buggy_path)
                 subprocess.call(cmd, shell=True)
+
+                # convert dos2unix
+                run = subprocess.run("find %s -type f -print0 | xargs -0 -n 1 -P 4 dos2unix" % buggy_path, shell=True, capture_output=True, check=True)
 
                 # check out master
                 cmd = "cd %s; git reset .; git checkout -- .; git clean -f; git checkout andre;" % self.path
