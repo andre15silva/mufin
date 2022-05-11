@@ -35,11 +35,11 @@ def train(args):
     def preprocess_buggy_to_fixed(examples):
         inputs = [model_utils.source_str(ex) for ex in examples["diff"]]
         targets = [model_utils.target_str(ex) for ex in examples["diff"]]
-        model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True, return_tensors='pt')
+        model_inputs = tokenizer(inputs, max_length=max_input_length, padding=True, truncation=True)
 
         # Set up the tokenizer for targets
         with tokenizer.as_target_tokenizer():
-            labels = tokenizer(targets, max_length=max_target_length, truncation=True, return_tensors='pt')
+            labels = tokenizer(targets, max_length=max_target_length, padding=True, truncation=True)
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
@@ -49,11 +49,11 @@ def train(args):
     def preprocess_fixed_to_buggy(examples):
         inputs = [model_utils.target_str(ex) for ex in examples["diff"]]
         targets = [model_utils.source_str(ex) for ex in examples["diff"]]
-        model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True)
+        model_inputs = tokenizer(inputs, max_length=max_input_length, padding=True, truncation=True)
 
         # Set up the tokenizer for targets
         with tokenizer.as_target_tokenizer():
-            labels = tokenizer(targets, max_length=max_target_length, truncation=True)
+            labels = tokenizer(targets, max_length=max_target_length, padding=True, truncation=True)
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
