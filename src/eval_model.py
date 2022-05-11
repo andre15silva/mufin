@@ -125,7 +125,8 @@ def evaluate(args):
         # TODO: Choose according to parameter
         diff, comp, test = evaluate_fix(args, bug, tentative_fix)
         bug_result = {}
-        bug_result["patch"] = diff
+        bug_result["patch"] = tentative_fix
+        bug_result["patch_diff"] = diff
         bug_result["comp_execute"] = comp.is_executing()
         bug_result["comp_pass"] = comp.is_passing()
         bug_result["test_execute"] = test.is_executing()
