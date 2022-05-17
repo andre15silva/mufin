@@ -152,8 +152,6 @@ class Defects4J(Dataset):
 
 
     def check_integrity(self, storage: pathlib.Path) -> bool:
-        if True:
-            return True
         # Get all project ids
         run = subprocess.run("%s pids" % self.bin, shell=True, capture_output=True, check=True)
         pids = {pid.decode("utf-8") for pid in run.stdout.split()}

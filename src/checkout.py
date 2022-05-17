@@ -3,6 +3,7 @@ import pathlib
 import sys
 
 import utils
+import serialization_utils
 
 from models.defects4j.defects4j import Defects4J
 from models.bugsdotjar.bugsdotjar import BugsDotJar
@@ -47,4 +48,4 @@ if __name__ == "__main__":
         raise Exception("Dataset integrity check failed")
 
     # Save the metadata
-    utils.save_dataset(args, dataset)
+    serialization_utils.save_dataset(args, dataset)

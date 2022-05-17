@@ -3,6 +3,7 @@ import subprocess
 from abc import ABC, abstractmethod
 from typing import final
 import tempfile
+import time
 
 from models.test_result import TestResult
 from models.compile_result import CompileResult

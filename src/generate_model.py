@@ -5,6 +5,7 @@ import pathlib
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
 
 import utils
+import serialization_utils
 import model_utils
 
 
@@ -45,7 +46,7 @@ def create_bug(args, bug, generated_str):
 
 
 def generate(args):
-    dataset = utils.load_dataset(args)
+    dataset = serialization_utils.load_dataset(args)
 
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
@@ -71,7 +72,7 @@ def generate(args):
         # TODO: Choose according to parameter
         new_dataset.add_bug(create_bug(args, bug, generated_str))
 
-    utils.save_dataset(args, new_dataset)
+    serialization_utils.save_dataset(args, new_dataset)
 
 
 if __name__ == '__main__':

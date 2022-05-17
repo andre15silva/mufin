@@ -11,6 +11,7 @@ from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2
 
 import utils
 import model_utils
+import serialization_utils
 from models.bug import Bug
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJarBug
@@ -100,7 +101,7 @@ def evaluate_bug(bug, tentative_bug):
 
 
 def evaluate(args):
-    dataset = utils.load_dataset(args)
+    dataset = serialization_utils.load_dataset(args)
 
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)

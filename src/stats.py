@@ -4,6 +4,7 @@ import pandas as pd
 import pathlib
 
 import utils
+import serialization_utils
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to remove all bugs with non-single file patches.")
@@ -11,7 +12,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load the dataset
-    dataset = utils.load_dataset(args)
+    dataset = serialization_utils.load_dataset(args)
 
     # Compute stats
     key = utils.get_json_input_file(args).stem

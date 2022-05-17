@@ -9,6 +9,7 @@ import uuid
 import time
 
 import utils
+import serialization_utils
 from models.bug import Bug
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJarBug
@@ -148,7 +149,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load the dataset
-    dataset = utils.load_dataset(args)
+    dataset = serialization_utils.load_dataset(args)
 
     generation_strategy = None
     if args.selfapr:
@@ -191,4 +192,4 @@ if __name__ == "__main__":
         dataset.add_bug(bug)
 
     # Save the metadata
-    utils.save_dataset(args, dataset)
+    serialization_utils.save_dataset(args, dataset)
