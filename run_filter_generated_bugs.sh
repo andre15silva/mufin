@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ $# != 2 ]; then
-    echo "Usage: ./run_filter_generated_bugs.sh <storage_path> <dataset_name>"
+if [ $# != 3 ]; then
+    echo "Usage: ./run_filter_generated_bugs.sh <storage_path> <dataset_name> <perturbation_strategy>"
     exit 1
 fi
 
@@ -15,6 +15,6 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs.json --model_output $2_generated_bugs_hunk.json > $1/$2_generated_bugs_hunk.out 2>&1
-python src/filter_compile.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_hunk.json --model_output $2_generated_bugs_hunk_compile.json > $1/$2_generated_bugs_compile.out 2>&1
-python src/filter_test.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_hunk_compile.json --model_output $2_generated_bugs_hunk_compile_test.json > $1/$2_generated_bugs_test.out 2>&1
+python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$3.json --model_output $2_generated_bugs_$3_hunk.json > $1/$2_generated_bugs_$3_hunk.out 2>&1
+python src/filter_compile.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$3_hunk.json --model_output $2_generated_bugs_$3_hunk_compile.json > $1/$2_generated_bugs_$3_compile.out 2>&1
+python src/filter_test.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$3_hunk_compile.json --model_output $2_generated_bugs_$3_hunk_compile_test.json > $1/$2_generated_bugs_$3_test.out 2>&1
