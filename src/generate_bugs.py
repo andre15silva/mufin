@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
     generation_strategy = None
     if args.selfapr:
-        generation_strategy = "selfAPR"
+        generation_strategy = "SelfAPR"
     elif args.buglab:
         generation_strategy = "BugLab"
     else:
