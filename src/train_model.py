@@ -6,6 +6,7 @@ from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2
 from datasets import load_dataset, load_metric
 
 import utils
+import serialization_utils
 import model_utils
 
 
@@ -62,7 +63,7 @@ def train(args):
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
     # Load the dataset
-    dataset = load_dataset("json", data_files=str(utils.get_json_input_file(args).absolute()), field="bugs")
+    dataset = load_dataset("json", data_files=str(serialization_utils.get_json_input_file(args).absolute()), field="bugs")
 
     # Split dataset into training and validation
     split_datasets = dataset["train"].train_test_split(train_size=0.9, seed=15)
@@ -111,7 +112,6 @@ def train(args):
     # Store the trained model
     tokenizer.save_pretrained(args.model_storage)
     model.save_pretrained(args.model_storage)
-
 
 
 if __name__ == '__main__':
