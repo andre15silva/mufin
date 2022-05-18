@@ -28,6 +28,7 @@ def get_json_output_file(args):
     else:
         return pathlib.Path(args.storage, get_default_json_filename(args)).absolute()
 
+
 def save_dataset(args, dataset):
     with open(get_json_output_file(args), "w+") as f:
         json.dump(dataset, f, cls=DatasetEncoder, indent=4)
