@@ -9,23 +9,6 @@ import serialization_utils
 import model_utils
 
 
-def create_empty_dataset(args):
-    if args.defects4j != None:
-        defects4j = Defects4J(pathlib.Path(args.defects4j).absolute())
-        return defects4j
-    elif args.bugsdotjar != None:
-        bugsdotjar = BugsDotJar(pathlib.Path(args.bugsdotjar).absolute())
-        return bugsdotjar
-    elif args.bears != None:
-        bears = Bears(pathlib.Path(args.bears).absolute())
-        return bears
-    elif args.quixbugs != None:
-        quixbugs = QuixBugs(pathlib.Path(args.quixbugs).absolute())
-        return quixbugs
-    else:
-        return NotImplementedError("%s" % args)
-
-
 # TODO: implement this as the definitive version
 def preprocess_buggy_to_fixed(tokenizer, bug):
     source = model_utils.source_str(bug.get_diff())
@@ -51,7 +34,7 @@ def generate(args):
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
 
-    new_dataset = create_empty_dataset(args)
+    new_dataset = serialization_utils.create_empty_dataset(args)
     
     for bug in dataset.get_bugs():
         # TODO: Choose according to parameter

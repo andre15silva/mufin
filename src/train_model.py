@@ -63,7 +63,7 @@ def train(args):
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
     # Load the dataset
-    dataset = load_dataset("json", data_files=str(serialization_utils.get_json_input_file(args).absolute()), field="bugs", streaming=True)
+    dataset = load_dataset("json", data_files=str(pathlib.Path(args.storage).absolute()) + "/*.json", field="bugs")
 
     # Split dataset into training and validation
     split_datasets = dataset["train"].train_test_split(train_size=0.9, seed=15)

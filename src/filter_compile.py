@@ -34,7 +34,7 @@ if __name__ == "__main__":
     projects = {}
     for bug in dataset.get_bugs():
         if bug.get_path() in projects:
-            projects[bug.get_path()] = projects[bug.get_path()].append(bug)
+            projects[bug.get_path()].append(bug)
         else:
             projects[bug.get_path()] = [bug]
 

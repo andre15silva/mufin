@@ -19,6 +19,7 @@ def filter_function(bugs):
             to_remove.add(bug)
         elif diff[0].is_added_file or diff[0].is_removed_file:
             print("There was some error with bug %s since it consideres it a new file or removed file." % bug.get_identifier())
+            to_remove.add(bug)
         elif len(diff[0]) != 1:
             print("Bug %s has %d hunks associated with its single-file patch." % (bug.get_identifier(), len(diff[0])))
             to_remove.add(bug)
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     projects = {}
     for bug in dataset.get_bugs():
         if bug.get_path() in projects:
-            projects[bug.get_path()] = projects[bug.get_path()].append(bug)
+            projects[bug.get_path()].append(bug)
         else:
             projects[bug.get_path()] = [bug]
 

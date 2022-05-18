@@ -160,9 +160,10 @@ if __name__ == "__main__":
         print("You must set either SelfAPR ou BugLab as the bug generation strategy.")
         sys.exit(1)
 
-    bugs_to_add = []
-    counter = 0
+
     for bug in dataset.get_bugs():
+        counter = 0
+        new_dataset = serialization_utils.create_empty_dataset(args)
         for file in pathlib.Path(bug.get_path()).glob("**/*.java"):
             # We don't want to generate bugs on the tests
             relative_path = str(file.relative_to(pathlib.Path(bug.get_path())))
@@ -175,21 +176,15 @@ if __name__ == "__main__":
                 generated_bugs = construct_bug(args, bug, file, perturbations_file)
                 if generated_bugs != None:
                     counter += len(generated_bugs)
-                    bugs_to_add.extend(generated_bugs)
+                    new_dataset.get_bugs().update(generated_bugs)
                     print("Generated %d bugs for %s..." % (len(generated_bugs), file.name))
 
             # TODO: debug purposes only
-            #if len(bugs_to_add) >= 20000:
+            #if counter > 0:
             #    break
             #break
         print("Generated %d bugs for project %s\n\n\n" % (counter, bug.get_identifier()))
-        counter = 0
-        # TODO: debug purposes only
-        #if len(bugs_to_add) >= 20000:
-        #    break
-        #break
-    for bug in bugs_to_add:
-        dataset.add_bug(bug)
-
-    # Save the metadata
-    serialization_utils.save_dataset(args, dataset)
+       
+        # Save the dataset
+        path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_" + bug.get_identifier().lower() + ".json")
+        serialization_utils.save_dataset_to_file(args, new_dataset, path)
