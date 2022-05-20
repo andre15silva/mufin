@@ -16,7 +16,7 @@ def source_str(example):
 # TODO: Change this to generate the definitive complex training sample
 def target_str(example):
     diff = PatchSet(example)
-    target = ""
     for line in diff[0][0].source_lines():
-        target += line.value.strip()
-    return target
+        if line.is_removed:
+            return line.value.strip()
+    return ""

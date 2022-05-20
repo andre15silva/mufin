@@ -30,7 +30,7 @@ def train(args):
 
     # Parametrize
     max_input_length = 732
-    max_target_length = 732
+    max_target_length = 128
 
     # TODO: Change this to generate the definitive complex training sample
     def preprocess_buggy_to_fixed(examples):
