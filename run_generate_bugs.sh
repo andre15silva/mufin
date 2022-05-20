@@ -15,13 +15,13 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-#python src/generate_bugs.py --storage $1 --$2 ${datasets[$2]} --perturbation_model perturbation-0.0.1-SNAPSHOT-jar-with-dependencies.jar --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$3.json --$3 > $1/$2_generated_bugs_$3.out 2>&1
+python src/generate_bugs.py --storage $1 --$2 ${datasets[$2]} --perturbation_model perturbation-0.0.1-SNAPSHOT-jar-with-dependencies.jar --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$3.json --$3 > $1/$2_generated_bugs_$3.out 2>&1
 
 # Filter each generated dataset
 for i in  $(find $1 -type f -name "$2_generated_bugs_$3_*.json" -printf "%f\n")
 do
-    #mkdir -p $1/generated_$2_$3/
-    #python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3/$i\_hunk.json > $1/$i\_hunk.out 2>&1
+    mkdir -p $1/generated_$2_$3/
+    python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3/$i\_hunk.json > $1/$i\_hunk.out 2>&1
     mkdir -p $1/generated_$2_$3_single_line/
     python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3_single_line/$i\_hunk_single_line.json --keep_single_line_only > $1/$i\_hunk_single_line.out 2>&1
 done
