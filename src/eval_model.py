@@ -12,6 +12,8 @@ from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2
 import utils
 import model_utils
 import serialization_utils
+from models.compile_result import CompileResult
+from models.test_result import TestResult
 from models.bug import Bug
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJarBug
@@ -77,21 +79,26 @@ def preprocess_fixed_to_buggy(tokenizer, bug):
 
 
 def evaluate_fix(args, original_bug, tentative_fix):
-    # 1 - Checkout the buggy version
-    original_bug.checkout()
+    try:
+        # 1 - Checkout the buggy version
+        original_bug.checkout()
 
-    # 2 - Create the bug fix
-    diff = apply_fix(original_bug, tentative_fix)
-    bug_fix = create_bug(args, original_bug, diff)
+        # 2 - Create the bug fix
+        diff = apply_fix(original_bug, tentative_fix)
+        print(diff)
+        bug_fix = create_bug(args, original_bug, diff)
 
-    # 3 - Test the bug fix
-    comp = bug_fix.compile()
-    test = bug_fix.test()
+        # 3 - Test the bug fix
+        comp = bug_fix.compile()
+        test = bug_fix.test()
 
-    # 4 - Revert to the fixed version
-    original_bug.restore()
+        # 4 - Revert to the fixed version
+        original_bug.restore()
 
-    return diff, comp, test
+        return diff, comp, test
+    except Exception as e:
+        print(e)
+        return tentative_fix, CompileResult(False, False), TestResult(False, False)
 
 
 # TODO: implement this
