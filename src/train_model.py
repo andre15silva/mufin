@@ -86,7 +86,7 @@ def train(args):
             save_strategy="no",
             learning_rate=2e-5,
             optim="adamw_torch",
-            per_device_train_batch_size=8,
+            per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
             weight_decay=0.01,
             save_total_limit=3,
