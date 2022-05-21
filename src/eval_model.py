@@ -45,10 +45,16 @@ def apply_fix(original_bug, tentative_fix):
         lines = f.readlines()
 
     # Replace the lines by the tentative_fix
-    target_start = diff[0][0].target_start
-    target_length = diff[0][0].target_length
-    lines[target_start - 1] = tentative_fix + "\n"
-    lines = lines[:target_start] + lines[target_start + target_length - 1:]
+    #target_start = diff[0][0].target_start
+    #target_length = diff[0][0].target_length
+    #lines[target_start - 1] = tentative_fix + "\n"
+    #lines = lines[:target_start] + lines[target_start + target_length - 1:]
+    # TODO: only fixes only line bugs
+    for line in diff[0][0].target_lines():
+        if line.is_added:
+            ln = line.target_line_no
+            lines = lines[:ln] + [tentative_fix + "\n"] + lines[ln+1:]
+            break
 
     # Write content to a temporary file
     fixed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
@@ -123,7 +129,7 @@ def evaluate(args):
                 input_ids=source.input_ids,
                 attention_mask=source.attention_mask,
                 num_beams=50,
-                max_length=732,
+                max_length=128,
                 early_stopping=True,
                 )
 
