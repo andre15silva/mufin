@@ -53,7 +53,7 @@ def apply_fix(original_bug, tentative_fix):
     for line in diff[0][0].target_lines():
         if line.is_added:
             ln = line.target_line_no
-            lines = lines[:ln] + [tentative_fix + "\n"] + lines[ln+1:]
+            lines = lines[:ln-1] + [tentative_fix + "\n"] + lines[ln:]
             break
 
     # Write content to a temporary file
