@@ -128,7 +128,7 @@ def evaluate(args):
         target_ids = model.generate(
                 input_ids=source.input_ids,
                 attention_mask=source.attention_mask,
-                num_beams=50,
+                num_beams=100,
                 max_length=128,
                 early_stopping=True,
                 )
