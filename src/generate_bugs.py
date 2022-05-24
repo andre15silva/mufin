@@ -7,6 +7,7 @@ import tempfile
 import shutil
 import uuid
 import time
+from unidiff import PatchSet
 
 import utils
 import serialization_utils
@@ -30,7 +31,7 @@ def apply_bug(original_file, infos):
 
     # read and perturb code 
     perturbed_content = ""
-    if "ADD" in action or "REPLACE" in action.upper() or "BUGLAB" in action.upper():
+    if "ADD" in action.upper() or "REPLACE" in action.upper() or "INSERT" in action.upper() or "UNWRAP" in action.upper() or "BUGLAB" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -58,7 +59,7 @@ def apply_bug(original_file, infos):
                         perturbed_content+=lines[i]
                     else:
                         perturbed_content+=" \n"
-    elif "REMOVE" in action.upper():
+    elif "REMOVE" in action.upper() or "DELETE" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -126,6 +127,9 @@ def construct_bug(args, original_bug, original_file, perturbations_file):
 
                     # Create bug
                     diff = apply_bug(original_file, infos)
+                    patch = PatchSet(diff)
+                    if len(patch) > 0 and (patch[0].is_added_file or patch[0].is_removed_file):
+                        print("BUGGY LINE: " + line)
                     if diff != "":
                         bug = create_bug(args, original_bug, diff)
                         bugs.append(bug)
