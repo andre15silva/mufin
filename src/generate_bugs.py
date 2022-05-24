@@ -173,7 +173,7 @@ if __name__ == "__main__":
             relative_path = str(file.relative_to(pathlib.Path(bug.get_path())))
 
             if "test" not in relative_path and "Test" not in relative_path:
-                perturbations_file = "./perturbations-%s-%s" % (relative_path.replace("/", "."), str(uuid.uuid4()))
+                perturbations_file = "./perturbations-%s" % (str(uuid.uuid4()))
                 cmd = "timeout 600 java -jar %s %s %s %s" % (args.perturbation_model, file, generation_strategy, perturbations_file)
                 run = subprocess.run(cmd, shell=True, capture_output=True)
 
