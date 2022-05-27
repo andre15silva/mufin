@@ -2,7 +2,7 @@ import numpy as np
 import argparse
 import pathlib
 
-from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
+from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer, EarlyStoppingCallback
 from datasets import load_dataset, load_metric
 
 import utils
@@ -66,7 +66,7 @@ def train(args):
     dataset = load_dataset("json", data_files=str(pathlib.Path(args.storage).absolute()) + "/*.json", field="bugs")
 
     # Split dataset into training and validation
-    split_datasets = dataset["train"].train_test_split(train_size=0.9, seed=15)
+    split_datasets = dataset["train"].train_test_split(train_size=0.98, seed=15)
     split_datasets["validation"] = split_datasets.pop("test")
 
     # Tokenize the datasets
@@ -80,20 +80,25 @@ def train(args):
 
     # Setup training args
     # TODO: Parametrize
+    steps=10000
     training_args = Seq2SeqTrainingArguments(
             pathlib.Path(args.model_storage).absolute(),
-            evaluation_strategy="epoch",
-            save_strategy="no",
+            evaluation_strategy="steps",
+            eval_steps=steps,
+            save_strategy="steps",
+            save_steps=steps,
             learning_rate=1e-4,
             optim="adamw_torch",
             per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
             weight_decay=0.01,
-            save_total_limit=3,
+            save_total_limit=4,
             num_train_epochs=15,
             predict_with_generate=True,
             fp16=True,
             push_to_hub=False,
+            metric_for_best_model="eval_bleu",
+            load_best_model_at_end=True,
             )
 
     metric = load_metric("sacrebleu")
@@ -125,6 +130,7 @@ def train(args):
             data_collator=data_collator,
             tokenizer=tokenizer,
             compute_metrics=compute_metrics,
+            callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
             )
 
     # Train the model
