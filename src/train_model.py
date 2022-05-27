@@ -82,7 +82,7 @@ def train(args):
     # TODO: Parametrize
     training_args = Seq2SeqTrainingArguments(
             pathlib.Path(args.model_storage).absolute(),
-            evaluation_strategy="no",
+            evaluation_strategy="epoch",
             save_strategy="no",
             learning_rate=1e-4,
             optim="adamw_torch",
@@ -96,6 +96,26 @@ def train(args):
             push_to_hub=False,
             )
 
+    metric = load_metric("sacrebleu")
+    def compute_metrics(eval_preds):
+        preds, labels = eval_preds
+        # In case the model returns more than the prediction logits
+        if isinstance(preds, tuple):
+            preds = preds[0]
+
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+
+        # Replace -100s in the labels as we can't decode them
+        labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+
+        # Some simple post-processing
+        decoded_preds = [pred.strip().split() for pred in decoded_preds]
+        decoded_labels = [[label.strip().split()] for label in decoded_labels]
+
+        result = metric.compute(predictions=decoded_preds, references=decoded_labels)
+        return {"bleu": result["score"]}
+
     # Setup trainer
     trainer = Seq2SeqTrainer(
             model,
@@ -104,6 +124,7 @@ def train(args):
             eval_dataset=tokenized_datasets["validation"],
             data_collator=data_collator,
             tokenizer=tokenizer,
+            compute_metrics=compute_metrics,
             )
 
     # Train the model
