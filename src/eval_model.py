@@ -50,10 +50,18 @@ def apply_fix(original_bug, tentative_fix):
     #lines[target_start - 1] = tentative_fix + "\n"
     #lines = lines[:target_start] + lines[target_start + target_length - 1:]
     # TODO: only fixes only line bugs
+    buggy_line = ""
     for line in diff[0][0].target_lines():
         if line.is_added:
+            buggy_line = line.value.strip()
             ln = line.target_line_no
             lines = lines[:ln-1] + [tentative_fix + "\n"] + lines[ln:]
+            break
+
+    fixed_line = ""
+    for line in diff[0][0].source_lines():
+        if line.is_removed:
+            fixed_line = line.value.strip()
             break
 
     # Write content to a temporary file
@@ -66,7 +74,7 @@ def apply_fix(original_bug, tentative_fix):
     diff = utils.get_diff(original_file, fixed_file.name)
     os.remove(str(pathlib.Path(fixed_file.name).absolute()))
 
-    return diff
+    return buggy_line, fixed_line, diff
 
 
 # TODO: implement this as the definitive version
@@ -90,8 +98,7 @@ def evaluate_fix(args, original_bug, tentative_fix):
         original_bug.checkout()
 
         # 2 - Create the bug fix
-        diff = apply_fix(original_bug, tentative_fix)
-        print(diff)
+        buggy_line, fixed_line, diff = apply_fix(original_bug, tentative_fix)
         bug_fix = create_bug(args, original_bug, diff)
 
         # 3 - Test the bug fix
@@ -101,10 +108,10 @@ def evaluate_fix(args, original_bug, tentative_fix):
         # 4 - Revert to the fixed version
         original_bug.restore()
 
-        return diff, comp, test
+        return buggy_line, fixed_line, diff, comp, test
     except Exception as e:
         print(e)
-        return tentative_fix, CompileResult(False, False), TestResult(False, False)
+        return "", "", tentative_fix, CompileResult(False, False), TestResult(False, False)
 
 
 # TODO: implement this
@@ -137,8 +144,10 @@ def evaluate(args):
         tentative_fix = tokenizer.decode(target_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=False)
 
         # TODO: Choose according to parameter
-        diff, comp, test = evaluate_fix(args, bug, tentative_fix)
+        buggy_line, fixed_line, diff, comp, test = evaluate_fix(args, bug, tentative_fix)
         bug_result = {}
+        bug_result["buggy_line"] = buggy_line
+        bug_result["fixed_line"] = fixed_line
         bug_result["patch"] = tentative_fix
         bug_result["patch_diff"] = diff
         bug_result["comp_execute"] = comp.is_executing()
@@ -159,4 +168,4 @@ if __name__ == '__main__':
     results = evaluate(args)
 
     with open(args.results_file, "w") as f:
-        json.dump(results, f)
+        json.dump(results, f, indent=4)
