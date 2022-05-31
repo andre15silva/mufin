@@ -35,6 +35,25 @@ def create_bug(args, original_bug, diff) -> Bug:
         return NotImplementedError("%s" % args)
 
 
+def extract_ground_truth(bug):
+    # Parse the diff and access info
+    diff = PatchSet(bug.get_diff())
+    
+    buggy_line = ""
+    for line in diff[0][0].target_lines():
+        if line.is_added:
+            buggy_line = line.value.strip()
+            break
+
+    fixed_line = ""
+    for line in diff[0][0].source_lines():
+        if line.is_removed:
+            fixed_line = line.value.strip()
+            break
+
+    return buggy_line, fixed_line
+
+
 def apply_fix(original_bug, tentative_fix):
     # Parse the diff and access info
     diff = PatchSet(original_bug.get_diff())
@@ -137,25 +156,33 @@ def evaluate(args):
                 attention_mask=source.attention_mask,
                 num_beams=100,
                 max_length=128,
-                early_stopping=True,
+                early_stopping=False,
+                num_return_sequences=100,
                 )
 
         # Generate the tentative solution
-        tentative_fix = tokenizer.decode(target_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=False)
-
-        # TODO: Choose according to parameter
-        buggy_line, fixed_line, diff, comp, test = evaluate_fix(args, bug, tentative_fix)
-        bug_result = {}
+        bug_result = { "fixes" : [] }
+        buggy_line, fixed_line = extract_ground_truth(bug)
         bug_result["buggy_line"] = buggy_line
         bug_result["fixed_line"] = fixed_line
-        bug_result["patch"] = tentative_fix
-        bug_result["patch_diff"] = diff
-        bug_result["comp_execute"] = comp.is_executing()
-        bug_result["comp_pass"] = comp.is_passing()
-        bug_result["test_execute"] = test.is_executing()
-        bug_result["test_pass"] = test.is_passing()
-        results[bug.get_identifier()] = bug_result
+        for i, target in enumerate(target_ids):
+            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+            # TODO: Choose according to parameter
+            #buggy_line, fixed_line, diff, comp, test = evaluate_fix(args, bug, tentative_fix)
+            fix = {}
+            fix["k"] = i+1
+            fix["patch"] = tentative_fix
+            #fix["patch_diff"] = diff
+            fix["identical"] = tentative_fix == fixed_line
+            #fix["comp_execute"] = comp.is_executing()
+            #fix["comp_pass"] = comp.is_passing()
+            #fix["test_execute"] = test.is_executing()
+            #fix["test_pass"] = test.is_passing()
+            bug_result["fixes"].append(fix)
 
+            print(tentative_fix)
+
+        results[bug.get_identifier()] = bug_result
     return results
 
 
