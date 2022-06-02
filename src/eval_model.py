@@ -154,10 +154,11 @@ def evaluate(args):
         target_ids = model.generate(
                 input_ids=source.input_ids,
                 attention_mask=source.attention_mask,
-                num_beams=100,
+                num_beams=args.beam_width,
+                num_beam_groups=args.beam_groups,
                 max_length=128,
                 early_stopping=False,
-                num_return_sequences=100,
+                num_return_sequences=args.beam_width,
                 )
 
         # Generate the tentative solution
@@ -179,8 +180,6 @@ def evaluate(args):
             #fix["test_execute"] = test.is_executing()
             #fix["test_pass"] = test.is_passing()
             bug_result["fixes"].append(fix)
-
-            print(tentative_fix)
 
         results[bug.get_identifier()] = bug_result
     return results

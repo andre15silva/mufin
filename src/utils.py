@@ -60,6 +60,9 @@ def add_eval_args(parser):
     parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
     parser.add_argument("--results_file", help="Path to the result file", required=True, metavar="<path_to_result_file>")
     
+    parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
+    parser.add_argument("--beam_groups", type=int, help="Beam groups", required=True, metavar="<beam_groups>")
+    
     # TODO: argument for setting fixed-to-buggy, or vice-verse
 
     return parser
