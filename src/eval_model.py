@@ -156,6 +156,7 @@ def evaluate(args):
                 attention_mask=source.attention_mask,
                 num_beams=args.beam_width,
                 num_beam_groups=args.beam_groups,
+                repetition_penalty=args.repetition_penalty,
                 max_length=128,
                 early_stopping=False,
                 num_return_sequences=args.beam_width,
