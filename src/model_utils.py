@@ -3,7 +3,6 @@ from unidiff import PatchSet
 
 def source_str(example):
     diff = PatchSet(example)
-    source = ""
     start_buggy = -1
     end_buggy = -1
     for i, line in enumerate(diff[0][0].target_lines()):
@@ -13,6 +12,7 @@ def source_str(example):
             if end_buggy < i:
                 end_buggy = i
     
+    source = ""
     for i, line in enumerate(diff[0][0].target_lines()):
         if i == start_buggy:
             source += " [START_BUGGY] "
@@ -20,7 +20,7 @@ def source_str(example):
         if i == end_buggy:
             source += " [END_BUGGY] "
 
-    return source
+    return " ".join(source.split())
 
 
 def target_str(example):
@@ -38,4 +38,5 @@ def target_str(example):
     for i, line in enumerate(diff[0][0].source_lines()):
         if i >= start_fix and i <= end_fix:
             target += " " + line.value.strip() + " "
-    return target
+
+    return " ".join(target.split())
