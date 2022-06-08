@@ -16,7 +16,8 @@ from models.compile_result import CompileResult
 from models.test_result import TestResult
 from models.bug import Bug
 from models.defects4j.defects4jbug import Defects4JBug
-from models.bugsdotjar.bugsdotjar import BugsDotJarBug from models.bears.bearsbug import BearsBug
+from models.bugsdotjar.bugsdotjar import BugsDotJarBug
+from models.bears.bearsbug import BearsBug
 from models.quixbugs.quixbugsbug import QuixBugsBug
 
 
