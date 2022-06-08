@@ -32,7 +32,6 @@ def train(args):
     max_input_length = 732
     max_target_length = 128
 
-    # TODO: Change this to generate the definitive complex training sample
     def preprocess_buggy_to_fixed(examples):
         inputs = [model_utils.source_str(ex) for ex in examples["diff"]]
         targets = [model_utils.target_str(ex) for ex in examples["diff"]]
@@ -46,10 +45,9 @@ def train(args):
         return model_inputs
 
 
-    # TODO: Change this to generate the definitive complex training sample
     def preprocess_fixed_to_buggy(examples):
-        inputs = [model_utils.target_str(ex) for ex in examples["diff"]]
-        targets = [model_utils.source_str(ex) for ex in examples["diff"]]
+        inputs = [model_utils.source_str_buggy(ex) for ex in examples["diff"]]
+        targets = [model_utils.target_str_buggy(ex) for ex in examples["diff"]]
         model_inputs = tokenizer(inputs, max_length=max_input_length, padding=True, truncation=True)
 
         # Set up the tokenizer for targets
@@ -70,8 +68,10 @@ def train(args):
     split_datasets["validation"] = split_datasets.pop("test")
 
     # Tokenize the datasets
-    # TODO: Change this to an if condition
-    preprocess_function = preprocess_buggy_to_fixed
+    if args.buggy_to_fixed:
+        preprocess_function = preprocess_buggy_to_fixed
+    elif args.fixed_to_buggy:
+        preprocess_function = preprocess_fixed_to_buggy
     tokenized_datasets = split_datasets.map(
             preprocess_function,
             batched=True,
@@ -79,7 +79,6 @@ def train(args):
             )
 
     # Setup training args
-    # TODO: Parametrize
     steps=10000
     training_args = Seq2SeqTrainingArguments(
             pathlib.Path(args.model_storage).absolute(),

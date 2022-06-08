@@ -49,6 +49,9 @@ def add_train_args(parser):
     parser.add_argument("--from_pretrained", help="Path to the pretrained model. If not used a new model will be trained from scratch.", required=False, metavar="<path_to_pretrained_model>")
     parser.add_argument("--model_storage", help="Path to the location where to store the model in.", required=True, metavar="<path_to_save_dir>")
 
+    direction = parser.add_mutually_exclusive_group(required=True)
+    direction.add_argument("--buggy_to_fixed", help="Train a model that fixes bugs.", required=False, action="store_true")
+    direction.add_argument("--fixed_to_buggy", help="Train a momdel that generates bugs.", required=False, action="store_true")
     # TODO: arguments for relevant model hyper-parameters
     # TODO: argument for setting fixed-to-buggy, or vice-verse
 
