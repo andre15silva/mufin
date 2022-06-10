@@ -62,7 +62,7 @@ def extract_ground_truth(bug):
             buggy_line += " " + line.value.strip() + " "
 
     fixed_line = ""
-    for line in diff[0][0].source_lines():
+    for i, line in enumerate(diff[0][0].source_lines()):
         if i >= start_fix and i <= end_fix:
             fixed_line += " " + line.value.strip() + " "
 
