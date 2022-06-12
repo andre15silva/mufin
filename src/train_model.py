@@ -96,7 +96,7 @@ def train(args):
             predict_with_generate=True,
             fp16=True,
             push_to_hub=False,
-            metric_for_best_model="loss",
+            metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             )
 
