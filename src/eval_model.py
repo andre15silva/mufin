@@ -111,19 +111,20 @@ def apply_fix(original_bug, tentative_fix):
     return buggy_line, fixed_line, diff
 
 
-# TODO: implement this as the definitive version
 def preprocess_buggy_to_fixed(tokenizer, bug):
     source = model_utils.source_str(bug.get_diff())
     target = model_utils.target_str(bug.get_diff())
 
-    # TODO: parametrize this
     max_input_length = 732
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
-# TODO: implement this as the definitive version
 def preprocess_fixed_to_buggy(tokenizer, bug):
-    pass
+    source = model_utils.source_str_buggy(bug.get_diff())
+    target = model_utils.target_str_buggy(bug.get_diff())
+    
+    max_input_length = 732
+    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
 def evaluate_fix(args, original_bug, tentative_fix):

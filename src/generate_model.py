@@ -12,15 +12,19 @@ import model_utils
 # TODO: implement this as the definitive version
 def preprocess_buggy_to_fixed(tokenizer, bug):
     source = model_utils.source_str(bug.get_diff())
+    target = model_utils.target_str(bug.get_diff())
 
-    # TODO: parametrize this
-    max_input_length = 128
-    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt')
+    max_input_length = 732
+    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
 # TODO: implement this as the definitive version
 def preprocess_fixed_to_buggy(tokenizer, bug):
-    pass
+    source = model_utils.source_str_buggy(bug.get_diff())
+    target = model_utils.target_str_buggy(bug.get_diff())
+    
+    max_input_length = 732
+    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
 # TODO: implement this according to the defined format
@@ -36,17 +40,21 @@ def generate(args):
 
     new_dataset = serialization_utils.create_empty_dataset(args)
     
+    # TODO: iterate over source code files of the fixed programs
     for bug in dataset.get_bugs():
         # TODO: Choose according to parameter
-        source = preprocess_buggy_to_fixed(tokenizer, bug)
+        source, target = preprocess_fixed_to_buggy(tokenizer, bug)
         
         # TODO: parametrize this
         target_ids = model.generate(
                 input_ids=source.input_ids,
                 attention_mask=source.attention_mask,
-                num_beams=50,
+                num_beams=args.beam_width,
+                num_beam_groups=args.beam_groups,
+                repetition_penalty=args.repetition_penalty,
                 max_length=128,
-                early_stopping=True,
+                early_stopping=False,
+                num_return_sequences=args.beam_width,
                 )
 
         # Generate the tentative solution
