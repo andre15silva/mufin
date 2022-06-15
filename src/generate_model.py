@@ -1,30 +1,13 @@
 import numpy as np
 import argparse
 import pathlib
+import subprocess
 
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
 
 import utils
 import serialization_utils
 import model_utils
-
-
-# TODO: implement this as the definitive version
-def preprocess_buggy_to_fixed(tokenizer, bug):
-    source = model_utils.source_str(bug.get_diff())
-    target = model_utils.target_str(bug.get_diff())
-
-    max_input_length = 732
-    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
-
-
-# TODO: implement this as the definitive version
-def preprocess_fixed_to_buggy(tokenizer, bug):
-    source = model_utils.source_str_buggy(bug.get_diff())
-    target = model_utils.target_str_buggy(bug.get_diff())
-    
-    max_input_length = 732
-    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
 # TODO: implement this according to the defined format
@@ -44,9 +27,27 @@ def generate(args):
     for bug in dataset.get_bugs():
         for file in pathlib.Path(bug.get_path()).glob("**/*.java"):
             print(file)
+            
+            cmd = "java -jar src/getlines/target/getlines-1.0-SNAPSHOT-jar-with-dependencies.jar %s" % file.absolute()
+            run = subprocess.run(cmd, shell=True, capture_output=True)
+            if run.returncode != 0:
+                continue
+
+            lns = run.stdout.decode("utf-8").split()
+            lns = list(map(lambda x: (int(x[0]), int(x[1])), map(lambda x: x.split("-"), lns)))
+
+            with open(file) as f:
+                lines = f.readlines()
+                samples = list(map(
+                    lambda x: lines[max(0, x[0]-6):x[0]-1] + \
+                            ["[START_BUGGY]"] + lines[x[0]-1:x[1]] + ["[END_BUGGY]"] + \
+                            lines[x[1]:min(len(lines), x[1]+5)],
+                    lns
+                    ))
+                print(samples[0])
             break
     #    # TODO: Choose according to parameter
-    #    source, target = preprocess_fixed_to_buggy(tokenizer, bug)
+    #    source = tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt')
     #    
     #    # TODO: parametrize this
     #    target_ids = model.generate(
