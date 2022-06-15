@@ -42,28 +42,31 @@ def generate(args):
     
     # TODO: iterate over source code files of the fixed programs
     for bug in dataset.get_bugs():
-        # TODO: Choose according to parameter
-        source, target = preprocess_fixed_to_buggy(tokenizer, bug)
-        
-        # TODO: parametrize this
-        target_ids = model.generate(
-                input_ids=source.input_ids,
-                attention_mask=source.attention_mask,
-                num_beams=args.beam_width,
-                num_beam_groups=args.beam_groups,
-                repetition_penalty=args.repetition_penalty,
-                max_length=128,
-                early_stopping=False,
-                num_return_sequences=args.beam_width,
-                )
+        for file in pathlib.Path(bug.get_path()).glob("**/*.java"):
+            print(file)
+            break
+    #    # TODO: Choose according to parameter
+    #    source, target = preprocess_fixed_to_buggy(tokenizer, bug)
+    #    
+    #    # TODO: parametrize this
+    #    target_ids = model.generate(
+    #            input_ids=source.input_ids,
+    #            attention_mask=source.attention_mask,
+    #            num_beams=args.beam_width,
+    #            num_beam_groups=args.beam_groups,
+    #            repetition_penalty=args.repetition_penalty,
+    #            max_length=128,
+    #            early_stopping=False,
+    #            num_return_sequences=args.beam_width,
+    #            )
 
-        # Generate the tentative solution
-        generated_str = tokenizer.decode(target_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
+    #    # Generate the tentative solution
+    #    generated_str = tokenizer.decode(target_ids[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
 
-        # TODO: Choose according to parameter
-        new_dataset.add_bug(create_bug(args, bug, generated_str))
+    #    # TODO: Choose according to parameter
+    #    new_dataset.add_bug(create_bug(args, bug, generated_str))
 
-    serialization_utils.save_dataset(args, new_dataset)
+    #serialization_utils.save_dataset(args, new_dataset)
 
 
 if __name__ == '__main__':
