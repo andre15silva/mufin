@@ -122,8 +122,7 @@ def generate(args):
                 new_dataset.add_bug(new_bug)
 
             # DEBUG ONLY
-            break
-
+            #break
 
     serialization_utils.save_dataset(args, new_dataset)
 
