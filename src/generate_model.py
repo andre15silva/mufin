@@ -7,6 +7,7 @@ import functools
 import tempfile
 import os
 import uuid
+import torch
 
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
 
@@ -76,6 +77,9 @@ def generate(args):
                 continue
 
             lns = run.stdout.decode("utf-8").split()
+            if len(lns) == 0:
+                continue
+            print(len(lns))
             df = pd.DataFrame(
                     list(
                         map(lambda x: (int(x[0]), int(x[1])), 
