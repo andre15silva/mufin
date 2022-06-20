@@ -76,7 +76,10 @@ def generate(args):
             if run.returncode != 0:
                 continue
 
-            lns = run.stdout.decode("utf-8").split()
+            try:
+                lns = run.stdout.decode("utf-8").split()
+            except UnicodeDecodeError as e:
+                continue
             if len(lns) == 0:
                 continue
             print(len(lns))
