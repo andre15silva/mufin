@@ -108,7 +108,7 @@ def generate(args):
             chunk_size = 250
             chunked_sources = [unchunked_sources[i:i + chunk_size] for i in range(0, len(unchunked_sources), chunk_size)]
 
-            df["generated_str"] = np.empty(len(unchunked_sources))
+            df.loc[:, "generated_str"] = np.empty(len(unchunked_sources))
             for i, chunk in enumerate(chunked_sources):
                 source = tokenizer(chunk, max_length=max_input_length, padding=True, truncation=True, return_tensors='pt')
                 target_ids = model.generate(
@@ -124,7 +124,7 @@ def generate(args):
 
                 # Generate the tentative solution
                 generated = tokenizer.batch_decode(target_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-                df["generated_str"][i*chunk_size:i*chunk_size + len(generated)] = generated
+                df.loc[i*chunk_size:i*chunk_size+len(generated)-1, "generated_str"] = generated
 
             bugs_to_add = create_bugs(args, bug, file, df)
             print("Generated %d bugs for %s" % (len(bugs_to_add), file))
