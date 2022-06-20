@@ -104,21 +104,27 @@ def generate(args):
                         )
 
             max_input_length = 732
-            source = tokenizer(list(df["source"]), max_length=max_input_length, padding=True, truncation=True, return_tensors='pt')
+            unchunked_sources = list(df["source"])
+            chunk_size = 250
+            chunked_sources = [unchunked_sources[i:i + chunk_size] for i in range(0, len(unchunked_sources), chunk_size)]
 
-            target_ids = model.generate(
-                    input_ids=source.input_ids,
-                    attention_mask=source.attention_mask,
-                    num_beams=args.beam_width,
-                    num_beam_groups=args.beam_groups,
-                    repetition_penalty=args.repetition_penalty,
-                    max_length=128,
-                    early_stopping=False,
-                    num_return_sequences=args.beam_width,
-                    )
+            df["generated_str"] = np.empty(len(unchunked_sources))
+            for i, chunk in enumerate(chunked_sources):
+                source = tokenizer(chunk, max_length=max_input_length, padding=True, truncation=True, return_tensors='pt')
+                target_ids = model.generate(
+                        input_ids=source.input_ids,
+                        attention_mask=source.attention_mask,
+                        num_beams=args.beam_width,
+                        num_beam_groups=args.beam_groups,
+                        repetition_penalty=args.repetition_penalty,
+                        max_length=128,
+                        early_stopping=False,
+                        num_return_sequences=args.beam_width,
+                        )
 
-            # Generate the tentative solution
-            df["generated_str"] = tokenizer.batch_decode(target_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+                # Generate the tentative solution
+                generated = tokenizer.batch_decode(target_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+                df["generated_str"][i*chunk_size:i*chunk_size + len(generated)] = generated
 
             bugs_to_add = create_bugs(args, bug, file, df)
             print("Generated %d bugs for %s" % (len(bugs_to_add), file))
