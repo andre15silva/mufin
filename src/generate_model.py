@@ -92,7 +92,10 @@ def generate(args):
                     columns=["start_line", "end_line"])
 
             with open(file) as f:
-                lines = f.readlines()
+                try:
+                    lines = f.readlines()
+                except UnicodeDecodeError as e:
+                    continue
                 df["source"] = df.apply(
                         lambda x: functools.reduce(
                             lambda y, z:
