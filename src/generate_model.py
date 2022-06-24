@@ -125,7 +125,7 @@ def generate(args):
                         repetition_penalty=args.repetition_penalty,
                         max_length=128,
                         early_stopping=False,
-                        num_return_sequences=args.beam_width,
+                        num_return_sequences=1,
                         )
 
                 # Generate the tentative solution
