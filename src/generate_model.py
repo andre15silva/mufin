@@ -68,9 +68,12 @@ def generate(args):
 
     new_dataset = serialization_utils.create_empty_dataset(args)
 
-    # TODO: iterate over source code files of the fixed programs
     for bug in dataset.get_bugs():
         for file in pathlib.Path(bug.get_path()).glob("**/*.java"):
+            # Ignore tests
+            if "test" in file.name or "Test" in file.name:
+                continue
+
             cmd = "java -jar src/getlines/target/getlines-1.0-SNAPSHOT-jar-with-dependencies.jar %s" % file.absolute()
             run = subprocess.run(cmd, shell=True, capture_output=True)
             if run.returncode != 0:
