@@ -18,6 +18,7 @@ class QuixBugsBug(Bug):
             run = subprocess.run("cd %s/java_programs; javac *.java" % self.path.absolute(), shell=True, capture_output=True, timeout=10)
             return CompileResult(True, run.returncode == 0)
         except:
+            run.terminate()
             return CompileResult(False, False)
 
     def test_impl(self) -> TestResult:
@@ -43,6 +44,8 @@ class QuixBugsBug(Bug):
 
                     return TestResult(True, java_run.returncode == 0 and python_run.returncode == 0 and java_run.stdout == python_run.stdout)
                 except subprocess.TimeoutExpired:
+                    java_run.terminate()
+                    python_run.terminate()
                     return TestResult(True, False)
         else:
             return TestResult(False, False)
