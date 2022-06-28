@@ -1,4 +1,6 @@
 import pathlib
+import os
+import signal
 import subprocess
 import re
 
@@ -17,7 +19,8 @@ class BearsBug(Bug):
             run = subprocess.run(cmd, shell=True, capture_output=True, timeout=60*10)
             return CompileResult(True, run.returncode == 0)
         except subprocess.TimeoutExpired:
-            run.terminate()
+            print("Timeout for %s" % self.get_identifier())
+            os.killpg(os.getpgid(run.pid), signal.SIGTERM)
             return CompileResult(False, False)
 
     def test_impl(self) -> TestResult:
@@ -26,5 +29,6 @@ class BearsBug(Bug):
             run = subprocess.run(cmd, shell=True, capture_output=True, timeout=60*10)
             return TestResult(True, run.returncode == 0)
         except subprocess.TimeoutExpired:
-            run.terminate()
+            print("Timeout for %s" % self.get_identifier())
+            os.killpg(os.getpgid(run.pid), signal.SIGTERM)
             return TestResult(False, False)
