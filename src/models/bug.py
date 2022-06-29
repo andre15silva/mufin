@@ -118,6 +118,8 @@ class Bug(ABC):
         pass
 
     def __eq__(self, other):
+        if other == None:
+            return False
         return self.identifier == other.identifier
 
     def __hash__(self):

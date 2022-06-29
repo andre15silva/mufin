@@ -9,11 +9,14 @@ import os
 import uuid
 import torch
 
+from unidiff import PatchSet
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
 
 import utils
 import serialization_utils
 import model_utils
+from models.compile_result import CompileResult
+from models.test_result import TestResult
 from models.bug import Bug
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJarBug
@@ -21,52 +24,18 @@ from models.bears.bearsbug import BearsBug
 from models.quixbugs.quixbugsbug import QuixBugsBug
 
 
-def create_bug(args, original_bug, diff) -> Bug:
+def create_bug(args, original_bug, diff, reverse_diff) -> Bug:
     uid = str(uuid.uuid4())
     if args.defects4j != None:
-        return Defects4JBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
+        return Defects4JBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff), Defects4JBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), reverse_diff)
     elif args.bugsdotjar != None:
-        return BugsDotJarBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
+        return BugsDotJarBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff), BugsDotJarBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), reverse_diff)
     elif args.bears != None:
-        return BearsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
+        return BearsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff), BearsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), reverse_diff)
     elif args.quixbugs != None:
-        return QuixBugsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
+        return QuixBugsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff), QuixBugsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), reverse_diff)
     else:
         return NotImplementedError("%s" % args)
-
-
-def extract_ground_truth(bug):
-    # Parse the diff and access info
-    diff = PatchSet(bug.get_diff())
-    
-    start_buggy = -1
-    end_buggy = -1
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if line.is_added:
-            if start_buggy == -1:
-                start_buggy = i
-            if end_buggy < i:
-                end_buggy = i
-    start_fix = -1
-    end_fix = -1
-    for i, line in enumerate(diff[0][0].source_lines()):
-        if line.is_removed:
-            if start_fix == -1:
-                start_fix = i
-            if end_fix < i:
-                end_fix = i
-    
-    buggy_line = ""
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if i >= start_buggy and i <= end_buggy:
-            buggy_line += " " + line.value.strip() + " "
-
-    fixed_line = ""
-    for i, line in enumerate(diff[0][0].source_lines()):
-        if i >= start_fix and i <= end_fix:
-            fixed_line += " " + line.value.strip() + " "
-
-    return " ".join(buggy_line.split()), " ".join(fixed_line.split())
 
 
 def apply_fix(original_bug, tentative_fix):
@@ -78,25 +47,23 @@ def apply_fix(original_bug, tentative_fix):
     with open(original_file, "r") as f:
         lines = f.readlines()
 
-    # Replace the lines by the tentative_fix
-    #target_start = diff[0][0].target_start
-    #target_length = diff[0][0].target_length
-    #lines[target_start - 1] = tentative_fix + "\n"
-    #lines = lines[:target_start] + lines[target_start + target_length - 1:]
-    # TODO: only fixes only line bugs
-    buggy_line = ""
-    for line in diff[0][0].target_lines():
+    start_buggy = -1
+    start_buggy_ln = -1
+    end_buggy = -1
+    end_buggy_ln = -1
+    for i, line in enumerate(diff[0][0].target_lines()):
         if line.is_added:
-            buggy_line = line.value.strip()
-            ln = line.target_line_no
-            lines = lines[:ln-1] + [tentative_fix + "\n"] + lines[ln:]
-            break
+            if start_buggy == -1:
+                start_buggy = i
+                start_buggy_ln = line.target_line_no
+            if end_buggy < i:
+                end_buggy = i
+                end_buggy_ln = line.target_line_no
+    if start_buggy_ln == -1 or end_buggy_ln == -1:
+        return None, None
 
-    fixed_line = ""
-    for line in diff[0][0].source_lines():
-        if line.is_removed:
-            fixed_line = line.value.strip()
-            break
+    # Replace the lines by the tentative_fix
+    lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
 
     # Write content to a temporary file
     fixed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
@@ -106,9 +73,10 @@ def apply_fix(original_bug, tentative_fix):
 
     # Compute diff
     diff = utils.get_diff(original_file, fixed_file.name)
+    reverse_diff = utils.get_diff(fixed_file.name, original_file)
     os.remove(str(pathlib.Path(fixed_file.name).absolute()))
 
-    return buggy_line, fixed_line, diff
+    return diff, reverse_diff
 
 
 def preprocess_buggy_to_fixed(tokenizer, bug):
@@ -125,8 +93,11 @@ def evaluate_fix(args, original_bug, tentative_fix):
         original_bug.checkout()
 
         # 2 - Create the bug fix
-        buggy_line, fixed_line, diff = apply_fix(original_bug, tentative_fix)
-        bug_fix = create_bug(args, original_bug, diff)
+        diff, reverse_diff = apply_fix(original_bug, tentative_fix)
+        if diff == None or reverse_diff == None:
+            original_bug.restore()
+            raise Exception("Bug %s is not patchable..." % original_bug.get_identifier())
+        bug_fix, reversed_bug_fix = create_bug(args, original_bug, diff, reverse_diff)
 
         # 3 - Test the bug fix
         comp = bug_fix.compile()
@@ -135,16 +106,11 @@ def evaluate_fix(args, original_bug, tentative_fix):
         # 4 - Revert to the fixed version
         original_bug.restore()
 
-        return buggy_line, fixed_line, diff, comp, test
+        # We return the reversed_bug_fix because our tokenization mechanisms need a diff that is applied to a fixed version
+        return reversed_bug_fix, comp, test
     except Exception as e:
         print(e)
-        return "", "", tentative_fix, CompileResult(False, False), TestResult(False, False)
-
-
-# TODO: implement this
-def evaluate_bug(bug, tentative_bug):
-    print("generated " + tentative_bug)
-    return True
+        return None, CompileResult(False, False), TestResult(False, False)
 
 
 def generate(args):
@@ -155,7 +121,7 @@ def generate(args):
     
     no_filter_dataset = serialization_utils.create_empty_dataset(args)
     filter_compile_dataset = serialization_utils.create_empty_dataset(args)
-    filter_tests_dataset = serialization_utils.create_empty_dataset(args)
+    filter_test_dataset = serialization_utils.create_empty_dataset(args)
     for bug in dataset.get_bugs():
         source, target = preprocess_buggy_to_fixed(tokenizer, bug)
         
@@ -169,27 +135,25 @@ def generate(args):
                 )
 
         # Generate the tentative solution
-        bug_result = { "fixes" : [] }
-        buggy_line, fixed_line = extract_ground_truth(bug)
-        bug_result["buggy_line"] = buggy_line
-        bug_result["fixed_line"] = fixed_line
         for i, target in enumerate(target_ids):
             tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=False)
-            # TODO: Choose according to parameter
-            #buggy_line, fixed_line, diff, comp, test = evaluate_fix(args, bug, tentative_fix)
-            fix = {}
-            fix["k"] = i+1
-            fix["patch"] = tentative_fix
-            #fix["patch_diff"] = diff
-            fix["identical"] = tentative_fix == fixed_line
-            #fix["comp_execute"] = comp.is_executing()
-            #fix["comp_pass"] = comp.is_passing()
-            #fix["test_execute"] = test.is_executing()
-            #fix["test_pass"] = test.is_passing()
-            bug_result["fixes"].append(fix)
+            new_bug, comp, test = evaluate_fix(args, bug, tentative_fix)
+            if new_bug == None:
+                continue
 
-        results[bug.get_identifier()] = bug_result
-    return results
+            no_filter_dataset.add_bug(new_bug)
+            if comp.is_executing() and comp.is_passing():
+                filter_compile_dataset.add_bug(new_bug)
+            if test.is_executing() and test.is_passing():
+                filter_test_dataset.add_bug(new_bug)
+
+    # Save the datasets
+    no_filter_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk.json")
+    serialization_utils.save_dataset_to_file(args, no_filter_dataset, no_filter_path)
+    filter_compile_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile.json")
+    serialization_utils.save_dataset_to_file(args, filter_compile_dataset, filter_compile_path)
+    filter_test_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile_test.json")
+    serialization_utils.save_dataset_to_file(args, filter_test_dataset, filter_test_path)
 
 
 if __name__ == '__main__':
