@@ -15,7 +15,7 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/generate_bugs_frmo_breaker.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3/$4 --results_file X --beam_width 1 --beam_groups 1 --repetition_penalty 1.0 --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$4.json > $1/$2_generated_bugs_$4.out 2>&1
+python src/generate_bugs_frmo_breaker.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3/$4 --results_file X --beam_width 1 --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$4.json > $1/$2_generated_bugs_$4.out 2>&1
 python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$4.json --model_output $2_generated_bugs_$4_hunk.json > $1/$2_generated_bugs_$4_hunk.out 2>&1
 python src/filter_compile.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$4_hunk.json --model_output $2_generated_bugs_$4_hunk_compile.json > $1/$2_generated_bugs_$4_hunk_compile.out 2>&1
 python src/filter_test.py --storage $1 --$2 ${datasets[$2]} --model_input $2_generated_bugs_$4_hunk_compile.json --model_output $2_generated_bugs_$4_hunk_compile_test.json > $1/$2_generated_bugs_$4_hunk_compile_test.out 2>&1

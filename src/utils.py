@@ -64,8 +64,6 @@ def add_eval_args(parser):
     parser.add_argument("--results_file", help="Path to the result file", required=True, metavar="<path_to_result_file>")
     
     parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
-    parser.add_argument("--beam_groups", type=int, help="Beam groups", required=True, metavar="<beam_groups>")
-    parser.add_argument("--repetition_penalty", type=float, help="Beam groups", required=True, metavar="<repetition_penalty>")
     
     # TODO: argument for setting fixed-to-buggy, or vice-verse
 
