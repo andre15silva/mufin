@@ -117,7 +117,7 @@ def generate(args):
     dataset = serialization_utils.load_dataset(args)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
     
     no_filter_dataset = serialization_utils.create_empty_dataset(args)
