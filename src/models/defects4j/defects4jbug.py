@@ -14,20 +14,10 @@ class Defects4JBug(Bug):
     """
 
     def compile_impl(self) -> CompileResult:
-        try:
-            run = subprocess.run("cd %s; defects4j compile" % self.path.absolute(), shell=True, capture_output=True, timeout=60*10)
-            return CompileResult(True, run.returncode == 0)
-        except subprocess.TimeoutExpired:
-            print("Timeout for %s" % self.get_identifier())
-            os.killpg(os.getpgid(run.pid), signal.SIGTERM)
-            return CompileResult(False, False)
+        run = subprocess.run("cd %s; timeout 600 defects4j compile" % self.path.absolute(), shell=True, capture_output=True)
+        return CompileResult(True, run.returncode == 0)
 
     def test_impl(self) -> TestResult:
-        try:
-            run = subprocess.run("cd %s; defects4j test" % self.path.absolute(), shell=True, capture_output=True, timeout=60*10)
-            m = re.search(r"Failing tests: ([0-9]+)", run.stdout.decode("utf-8"))
-            return TestResult(True and m != None, run.returncode == 0 and int(m.group(1)) == 0)
-        except subprocess.TimeoutExpired:
-            print("Timeout for %s" % self.get_identifier())
-            os.killpg(os.getpgid(run.pid), signal.SIGTERM)
-            return TestResult(False, False)
+        run = subprocess.run("cd %s; timeout 600 defects4j test" % self.path.absolute(), shell=True, capture_output=True)
+        m = re.search(r"Failing tests: ([0-9]+)", run.stdout.decode("utf-8"))
+        return TestResult(True and m != None, run.returncode == 0 and int(m.group(1)) == 0)
