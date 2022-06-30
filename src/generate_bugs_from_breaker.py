@@ -62,9 +62,10 @@ def create_bugs(args, bug, original_file, df):
 
 def generate(args):
     dataset = serialization_utils.load_dataset(args)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
-    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
+    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained).to(device)
+    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
 
     new_dataset = serialization_utils.create_empty_dataset(args)
 
@@ -119,7 +120,7 @@ def generate(args):
 
             df.loc[:, "generated_str"] = np.empty(len(unchunked_sources))
             for i, chunk in enumerate(chunked_sources):
-                source = tokenizer(chunk, max_length=max_input_length, padding=True, truncation=True, return_tensors='pt')
+                source = tokenizer(chunk, max_length=max_input_length, padding=True, truncation=True, return_tensors='pt').to(device)
                 target_ids = model.generate(
                         input_ids=source.input_ids,
                         attention_mask=source.attention_mask,
