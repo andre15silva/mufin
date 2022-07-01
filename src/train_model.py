@@ -28,7 +28,6 @@ def train(args):
                     )
                 )
 
-    # Parametrize
     max_input_length = 732
     max_target_length = 128
 
@@ -92,7 +91,7 @@ def train(args):
             per_device_eval_batch_size=16,
             weight_decay=0.01,
             save_total_limit=4,
-            num_train_epochs=15,
+            num_train_epochs=args.max_epochs,
             predict_with_generate=True,
             fp16=True,
             push_to_hub=False,
@@ -122,7 +121,6 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Script to train a model based on a given dataset.")
-    parser = utils.add_core_args(parser)
     parser = utils.add_train_args(parser)
     args = parser.parse_args()
 

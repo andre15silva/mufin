@@ -52,8 +52,21 @@ def add_train_args(parser):
     direction = parser.add_mutually_exclusive_group(required=True)
     direction.add_argument("--buggy_to_fixed", help="Train a model that fixes bugs.", required=False, action="store_true")
     direction.add_argument("--fixed_to_buggy", help="Train a momdel that generates bugs.", required=False, action="store_true")
-    # TODO: arguments for relevant model hyper-parameters
-    # TODO: argument for setting fixed-to-buggy, or vice-verse
+
+    parser.add_argument("--max_epochs", type=int, help="Number of maximum epochs.", required=True, metavar="<max_epochs>")
+    parser.add_argument("--samples_per_epoch", type=int, help="Number of samples per epoch.", required=True, metavar="<samples_per_epoch>")
+
+    parser.add_argument("--training_dataset", help="Path to the training dataset directory containing json files.", required=True, metavar="<path_to_training_dataset_dir>")
+    parser.add_argument("--validation_dataset", help="Path to the validation dataset directory containing json files.", required=True, metavar="<path_to_training_dataset_dir>")
+    
+    return parser
+
+
+def add_split_train_val_args(parser):
+    parser.add_argument("--dataset", help="Path to the dataset directory", required=True, metavar="<path_to_dataset_dir>")
+
+    parser.add_argument("--training_dataset", help="Path to the training dataset final location.", required=True, metavar="<path_to_training_dataset_dir>")
+    parser.add_argument("--validation_dataset", help="Path to the validation dataset final location.", required=True, metavar="<path_to_training_dataset_dir>")
 
     return parser
 
