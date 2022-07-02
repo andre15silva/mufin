@@ -60,38 +60,41 @@ def train(args):
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
     # Load the dataset
-    dataset = load_dataset("json", data_files=str(pathlib.Path(args.storage).absolute()) + "/*.json", field="bugs")
-
-    # Split dataset into training and validation
-    split_datasets = dataset["train"].train_test_split(train_size=0.98, seed=15)
-    split_datasets["validation"] = split_datasets.pop("test")
-
+    data_files = {
+            "train" : str(pathlib.Path(args.training_dataset).absolute()),
+            "validation" : str(pathlib.Path(args.validation_dataset).absolute())
+            }
+    split_datasets = load_dataset("json", data_files=data_files)
+    
     # Tokenize the datasets
     if args.buggy_to_fixed:
         preprocess_function = preprocess_buggy_to_fixed
     elif args.fixed_to_buggy:
         preprocess_function = preprocess_fixed_to_buggy
+
     tokenized_datasets = split_datasets.map(
             preprocess_function,
             batched=True,
             remove_columns=split_datasets["train"].column_names,
             )
 
+    # Compute the number of max epochs
+    max_epochs = (args.max_epochs * args.samples_per_epoch) // len(split_datasets["train"]) + 1
+
     # Setup training args
-    steps=10000
     training_args = Seq2SeqTrainingArguments(
             pathlib.Path(args.model_storage).absolute(),
             evaluation_strategy="steps",
-            eval_steps=steps,
+            eval_steps=10000,
             save_strategy="steps",
-            save_steps=steps,
+            save_steps=10000,
             learning_rate=1e-4,
             optim="adamw_torch",
             per_device_train_batch_size=16,
             per_device_eval_batch_size=16,
             weight_decay=0.01,
             save_total_limit=4,
-            num_train_epochs=args.max_epochs,
+            num_train_epochs=max_epochs,
             predict_with_generate=True,
             fp16=True,
             push_to_hub=False,
