@@ -161,7 +161,7 @@ def generate(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Script to generate a dataset with a pretrained model from a given dataset")
     parser = utils.add_core_args(parser)
-    parser = utils.add_eval_args(parser)
+    parser = utils.add_generate_bugs_from_fixer_args(parser)
     args = parser.parse_args()
 
     generate(args)

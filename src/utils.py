@@ -64,7 +64,6 @@ def add_train_args(parser):
 
 def add_split_train_val_args(parser):
     parser.add_argument("--dataset", help="Path to the dataset directory", required=True, metavar="<path_to_dataset_dir>")
-
     parser.add_argument("--training_dataset", help="Path to the training dataset final location.", required=True, metavar="<path_to_training_dataset>")
     parser.add_argument("--validation_dataset", help="Path to the validation dataset final location.", required=True, metavar="<path_to_validation_dataset>")
 
@@ -72,12 +71,15 @@ def add_split_train_val_args(parser):
 
 
 def add_eval_args(parser):
-    # Options for model training
     parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
     parser.add_argument("--results_file", help="Path to the result file", required=True, metavar="<path_to_result_file>")
-    
     parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
     
-    # TODO: argument for setting fixed-to-buggy, or vice-verse
+    return parser
+
+
+def add_generate_bugs_from_fixer_args(parser):
+    parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
+    parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
 
     return parser
