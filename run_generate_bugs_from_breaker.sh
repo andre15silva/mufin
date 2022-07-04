@@ -15,7 +15,7 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/generate_bugs_from_breaker.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3/$4/$5/fixer --beam_width 1 --model_input $2_hunk_compile_test.json --model_output $2_breaker_generated_bugs_$4_$5.json > $1/$2_breaker_generated_bugs_$4_$5.out 2>&1
+python src/generate_bugs_from_breaker.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3/$4/$5/part1/breaker --beam_width 1 --model_input $2_hunk_compile_test.json --model_output $2_breaker_generated_bugs_$4_$5.json > $1/$2_breaker_generated_bugs_$4_$5.out 2>&1
 
 if [[ "$5" == *"nocritic"* ]]; then
     python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $2_breaker_generated_bugs_$4_$5.json --model_output $2_breaker_generated_bugs_$4_$5_hunk.json > $1/$2_breaker_generated_bugs_$4_$5_hunk.out 2>&1
