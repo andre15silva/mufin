@@ -35,7 +35,6 @@ def create_bug(args, original_bug, diff) -> Bug:
         return NotImplementedError("%s" % args)
 
 
-# TODO: implement this according to the defined format
 def create_bugs(args, bug, original_file, df):
     bugs = []
     for index, row in df.iterrows():
@@ -148,7 +147,7 @@ def generate(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Script to generate a dataset with a pretrained model from a given dataset")
     parser = utils.add_core_args(parser)
-    parser = utils.add_eval_args(parser)
+    parser = utils.add_generate_bugs_from_breaker_args(parser)
     args = parser.parse_args()
 
     generate(args)

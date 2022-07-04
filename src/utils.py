@@ -90,3 +90,10 @@ def add_generate_bugs_from_fixer_args(parser):
     parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
 
     return parser
+
+
+def add_generate_bugs_from_breaker_args(parser):
+    parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
+    parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
+
+    return parser
