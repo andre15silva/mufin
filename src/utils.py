@@ -70,6 +70,13 @@ def add_split_train_val_args(parser):
     return parser
 
 
+def add_pre_process_args(parser):
+    parser.add_argument("--dataset", help="Path to the dataset directory", required=True, metavar="<path_to_dataset_dir>")
+    parser.add_argument("--training_dataset", help="Path to the training dataset final location.", required=True, metavar="<path_to_training_dataset_dir>")
+
+    return parser
+
+
 def add_eval_args(parser):
     parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
     parser.add_argument("--results_file", help="Path to the result file", required=True, metavar="<path_to_result_file>")

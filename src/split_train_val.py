@@ -14,7 +14,7 @@ def split_train_val(args):
     dataset = load_dataset("json", data_files=str(pathlib.Path(args.dataset).absolute()) + "/*.json", field="bugs")
 
     # Shuffle the dataset
-    dataset.shuffle(seed=42)
+    dataset["train"] = dataset["train"].shuffle(seed=42)
 
     # Split dataset into training and validation
     split_datasets = dataset["train"].train_test_split(train_size=0.98, seed=42)
