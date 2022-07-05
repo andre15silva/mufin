@@ -114,7 +114,7 @@ def generate(args):
 
             max_input_length = 732
             unchunked_sources = list(df["source"])
-            chunk_size = 250
+            chunk_size = 100
             chunked_sources = [unchunked_sources[i:i + chunk_size] for i in range(0, len(unchunked_sources), chunk_size)]
 
             df.loc[:, "generated_str"] = np.empty(len(unchunked_sources))
