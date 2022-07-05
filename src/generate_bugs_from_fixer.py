@@ -100,8 +100,12 @@ def evaluate_fix(args, original_bug, tentative_fix):
         bug_fix, reversed_bug_fix = create_bug(args, original_bug, diff, reverse_diff)
 
         # 3 - Test the bug fix
-        comp = bug_fix.compile()
-        test = bug_fix.test()
+        comp = CompileResult(False, False)
+        test = TestResult(False, False)
+        if args.compile or args.tests:
+            comp = bug_fix.compile()
+        if args.tests:
+            test = bug_fix.test()
 
         # 4 - Revert to the fixed version
         original_bug.restore()
@@ -120,9 +124,7 @@ def generate(args):
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
     
-    no_filter_dataset = serialization_utils.create_empty_dataset(args)
-    filter_compile_dataset = serialization_utils.create_empty_dataset(args)
-    filter_test_dataset = serialization_utils.create_empty_dataset(args)
+    generated_dataset = serialization_utils.create_empty_dataset(args)
     for bug in dataset.get_bugs():
         source, target = preprocess_buggy_to_fixed(tokenizer, bug)
         source = source.to(device)
@@ -143,19 +145,22 @@ def generate(args):
             if new_bug == None:
                 continue
 
-            no_filter_dataset.add_bug(new_bug)
-            if comp.is_executing() and comp.is_passing():
-                filter_compile_dataset.add_bug(new_bug)
-            if test.is_executing() and test.is_passing():
-                filter_test_dataset.add_bug(new_bug)
+            if args.nocritic:
+                generated_dataset.add_bug(new_bug)
+            elif args.compiler and comp.is_executing() and comp.is_passing():
+                generated_dataset.add_bug(new_bug)
+            elif args.tests and test.is_executing() and test.is_passing():
+                generated_dataset.add_bug(new_bug)
 
     # Save the datasets
-    no_filter_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk.json")
-    serialization_utils.save_dataset_to_file(args, no_filter_dataset, no_filter_path)
-    filter_compile_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile.json")
-    serialization_utils.save_dataset_to_file(args, filter_compile_dataset, filter_compile_path)
-    filter_test_path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile_test.json")
-    serialization_utils.save_dataset_to_file(args, filter_test_dataset, filter_test_path)
+    if args.nocritic:
+        path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk.json")
+    elif args.compiler and comp.is_executing() and comp.is_passing():
+        path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile.json")
+    elif args.tests and test.is_executing() and test.is_passing():
+        path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile_test.json")
+
+    serialization_utils.save_dataset_to_file(args, generated_dataset, path)
 
 
 if __name__ == '__main__':

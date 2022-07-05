@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# != 6 ]; then
-    echo "Usage: ./run_generate_bugs_from_fixer.sh <storage_path> <dataset_name> <experiments_path> <experiment_name> <round> <beam_width>"
+    echo "Usage: ./run_generate_bugs_from_fixer.sh <storage_path> <dataset_name> <from_pretrained> <critic> <round> <beam_width>"
     exit 1
 fi
 
@@ -15,4 +15,4 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3/$4/$5/fixer --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$4_$5.json > $1/$2_fixer_generated_bugs_$4_$5.out 2>&1
+python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$6_$5.json > $1/$2_fixer_generated_bugs_$6_$5.out 2>&1
