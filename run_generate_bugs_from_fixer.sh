@@ -15,4 +15,14 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$6_$5.json > $1/$2_fixer_generated_bugs_$6_$5.out 2>&1
+if [[ "$6" == *"nocritic"* ]]; then
+    python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$6_$5.json --nocritic > $1/$2_fixer_generated_bugs_$6_$5.out 2>&1
+fi
+
+if [[ "$6" == *"compiler"* ]]; then
+    python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$6_$5.json --compiler > $1/$2_fixer_generated_bugs_$6_$5.out 2>&1
+fi
+
+if [[ "$6" == *"tests"* ]]; then
+    python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$6_$5.json --tests > $1/$2_fixer_generated_bugs_$6_$5.out 2>&1
+fi
