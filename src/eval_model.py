@@ -146,13 +146,15 @@ def evaluate_fix(args, original_bug, tentative_fix):
 
 def evaluate(args):
     dataset = serialization_utils.load_dataset(args)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
-    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
+    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
     
     results = {}
     for bug in dataset.get_bugs():
         source, target = preprocess_buggy_to_fixed(tokenizer, bug)
+        source = source.to(device)
         
         target_ids = model.generate(
                 input_ids=source.input_ids,
