@@ -140,7 +140,7 @@ def generate(args):
 
         # Generate the tentative solution
         for i, target in enumerate(target_ids):
-            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             new_bug, comp, test = evaluate_fix(args, bug, tentative_fix)
             if new_bug == None:
                 continue

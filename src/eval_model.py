@@ -5,6 +5,7 @@ import os
 import tempfile
 import uuid
 import json
+import traceback
 from unidiff import PatchSet
 
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
@@ -78,25 +79,24 @@ def apply_fix(original_bug, tentative_fix):
     with open(original_file, "r") as f:
         lines = f.readlines()
 
-    # Replace the lines by the tentative_fix
-    #target_start = diff[0][0].target_start
-    #target_length = diff[0][0].target_length
-    #lines[target_start - 1] = tentative_fix + "\n"
-    #lines = lines[:target_start] + lines[target_start + target_length - 1:]
-    # TODO: only fixes only line bugs
-    buggy_line = ""
-    for line in diff[0][0].target_lines():
+    start_buggy = -1
+    start_buggy_ln = -1
+    end_buggy = -1
+    end_buggy_ln = -1
+    for i, line in enumerate(diff[0][0].target_lines()):
         if line.is_added:
-            buggy_line = line.value.strip()
-            ln = line.target_line_no
-            lines = lines[:ln-1] + [tentative_fix + "\n"] + lines[ln:]
-            break
+            if start_buggy == -1:
+                start_buggy = i
+                start_buggy_ln = line.target_line_no
+            if end_buggy < i:
+                end_buggy = i
+                end_buggy_ln = line.target_line_no
+    if start_buggy_ln == -1 or end_buggy_ln == -1:
+        return None
 
-    fixed_line = ""
-    for line in diff[0][0].source_lines():
-        if line.is_removed:
-            fixed_line = line.value.strip()
-            break
+    # Replace the lines by the tentative_fix
+    lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
+    print(tentative_fix)
 
     # Write content to a temporary file
     fixed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
@@ -108,7 +108,7 @@ def apply_fix(original_bug, tentative_fix):
     diff = utils.get_diff(original_file, fixed_file.name)
     os.remove(str(pathlib.Path(fixed_file.name).absolute()))
 
-    return buggy_line, fixed_line, diff
+    return diff
 
 
 def preprocess_buggy_to_fixed(tokenizer, bug):
@@ -119,21 +119,16 @@ def preprocess_buggy_to_fixed(tokenizer, bug):
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
-def preprocess_fixed_to_buggy(tokenizer, bug):
-    source = model_utils.source_str_buggy(bug.get_diff())
-    target = model_utils.target_str_buggy(bug.get_diff())
-    
-    max_input_length = 732
-    return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
-
-
 def evaluate_fix(args, original_bug, tentative_fix):
     try:
         # 1 - Checkout the buggy version
         original_bug.checkout()
 
         # 2 - Create the bug fix
-        buggy_line, fixed_line, diff = apply_fix(original_bug, tentative_fix)
+        diff = apply_fix(original_bug, tentative_fix)
+        if diff == None:
+            original_bug.restore()
+            raise Exception("Bug %s is not patchable..." % original_bug.get_identifier())
         bug_fix = create_bug(args, original_bug, diff)
 
         # 3 - Test the bug fix
@@ -143,16 +138,10 @@ def evaluate_fix(args, original_bug, tentative_fix):
         # 4 - Revert to the fixed version
         original_bug.restore()
 
-        return buggy_line, fixed_line, diff, comp, test
+        return diff, comp, test
     except Exception as e:
         print(e)
-        return "", "", tentative_fix, CompileResult(False, False), TestResult(False, False)
-
-
-# TODO: implement this
-def evaluate_bug(bug, tentative_bug):
-    print("generated " + tentative_bug)
-    return True
+        return tentative_fix, CompileResult(False, False), TestResult(False, False)
 
 
 def evaluate(args):
@@ -163,10 +152,8 @@ def evaluate(args):
     
     results = {}
     for bug in dataset.get_bugs():
-        # TODO: Choose according to parameter
         source, target = preprocess_buggy_to_fixed(tokenizer, bug)
         
-        # TODO: parametrize this
         target_ids = model.generate(
                 input_ids=source.input_ids,
                 attention_mask=source.attention_mask,
@@ -182,18 +169,16 @@ def evaluate(args):
         bug_result["buggy_line"] = buggy_line
         bug_result["fixed_line"] = fixed_line
         for i, target in enumerate(target_ids):
-            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=False)
-            # TODO: Choose according to parameter
-            #buggy_line, fixed_line, diff, comp, test = evaluate_fix(args, bug, tentative_fix)
+            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            diff, comp, test = evaluate_fix(args, bug, tentative_fix)
             fix = {}
             fix["k"] = i+1
             fix["patch"] = tentative_fix
-            #fix["patch_diff"] = diff
-            fix["identical"] = tentative_fix == fixed_line
-            #fix["comp_execute"] = comp.is_executing()
-            #fix["comp_pass"] = comp.is_passing()
-            #fix["test_execute"] = test.is_executing()
-            #fix["test_pass"] = test.is_passing()
+            fix["patch_diff"] = diff
+            fix["comp_execute"] = comp.is_executing()
+            fix["comp_pass"] = comp.is_passing()
+            fix["test_execute"] = test.is_executing()
+            fix["test_pass"] = test.is_passing()
             bug_result["fixes"].append(fix)
 
         results[bug.get_identifier()] = bug_result
