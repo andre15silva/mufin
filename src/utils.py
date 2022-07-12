@@ -77,6 +77,23 @@ def add_pre_process_args(parser):
     return parser
 
 
+def add_group_data_for_breaker_args(parser):
+    parser.add_argument("--round0_dataset", help="Path to the round0 dataset.", required=True, metavar="<path_to_round0_dataset>")
+    parser.add_argument("--fixer_generated_dataset", help="Path to the fixer generated dataset.", required=True, metavar="<path_to_fixer_generated_dataset>")
+    parser.add_argument("--training_dataset", help="Path to the training dataset final location.", required=True, metavar="<path_to_training_dataset>")
+
+    return parser
+
+
+def add_group_data_for_fixer_args(parser):
+    parser.add_argument("--round0_dataset", help="Path to the round0 dataset.", required=True, metavar="<path_to_round0_dataset>")
+    parser.add_argument("--fixer_generated_dataset", help="Path to the fixer generated dataset.", required=True, metavar="<path_to_fixer_generated_dataset>")
+    parser.add_argument("--breaker_generated_dataset", help="Path to the breaker generated dataset.", required=True, metavar="<path_to_breaker_generated_dataset>")
+    parser.add_argument("--training_dataset", help="Path to the training dataset final location.", required=True, metavar="<path_to_training_dataset>")
+
+    return parser
+
+
 def add_eval_args(parser):
     parser.add_argument("--from_pretrained", help="Path to the pretrained model.", required=True, metavar="<path_to_pretrained_model>")
     parser.add_argument("--results_file", help="Path to the result file", required=True, metavar="<path_to_result_file>")

@@ -9,7 +9,7 @@ import serialization_utils
 import model_utils
 
 
-def split_train_val(args):
+def pre_process(args):
     # Load the dataset
     dataset = load_dataset("json", data_files=str(pathlib.Path(args.dataset).absolute()) + "/*.json", field="bugs")
 
@@ -23,8 +23,8 @@ def split_train_val(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Script to shuffle and store the processed dataset.")
+    parser = argparse.ArgumentParser(description="Script to pre process a dataset.")
     parser = utils.add_pre_process_args(parser)
     args = parser.parse_args()
 
-    split_train_val(args)
+    pre_process(args)
