@@ -102,7 +102,7 @@ def evaluate_fix(args, original_bug, tentative_fix):
         # 3 - Test the bug fix
         comp = CompileResult(False, False)
         test = TestResult(False, False)
-        if args.compile or args.tests:
+        if args.compiler or args.tests:
             comp = bug_fix.compile()
         if args.tests:
             test = bug_fix.test()
