@@ -5,7 +5,7 @@ import os
 import tempfile
 import uuid
 import json
-import traceback
+import torch
 from unidiff import PatchSet
 
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer
