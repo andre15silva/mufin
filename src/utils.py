@@ -107,10 +107,9 @@ def add_generate_bugs_from_fixer_args(parser):
     parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
 
     # Dataset to analyze args
-    strategy_arg = parser.add_mutually_exclusive_group(required=True)
-    strategy_arg.add_argument("--nocritic", help="Does not filter the generated bugs with any critic.", required=False, action="store_true")
-    strategy_arg.add_argument("--compiler", help="Filter the generated bugs with any the compiler.", required=False, action="store_true")
-    strategy_arg.add_argument("--tests", help="Does not filter the generated bugs with the tests.", required=False, action="store_true")
+    parser.add_argument("--nocritic", help="Does not filter the generated bugs with any critic.", required=False, action="store_true")
+    parser.add_argument("--compiler", help="Filter the generated bugs with any the compiler.", required=False, action="store_true")
+    parser.add_argument("--tests", help="Does not filter the generated bugs with the tests.", required=False, action="store_true")
 
     return parser
 

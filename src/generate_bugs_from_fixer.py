@@ -124,7 +124,9 @@ def generate(args):
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
     
-    generated_dataset = serialization_utils.create_empty_dataset(args)
+    nocritic_dataset = serialization_utils.create_empty_dataset(args)
+    compiler_dataset = serialization_utils.create_empty_dataset(args)
+    tests_dataset = serialization_utils.create_empty_dataset(args)
     for bug in dataset.get_bugs():
         source, target = preprocess_buggy_to_fixed(tokenizer, bug)
         source = source.to(device)
@@ -146,21 +148,22 @@ def generate(args):
                 continue
 
             if args.nocritic:
-                generated_dataset.add_bug(new_bug)
-            elif args.compiler and comp.is_executing() and comp.is_passing():
-                generated_dataset.add_bug(new_bug)
-            elif args.tests and test.is_executing() and test.is_passing():
-                generated_dataset.add_bug(new_bug)
+                nocritic_dataset.add_bug(new_bug)
+            if args.compiler and comp.is_executing() and comp.is_passing():
+                compiler_dataset.add_bug(new_bug)
+            if args.tests and test.is_executing() and test.is_passing():
+                tests_dataset.add_bug(new_bug)
 
     # Save the datasets
     if args.nocritic:
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk.json")
-    elif args.compiler and comp.is_executing() and comp.is_passing():
+        serialization_utils.save_dataset_to_file(args, nocritic_dataset, path)
+    if args.compiler and comp.is_executing() and comp.is_passing():
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile.json")
-    elif args.tests and test.is_executing() and test.is_passing():
+        serialization_utils.save_dataset_to_file(args, compiler_dataset, path)
+    if args.tests and test.is_executing() and test.is_passing():
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile_test.json")
-
-    serialization_utils.save_dataset_to_file(args, generated_dataset, path)
+        serialization_utils.save_dataset_to_file(args, tests_dataset, path)
 
 
 if __name__ == '__main__':

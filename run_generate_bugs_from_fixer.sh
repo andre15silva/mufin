@@ -26,3 +26,7 @@ fi
 if [[ "$5" == *"tests"* ]]; then
     python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$5_$4.json --tests > $1/$2_fixer_generated_bugs_$5_$4.out 2>&1
 fi
+
+if [[ "$5" == *"round0"* ]]; then
+    python src/generate_bugs_from_fixer.py --storage $1 --$2 ${datasets[$2]} --from_pretrained $3 --beam_width $6 --model_input $2_hunk_compile_test.json --model_output $2_fixer_generated_bugs_$5_$4.json --nocritic --compiler --tests > $1/$2_fixer_generated_bugs_$5_$4.out 2>&1
+fi
