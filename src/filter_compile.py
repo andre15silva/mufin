@@ -11,11 +11,12 @@ def filter_function(bugs):
     for bug in bugs:
         # Check bugs and fixed versions
         comp_bug = bug.compile()
-        comp_fixed = bug.compile_fixed()
+        #comp_fixed = bug.compile_fixed()
         if not comp_bug.is_executing() or \
-            not comp_bug.is_passing() or \
-            not comp_fixed.is_executing() or \
-            not comp_fixed.is_passing():
+                not comp_bug.is_passing():
+            #or \
+            #not comp_fixed.is_executing() or \
+            #not comp_fixed.is_passing():
             print("Bug %s failed to compile." % bug.get_identifier())
             to_remove.add(bug)
     return to_remove
