@@ -51,7 +51,7 @@ if __name__ == "__main__":
             projects[bug.get_path()] = [bug]
     
     # Run the filter function in separate threads (one for each project)
-    results = Parallel(n_jobs=8)(delayed(filter_function)(project) for project in projects.values())
+    results = Parallel(n_jobs=4)(delayed(filter_function)(project) for project in projects.values())
 
     # Flatten the results
     to_remove = set()
