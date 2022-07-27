@@ -141,7 +141,7 @@ def identical(fixed_line, tentative_fix):
 
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     if identical(fixed_line, tentative_fix):
-        return "", False, CompileResult(True, True), TestResult(True, True)
+        return "", True, CompileResult(True, True), TestResult(True, True)
     # TODO: Debug only
     else:
         return "", False, CompileResult(False, False), TestResult(False, False)
