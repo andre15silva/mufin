@@ -8,3 +8,4 @@ sentencepiece==0.1.96
 datasets==2.1.0
 sacrebleu==2.1.0
 tabulate==0.8.9
+matplotlib-venn==0.11.7
