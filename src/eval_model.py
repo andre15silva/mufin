@@ -142,6 +142,9 @@ def identical(fixed_line, tentative_fix):
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     if identical(fixed_line, tentative_fix):
         return "", False, CompileResult(True, True), TestResult(True, True)
+    # TODO: Debug only
+    else:
+        return "", False, CompileResult(False, False), TestResult(False, False)
 
     try:
         # 1 - Checkout the buggy version
@@ -228,7 +231,7 @@ if __name__ == '__main__':
             projects[bug.get_path()] = [bug]
 
     # Run the filter function in separate threads (one for each project)
-    results = Parallel(n_jobs=4)(delayed(evaluate)(project) for project in projects.values())
+    results = Parallel(n_jobs=1)(delayed(evaluate)(project) for project in projects.values())
 
     # Merge results
     merged_results = {}
