@@ -74,30 +74,46 @@ def extract_ground_truth(bug):
 def apply_fix(original_bug, tentative_fix):
     # Parse the diff and access info
     diff = PatchSet(original_bug.get_diff())
+    type_ = model_utils.get_type(original_bug.get_diff())
     original_file = diff[0].source_file
 
     # Read the lines of the original file
     with open(original_file, "r") as f:
         lines = f.readlines()
 
-    start_buggy = -1
-    start_buggy_ln = -1
-    end_buggy = -1
-    end_buggy_ln = -1
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if line.is_added:
-            if start_buggy == -1:
-                start_buggy = i
-                start_buggy_ln = line.target_line_no
-            if end_buggy < i:
-                end_buggy = i
-                end_buggy_ln = line.target_line_no
-    if start_buggy_ln == -1 or end_buggy_ln == -1:
-        return None
+    if type_ == "REPLACE" or type_ == "REMOVE":
+        start_buggy = -1
+        start_buggy_ln = -1
+        end_buggy = -1
+        end_buggy_ln = -1
+        for i, line in enumerate(diff[0][0]):
+            if line.is_added:
+                if start_buggy == -1:
+                    start_buggy = i
+                    start_buggy_ln = line.target_line_no
+                if end_buggy < i:
+                    end_buggy = i
+                    end_buggy_ln = line.target_line_no
 
-    # Replace the lines by the tentative_fix
-    lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
-    print(tentative_fix)
+        lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
+
+    elif type_ == "ADD":
+        start_buggy = False
+        start_buggy_ln = -1
+        end_buggy = False
+        end_buggy_ln = -1
+        for i, line in enumerate(diff[0][0]):
+            if line.is_removed:
+                start_buggy = True
+                end_buggy = True
+            elif not start_buggy:
+                start_buggy_ln = line.target_line_no
+            elif end_buggy:
+                end_buggy = False
+                end_buggy_ln = line.target_line_no - 1
+
+        # Add the lines
+        lines = lines[:start_buggy_ln] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
 
     # Write content to a temporary file
     fixed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
@@ -120,7 +136,13 @@ def preprocess_buggy_to_fixed(tokenizer, bug):
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
-def evaluate_fix(args, original_bug, tentative_fix):
+def identical(fixed_line, tentative_fix):
+    return fixed_line.strip() == tentative_fix.strip() or fixed_line.split() == tentative_fix.split()
+
+def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
+    if identical(fixed_line, tentative_fix):
+        return "", False, CompileResult(True, True), TestResult(True, True)
+
     try:
         # 1 - Checkout the buggy version
         original_bug.checkout()
@@ -139,10 +161,10 @@ def evaluate_fix(args, original_bug, tentative_fix):
         # 4 - Revert to the fixed version
         original_bug.restore()
 
-        return diff, comp, test
+        return diff, False, comp, test
     except Exception as e:
         print(e)
-        return tentative_fix, CompileResult(False, False), TestResult(False, False)
+        return tentative_fix, False, CompileResult(False, False), TestResult(False, False)
 
 
 def evaluate(bugs):
@@ -172,11 +194,12 @@ def evaluate(bugs):
         bug_result["fixed_line"] = fixed_line
         for i, target in enumerate(target_ids):
             tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            diff, comp, test = evaluate_fix(args, bug, tentative_fix)
+            diff, identical, comp, test = evaluate_fix(args, bug, fixed_line, tentative_fix)
             fix = {}
             fix["k"] = i+1
             fix["patch"] = tentative_fix
             fix["patch_diff"] = diff
+            fix["identical"] = identical
             fix["comp_execute"] = comp.is_executing()
             fix["comp_pass"] = comp.is_passing()
             fix["test_execute"] = test.is_executing()
