@@ -1,0 +1,17 @@
+Perturb Actions;Repair Actions;No. bugs;Repaired Bugs
+P1 Replace type;Replace type;3;Math-30,Math-79,Math-57
+P2 Replace operator;Replace operator;11;Chart-1,Closure-62,Closure-73,Compress-19,JacksonCore-25,Math-77,Math-82,Math-85,Time-19,JacksonDatabind-17,JacksonCore-5
+P3 replace literal;Replace literal;14;Closure-168,Closure-70,Closure-86,Codec-7,Collections-26,JacksonDatabind-46,Math-22,Jsoup-18,Cli-25,Math-80,Mockito-26,Math-104,Cli-8,Codec-3
+P4 replace constructor;replace constructor;1;Lang-26
+P5 replace variable;Replace variable;14;Chart-11,Chart-20,Chart-7,Chart-8,Time-4,JacksonDatabind-27,Lang-21,Lang-59,Lang-6,Math-5,Math-72,Math-98,Chart-24,Lang-57
+P6 replace condition expression;Replace condition expression;16;Closure-113,Closure-18,Closure-57,Mockito-29,Mockito-34, Jsoup-47,Codec-2,Closure-38,Lang-33,Chart-9,Closure-104,Mockito-8,Jsoup-43,Math-46,Math-32,Closure-31
+P7 replace invocation;replace invocation;11;Closure-30,Closure-92,Codec-17,Lang-4,Math-75,JacksonDatabind-57,JxPath-10,Math-70,Cli-27,Math-49,Jsoup-62
+P8 compound statement;compound statement;3;Cli-18, Math-41,Mockito-11
+P9 replace with similarity;replace with similarity;5;Mockito-5,Cli-28,Jsoup-41,Jsoup-85,Csv-11
+P10 move statement;move statement;2;Closure-13, Jsoup-49
+P11 transplatant statement;remove statement;1;Jsoup-24
+P12 transplatant condition;unwrap condition;1;Closure-40
+P13 transplatant a block;remove a block;11;Closure-6,,Compress-31,Lang-10,JacksonDatabind-76, Closure-11,Closure-126,Math-50,Compress-27,Closure-46
+P14 remove a statement;insert statement;7;JacksonDatabind-99,Lang-43,Jsoup-55,Cli-17,Lang-51,Compress-4,Lang-8
+P15 unwrap a statement;wrap statements;5;Chart-4,JacksonDatabind-49,Lang-55,Gson-6,Compress-14
+P16 remove a block;add a block;9;Cli-5,Compress-30,Compress-33,JacksonCore-19,JacksonDatabind-47,Closure-102,Closure-118,Chart-14,Csv-9
