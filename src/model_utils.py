@@ -27,145 +27,75 @@ def get_type(example):
 
 def source_str(example):
     diff = PatchSet(example)
-    type_ = get_type(example)
 
-    if type_ == "REPLACE" or type_ == "REMOVE":
-        start_buggy = -1
-        end_buggy = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_added:
-                if start_buggy == -1:
-                    start_buggy = i
-                if end_buggy < i:
-                    end_buggy = i
-        
-        source = ""
-        for i, line in enumerate(diff[0][0]):
-            if i == start_buggy:
-                source += " [START_BUGGY] "
-            if not line.is_removed:
-                source += " " + line.value.strip() + " "
-            if i == end_buggy:
-                source += " [END_BUGGY] "
+    start_buggy = -1
+    end_buggy = -1
+    for i, line in enumerate(diff[0][0]):
+        if line.is_added or line.is_removed:
+            if start_buggy == -1:
+                start_buggy = i
+            if end_buggy < i:
+                end_buggy = i
+    
+    source = ""
+    for i, line in enumerate(diff[0][0]):
+        if i == start_buggy:
+            source += " [START_BUGGY] "
+        if not line.is_removed:
+            source += " " + line.value.strip() + " "
+        if i == end_buggy:
+            source += " [END_BUGGY] "
 
-        return " ".join(source.split())
-
-    elif type_ == "ADD":
-        start_buggy = -1
-        end_buggy = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_removed:
-                if start_buggy == -1:
-                    start_buggy = i
-                if end_buggy < i:
-                    end_buggy = i
-
-        source = ""
-        for i, line in enumerate(diff[0][0]):
-            if i == start_buggy:
-                source += " [START_BUGGY] "
-            if not line.is_removed:
-                source += " " + line.value.strip() + " "
-            if i == end_buggy:
-                source += " [END_BUGGY] "
-        
-        return " ".join(source.split())
-
-    return "ERROR"
+    return " ".join(source.split())
 
 
 def target_str(example):
     diff = PatchSet(example)
-    type_ = get_type(example)
 
-    if type_ == "REPLACE" or type_ == "ADD":
-        start_fix = -1
-        end_fix = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_removed:
-                if start_fix == -1:
-                    start_fix = i
-                if end_fix < i:
-                    end_fix = i
+    start_buggy = -1
+    end_buggy = -1
+    for i, line in enumerate(diff[0][0]):
+        if line.is_added or line.is_removed:
+            if start_buggy == -1:
+                start_buggy = i
+            if end_buggy < i:
+                end_buggy = i
 
-        target = ""
-        for i, line in enumerate(diff[0][0]):
-            if not line.is_added and i >= start_fix and i <= end_fix:
-                target += " " + line.value.strip() + " "
+    target = ""
+    for i, line in enumerate(diff[0][0]):
+        if not line.is_added and i >= start_buggy and i <= end_buggy:
+            target += " " + line.value.strip() + " "
 
-        return " ".join(target.split())
-
-    elif type_ == "REMOVE":
-        start_fix = -1
-        end_fix = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_added:
-                if start_fix == -1:
-                    start_fix = i
-                if end_fix < i:
-                    end_fix = i
-        
-        if start_fix == end_fix:
-            return ""
-        target = ""
-        for i, line in enumerate(diff[0][0]):
-            if not line.is_added and i >= start_fix and i <= end_fix:
-                target += " " + line.value.strip() + " "
-
-        return target
-
-    return "ERROR"
+    return " ".join(target.split())
 
 
 def source_str_buggy(example):
     diff = PatchSet(example)
-    type_ = get_type(example)
 
-    if type_ == "REPLACE" or type_ == "ADD":
-        start_buggy = -1
-        end_buggy = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_removed:
-                if start_buggy == -1:
-                    start_buggy = i
-                if end_buggy < i:
-                    end_buggy = i
+    start_buggy = -1
+    end_buggy = -1
+    for i, line in enumerate(diff[0][0]):
+        if line.is_removed or line.is_added:
+            if start_buggy == -1:
+                start_buggy = i
+            if end_buggy < i:
+                end_buggy = i
         
-        source = ""
-        for i, line in enumerate(diff[0][0]):
-            if i == start_buggy:
-                source += " [START_BUGGY] "
-            if not line.is_added:
-                source += " " + line.value.strip() + " "
-            if i == end_buggy:
-                source += " [END_BUGGY] "
+    source = ""
+    for i, line in enumerate(diff[0][0]):
+        if i == start_buggy:
+            source += " [START_BUGGY] "
+        if not line.is_added:
+            source += " " + line.value.strip() + " "
+        if i == end_buggy:
+            source += " [END_BUGGY] "
 
-        return " ".join(source.split())
-    
-    elif type_ == "REMOVE":
-        start_buggy = -1
-        end_buggy = -1
-        for i, line in enumerate(diff[0][0]):
-            if line.is_added:
-                if start_buggy == -1:
-                    start_buggy = i
-                if end_buggy < i:
-                    end_buggy = i
-        
-        source = ""
-        for i, line in enumerate(diff[0][0]):
-            if i == start_buggy:
-                source += " [START_BUGGY] "
-            if not line.is_added:
-                source += " " + line.value.strip() + " "
-            if i == end_buggy:
-                source += " [END_BUGGY] "
-
-        return " ".join(source.split())
+    return " ".join(source.split())
 
 
 def target_str_buggy(example):
     diff = PatchSet(example)
+
     start_fix = -1
     end_fix = -1
     for i, line in enumerate(diff[0][0]):
