@@ -40,35 +40,14 @@ def create_bug(args, original_bug, diff) -> Bug:
 def extract_ground_truth(bug):
     # Parse the diff and access info
     diff = PatchSet(bug.get_diff())
-    
-    start_buggy = -1
-    end_buggy = -1
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if line.is_added:
-            if start_buggy == -1:
-                start_buggy = i
-            if end_buggy < i:
-                end_buggy = i
-    start_fix = -1
-    end_fix = -1
-    for i, line in enumerate(diff[0][0].source_lines()):
-        if line.is_removed:
-            if start_fix == -1:
-                start_fix = i
-            if end_fix < i:
-                end_fix = i
-    
-    buggy_line = ""
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if i >= start_buggy and i <= end_buggy:
-            buggy_line += " " + line.value.strip() + " "
 
-    fixed_line = ""
-    for i, line in enumerate(diff[0][0].source_lines()):
-        if i >= start_fix and i <= end_fix:
-            fixed_line += " " + line.value.strip() + " "
+    source = model_utils.source_str(bug.get_diff())
+    target = model_utils.target_str(bug.get_diff())
 
-    return " ".join(buggy_line.split()), " ".join(fixed_line.split())
+    source_split_start = source.split("[START_BUGGY]")[1]
+    source_split_end = source_split_start.split("[END_BUGGY]")[0]
+
+    return source_split_end.strip(), target.strip()
 
 
 def apply_fix(original_bug, tentative_fix):
