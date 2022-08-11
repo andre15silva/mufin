@@ -41,29 +41,46 @@ def create_bug(args, original_bug, diff, reverse_diff) -> Bug:
 def apply_fix(original_bug, tentative_fix):
     # Parse the diff and access info
     diff = PatchSet(original_bug.get_diff())
+    type_ = model_utils.get_type(original_bug.get_diff())
     original_file = diff[0].source_file
 
     # Read the lines of the original file
     with open(original_file, "r") as f:
         lines = f.readlines()
 
-    start_buggy = -1
-    start_buggy_ln = -1
-    end_buggy = -1
-    end_buggy_ln = -1
-    for i, line in enumerate(diff[0][0].target_lines()):
-        if line.is_added:
-            if start_buggy == -1:
-                start_buggy = i
-                start_buggy_ln = line.target_line_no
-            if end_buggy < i:
-                end_buggy = i
-                end_buggy_ln = line.target_line_no
-    if start_buggy_ln == -1 or end_buggy_ln == -1:
-        return None, None
+    if type_ == "REPLACE" or type_ == "REMOVE":
+        start_buggy = -1
+        start_buggy_ln = -1
+        end_buggy = -1
+        end_buggy_ln = -1
+        for i, line in enumerate(diff[0][0]):
+            if line.is_added:
+                if start_buggy == -1:
+                    start_buggy = i
+                    start_buggy_ln = line.target_line_no
+                if end_buggy < i:
+                    end_buggy = i
+                    end_buggy_ln = line.target_line_no
 
-    # Replace the lines by the tentative_fix
-    lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
+        lines = lines[:start_buggy_ln-1] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
+
+    elif type_ == "ADD":
+        start_buggy = False
+        start_buggy_ln = -1
+        end_buggy = False
+        end_buggy_ln = -1
+        for i, line in enumerate(diff[0][0]):
+            if line.is_removed:
+                start_buggy = True
+                end_buggy = True
+            elif not start_buggy:
+                start_buggy_ln = line.target_line_no
+            elif end_buggy:
+                end_buggy = False
+                end_buggy_ln = line.target_line_no - 1
+
+        # Add the lines
+        lines = lines[:start_buggy_ln] + [tentative_fix + "\n"] + lines[end_buggy_ln:]
 
     # Write content to a temporary file
     fixed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
