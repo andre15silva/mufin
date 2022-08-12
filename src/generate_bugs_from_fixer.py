@@ -153,7 +153,7 @@ def generate(args):
                 attention_mask=source.attention_mask,
                 num_beams=args.beam_width,
                 max_length=128,
-                early_stopping=False,
+                early_stopping=True,
                 num_return_sequences=args.beam_width,
                 )
 
@@ -175,10 +175,10 @@ def generate(args):
     if args.nocritic:
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk.json")
         serialization_utils.save_dataset_to_file(args, nocritic_dataset, path)
-    if args.compiler and comp.is_executing() and comp.is_passing():
+    if args.compiler:
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile.json")
         serialization_utils.save_dataset_to_file(args, compiler_dataset, path)
-    if args.tests and test.is_executing() and test.is_passing():
+    if args.tests:
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_hunk_compile_test.json")
         serialization_utils.save_dataset_to_file(args, tests_dataset, path)
 

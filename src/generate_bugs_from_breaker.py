@@ -125,7 +125,7 @@ def generate(args):
                         attention_mask=source.attention_mask,
                         num_beams=args.beam_width,
                         max_length=128,
-                        early_stopping=False,
+                        early_stopping=True,
                         num_return_sequences=1,
                         )
 
