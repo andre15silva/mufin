@@ -30,8 +30,6 @@ def add_filtering_args(parser):
     parser.add_argument("--ignore_empty_diff", help="Ignores empty diffs during diff-based filtering", required=False, action="store_true")
     parser.add_argument("--keep_single_file_only", help="Keeps only single file diffs during diff-based filtering", required=False, action="store_true")
     parser.add_argument("--keep_single_hunk_only", help="Keeps only single file hunks during diff-based filtering", required=False, action="store_true")
-    parser.add_argument("--keep_single_line_only", help="Keeps only single line diffs during diff-based filtering", required=False, action="store_true")
-
     return parser
 
 

@@ -17,22 +17,12 @@ def filter_function(bugs):
         elif args.keep_single_file_only and len(diff) != 1:
             print("Bug %s has %d files associated to its patch." % (bug.get_identifier(), len(diff)))
             to_remove.add(bug)
-        elif diff[0].is_added_file or diff[0].is_removed_file:
+        elif True in [file.is_added_file or file.is_removed_file for file in diff]:
             print("There was some error with bug %s since it consideres it a new file or removed file." % bug.get_identifier())
             to_remove.add(bug)
-        elif args.keep_single_hunk_only and len(diff[0]) != 1:
+        elif args.keep_single_hunk_only and True in [len(file) != 1 for file in diff]:
             print("Bug %s has %d hunks associated with its single-file patch." % (bug.get_identifier(), len(diff[0])))
             to_remove.add(bug)
-        elif args.keep_single_line_only:
-            if diff[0][0].added != 1 or diff[0][0].removed != 1:
-                print("Bug %s is not single line" % bug.get_identifier())
-                to_remove.add(bug)
-            elif not [line.target_line_no for line in diff[0][0].target_lines() if line.is_added][0] != None or not \
-                [line.source_line_no for line in diff[0][0].source_lines() if line.is_removed][0] != None or not \
-                [line.target_line_no for line in diff[0][0].target_lines() if line.is_added][0] == \
-                [line.source_line_no for line in diff[0][0].source_lines() if line.is_removed][0]:
-                print("Bug %s is single line but the lines don't match" % bug.get_identifier())
-                to_remove.add(bug)
     return to_remove
 
 
