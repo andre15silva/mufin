@@ -37,12 +37,9 @@ def create_bug(args, original_bug, diff) -> Bug:
         return NotImplementedError("%s" % args)
 
 
-def extract_ground_truth(bug):
-    # Parse the diff and access info
-    diff = PatchSet(bug.get_diff())
-
-    source = model_utils.source_str(bug.get_diff())
-    target = model_utils.target_str(bug.get_diff())
+def extract_ground_truth(hunk):
+    source = model_utils.source_str_hunk(hunk)
+    target = model_utils.target_str_hunk(hunk)
 
     source_split_start = source.split("[START_BUGGY]")[1]
     source_split_end = source_split_start.split("[END_BUGGY]")[0]
@@ -107,9 +104,9 @@ def apply_fix(original_bug, tentative_fix):
     return diff
 
 
-def preprocess_buggy_to_fixed(tokenizer, bug):
-    source = model_utils.source_str(bug.get_diff())
-    target = model_utils.target_str(bug.get_diff())
+def preprocess_buggy_to_fixed(tokenizer, hunk):
+    source = model_utils.source_str_hunk(hunk)
+    target = model_utils.target_str_hunk(hunk)
 
     max_input_length = 732
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
@@ -121,7 +118,7 @@ def identical(fixed_line, tentative_fix):
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     if identical(fixed_line, tentative_fix):
         return "", True, CompileResult(True, True), TestResult(True, True)
-    # TODO: Debug only
+    # TODO: Implement execution for perfect fault localization on several lines
     else:
         return "", False, CompileResult(False, False), TestResult(False, False)
 
@@ -157,37 +154,46 @@ def evaluate(bugs):
     
     results = {}
     for bug in bugs:
-        source, target = preprocess_buggy_to_fixed(tokenizer, bug)
-        source = source.to(device)
-        
-        target_ids = model.generate(
-                input_ids=source.input_ids,
-                attention_mask=source.attention_mask,
-                num_beams=args.beam_width,
-                max_length=128,
-                early_stopping=True,
-                num_return_sequences=args.beam_width,
-                )
+        # Parse the diff and access info
+        diff = PatchSet(bug.get_diff())
 
-        # Generate the tentative solution
-        bug_result = { "fixes" : [] }
-        buggy_line, fixed_line = extract_ground_truth(bug)
-        bug_result["buggy_line"] = buggy_line
-        bug_result["fixed_line"] = fixed_line
-        for i, target in enumerate(target_ids):
-            tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            diff, identical, comp, test = evaluate_fix(args, bug, fixed_line, tentative_fix)
-            fix = {}
-            fix["k"] = i+1
-            fix["patch"] = tentative_fix
-            fix["patch_diff"] = diff
-            fix["identical"] = identical
-            fix["comp_execute"] = comp.is_executing()
-            fix["comp_pass"] = comp.is_passing()
-            fix["test_execute"] = test.is_executing()
-            fix["test_pass"] = test.is_passing()
-            bug_result["fixes"].append(fix)
+        bug_result = {}
+        for file in diff:
+            file_result = {}
+            for hunk_id, hunk in enumerate(file):
+                hunk_result = { "patches" : [] }
+                source, target = preprocess_buggy_to_fixed(tokenizer, hunk)
+                source = source.to(device)
+                
+                target_ids = model.generate(
+                        input_ids=source.input_ids,
+                        attention_mask=source.attention_mask,
+                        num_beams=args.beam_width,
+                        max_length=128,
+                        early_stopping=True,
+                        num_return_sequences=args.beam_width,
+                        )
 
+                # Generate the tentative solution
+                buggy_line, fixed_line = extract_ground_truth(hunk)
+                hunk_result["buggy_line"] = buggy_line
+                hunk_result["fixed_line"] = fixed_line
+                for i, target in enumerate(target_ids):
+                    tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+                    diff, identical, comp, test = evaluate_fix(args, bug, fixed_line, tentative_fix)
+                    fix = {}
+                    fix["k"] = i+1
+                    fix["patch"] = tentative_fix
+                    fix["patch_diff"] = diff
+                    fix["identical"] = identical
+                    fix["comp_execute"] = comp.is_executing()
+                    fix["comp_pass"] = comp.is_passing()
+                    fix["test_execute"] = test.is_executing()
+                    fix["test_pass"] = test.is_passing()
+                    hunk_result["patches"].append(fix)
+
+                file_result[hunk_id+1] = hunk_result
+            bug_result[file.source_file] = file_result
         results[bug.get_identifier()] = bug_result
     return results
 
@@ -210,7 +216,7 @@ if __name__ == '__main__':
             projects[bug.get_path()] = [bug]
 
     # Run the filter function in separate threads (one for each project)
-    results = Parallel(n_jobs=2)(delayed(evaluate)(project) for project in projects.values())
+    results = Parallel(n_jobs=1)(delayed(evaluate)(project) for project in projects.values())
 
     # Merge results
     merged_results = {}
