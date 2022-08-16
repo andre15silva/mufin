@@ -21,7 +21,5 @@ python src/generate_bugs_from_perturbation_model.py --storage $1 --$2 ${datasets
 for i in  $(find $1 -type f -name "$2_generated_bugs_$3_*.json" -printf "%f\n")
 do
     mkdir -p $1/generated_$2_$3/
-    python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3/$i\_hunk.json > $1/$i\_hunk.out 2>&1
-    mkdir -p $1/generated_$2_$3_single_line/
-    python src/filter_single_hunk.py --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3_single_line/$i\_hunk_single_line.json --keep_single_line_only > $1/$i\_hunk_single_line.out 2>&1
+    python src/filter_single_hunk.py --keep_single_file_only --keep_single_hunk_only --storage $1 --$2 ${datasets[$2]} --model_input $i --model_output generated_$2_$3/$i\_hunk.json > $1/$i\_hunk.out 2>&1
 done

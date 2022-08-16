@@ -14,13 +14,13 @@ def filter_function(bugs):
         diff = PatchSet(bug.get_diff())
         if args.ignore_empty_diff and len(diff) == 0:
             print("Bug %s has %d files associated to its patch, but it will be included." % (bug.get_identifier(), len(diff)))
-        elif len(diff) != 1:
+        elif args.keep_single_file_only and len(diff) != 1:
             print("Bug %s has %d files associated to its patch." % (bug.get_identifier(), len(diff)))
             to_remove.add(bug)
         elif diff[0].is_added_file or diff[0].is_removed_file:
             print("There was some error with bug %s since it consideres it a new file or removed file." % bug.get_identifier())
             to_remove.add(bug)
-        elif len(diff[0]) != 1:
+        elif args.keep_single_hunk_only and len(diff[0]) != 1:
             print("Bug %s has %d hunks associated with its single-file patch." % (bug.get_identifier(), len(diff[0])))
             to_remove.add(bug)
         elif args.keep_single_line_only:
