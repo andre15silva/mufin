@@ -157,7 +157,7 @@ def evaluate(bugs):
         # Parse the diff and access info
         diff = PatchSet(bug.get_diff())
 
-        bug_result = {}
+        bug_result = { "files" : {} }
         for file in diff:
             file_result = {}
             for hunk_id, hunk in enumerate(file):
@@ -193,7 +193,7 @@ def evaluate(bugs):
                     hunk_result["patches"].append(fix)
 
                 file_result[hunk_id+1] = hunk_result
-            bug_result[file.source_file] = file_result
+            bug_result["files"][file.source_file] = file_result
         results[bug.get_identifier()] = bug_result
     return results
 
