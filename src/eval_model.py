@@ -113,7 +113,7 @@ def preprocess_buggy_to_fixed(tokenizer, hunk):
 
 
 def identical(fixed_line, tentative_fix):
-    return fixed_line.strip() == tentative_fix.strip() or fixed_line.split() == tentative_fix.split()
+    return fixed_line.strip() == tentative_fix.strip() or fixed_line.split() == tentative_fix.split() or fixed_line.replace(" ", "") == tentative_fix.replace(" ", "")
 
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     if identical(fixed_line, tentative_fix):
