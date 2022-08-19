@@ -25,6 +25,19 @@ def get_type(example):
         return "ERROR"
 
 
+def source_str_hunk_targets(hunk, targets):
+    source = ""
+    for i, line in enumerate(hunk):
+        if i == targets[0]:
+            source += " [START_BUGGY] "
+        if not line.is_removed:
+            source += " " + line.value.strip() + " "
+        if i == targets[1]:
+            source += " [END_BUGGY] "
+
+    return " ".join(source.split())
+
+
 def source_str_hunk(hunk):
     start_buggy = -1
     end_buggy = -1
@@ -50,6 +63,15 @@ def source_str_hunk(hunk):
 def source_str(example):
     diff = PatchSet(example)
     return source_str_hunk(diff[0][0])
+
+
+def target_str_hunk_targets(hunk, targets):
+    target = ""
+    for i, line in enumerate(hunk):
+        if not line.is_added and i >= targets[0] and i <= targets[1]:
+            target += " " + line.value.strip() + " "
+
+    return " ".join(target.split())
 
 
 def target_str_hunk(hunk):

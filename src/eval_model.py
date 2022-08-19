@@ -37,9 +37,9 @@ def create_bug(args, original_bug, diff) -> Bug:
         return NotImplementedError("%s" % args)
 
 
-def extract_ground_truth(hunk):
-    source = model_utils.source_str_hunk(hunk)
-    target = model_utils.target_str_hunk(hunk)
+def extract_ground_truth(hunk, targets):
+    source = model_utils.source_str_hunk_targets(hunk, targets)
+    target = model_utils.target_str_hunk_targets(hunk, targets)
 
     source_split_start = source.split("[START_BUGGY]")[1]
     source_split_end = source_split_start.split("[END_BUGGY]")[0]
@@ -104,16 +104,19 @@ def apply_fix(original_bug, tentative_fix):
     return diff
 
 
-def preprocess_buggy_to_fixed(tokenizer, hunk):
-    source = model_utils.source_str_hunk(hunk)
-    target = model_utils.target_str_hunk(hunk)
+def preprocess_buggy_to_fixed(tokenizer, hunk, targets):
+    source = model_utils.source_str_hunk_targets(hunk, targets)
+    target = model_utils.target_str_hunk_targets(hunk, targets)
 
     max_input_length = 732
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
 def identical(fixed_line, tentative_fix):
-    return fixed_line.strip() == tentative_fix.strip() or fixed_line.split() == tentative_fix.split() or fixed_line.replace(" ", "") == tentative_fix.replace(" ", "")
+    return fixed_line.strip() == tentative_fix.strip() or \
+            fixed_line.split() == tentative_fix.split() or \
+            fixed_line.replace(" ", "") == tentative_fix.replace(" ", "")
+
 
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     if identical(fixed_line, tentative_fix):
@@ -121,29 +124,48 @@ def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     # TODO: Implement execution for perfect fault localization on several lines
     else:
         return "", False, CompileResult(False, False), TestResult(False, False)
+#
+#    try:
+#        # 1 - Checkout the buggy version
+#        original_bug.checkout()
+#
+#        # 2 - Create the bug fix
+#        diff = apply_fix(original_bug, tentative_fix)
+#        if diff == None:
+#            original_bug.restore()
+#            raise Exception("Bug %s is not patchable..." % original_bug.get_identifier())
+#        bug_fix = create_bug(args, original_bug, diff)
+#
+#        # 3 - Test the bug fix
+#        comp = bug_fix.compile()
+#        test = bug_fix.test()
+#
+#        # 4 - Revert to the fixed version
+#        original_bug.restore()
+#
+#        return diff, False, comp, test
+#    except Exception as e:
+#        print(e)
+#        return tentative_fix, False, CompileResult(False, False), TestResult(False, False)
 
-    try:
-        # 1 - Checkout the buggy version
-        original_bug.checkout()
 
-        # 2 - Create the bug fix
-        diff = apply_fix(original_bug, tentative_fix)
-        if diff == None:
-            original_bug.restore()
-            raise Exception("Bug %s is not patchable..." % original_bug.get_identifier())
-        bug_fix = create_bug(args, original_bug, diff)
+def get_target_idxs(hunk):
+    targets = []
 
-        # 3 - Test the bug fix
-        comp = bug_fix.compile()
-        test = bug_fix.test()
+    start_buggy = -1
+    end_buggy = -1
+    for i, line in enumerate(hunk):
+        if line.is_added or line.is_removed:
+            if start_buggy == -1:
+                start_buggy = i
+            if end_buggy < i:
+                end_buggy = i
+        elif start_buggy != -1 and end_buggy != -1:
+            targets.append((start_buggy, end_buggy))
+            start_buggy = -1
+            end_buggy = -1
 
-        # 4 - Revert to the fixed version
-        original_bug.restore()
-
-        return diff, False, comp, test
-    except Exception as e:
-        print(e)
-        return tentative_fix, False, CompileResult(False, False), TestResult(False, False)
+    return targets
 
 
 def evaluate(bugs):
@@ -160,39 +182,46 @@ def evaluate(bugs):
         bug_result = { "files" : {} }
         for file in diff:
             file_result = {}
-            for hunk_id, hunk in enumerate(file):
-                hunk_result = { "patches" : [] }
-                source, target = preprocess_buggy_to_fixed(tokenizer, hunk)
-                source = source.to(device)
+            hunk_id = 0
+            for hunk in file:
+                target_idxs = get_target_idxs(hunk)
+                print(hunk)
+                print(target_idxs)
+
+                for targets in target_idxs:
+                    hunk_result = { "patches" : [] }
+                    source, target = preprocess_buggy_to_fixed(tokenizer, hunk, targets)
+                    source = source.to(device)
                 
-                target_ids = model.generate(
-                        input_ids=source.input_ids,
-                        attention_mask=source.attention_mask,
-                        num_beams=args.beam_width,
-                        max_length=128,
-                        early_stopping=True,
-                        num_return_sequences=args.beam_width,
-                        )
+                    target_ids = model.generate(
+                            input_ids=source.input_ids,
+                            attention_mask=source.attention_mask,
+                            num_beams=args.beam_width,
+                            max_length=128,
+                            early_stopping=True,
+                            num_return_sequences=args.beam_width,
+                            )
 
-                # Generate the tentative solution
-                buggy_line, fixed_line = extract_ground_truth(hunk)
-                hunk_result["buggy_line"] = buggy_line
-                hunk_result["fixed_line"] = fixed_line
-                for i, target in enumerate(target_ids):
-                    tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-                    diff, identical, comp, test = evaluate_fix(args, bug, fixed_line, tentative_fix)
-                    fix = {}
-                    fix["k"] = i+1
-                    fix["patch"] = tentative_fix
-                    fix["patch_diff"] = diff
-                    fix["identical"] = identical
-                    fix["comp_execute"] = comp.is_executing()
-                    fix["comp_pass"] = comp.is_passing()
-                    fix["test_execute"] = test.is_executing()
-                    fix["test_pass"] = test.is_passing()
-                    hunk_result["patches"].append(fix)
+                    # Generate the tentative solution
+                    buggy_line, fixed_line = extract_ground_truth(hunk, targets)
+                    hunk_result["buggy_line"] = buggy_line
+                    hunk_result["fixed_line"] = fixed_line
+                    for i, target in enumerate(target_ids):
+                        tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+                        diff, identical, comp, test = evaluate_fix(args, bug, fixed_line, tentative_fix)
+                        fix = {}
+                        fix["k"] = i+1
+                        fix["patch"] = tentative_fix
+                        fix["patch_diff"] = diff
+                        fix["identical"] = identical
+                        fix["comp_execute"] = comp.is_executing()
+                        fix["comp_pass"] = comp.is_passing()
+                        fix["test_execute"] = test.is_executing()
+                        fix["test_pass"] = test.is_passing()
+                        hunk_result["patches"].append(fix)
 
-                file_result[hunk_id+1] = hunk_result
+                    file_result[hunk_id] = hunk_result
+                    hunk_id += 1
             bug_result["files"][file.source_file] = file_result
         results[bug.get_identifier()] = bug_result
     return results
