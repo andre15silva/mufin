@@ -41,7 +41,7 @@ def create_bugs(args, bug, original_file, df):
         with open(original_file, "r") as f:
             lines = f.readlines()
             lines = lines[:row["start_line"]-1] + \
-                    [row["generated_str"]] + \
+                    [row["generated_str"].strip()] + \
                     lines[row["end_line"]:]
 
         buggy_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")

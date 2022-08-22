@@ -35,7 +35,7 @@ def source_str_hunk_targets(hunk, targets):
         if i == targets[1]:
             source += " [END_BUGGY] "
 
-    return " ".join(source.split())
+    return " ".join(source.split()).strip()
 
 
 def source_str_hunk(hunk):
@@ -57,7 +57,7 @@ def source_str_hunk(hunk):
         if i == end_buggy:
             source += " [END_BUGGY] "
 
-    return " ".join(source.split())
+    return " ".join(source.split()).strip()
 
 
 def source_str(example):
@@ -71,7 +71,7 @@ def target_str_hunk_targets(hunk, targets):
         if not line.is_added and i >= targets[0] and i <= targets[1]:
             target += " " + line.value.strip() + " "
 
-    return " ".join(target.split())
+    return " ".join(target.split()).strip()
 
 
 def target_str_hunk(hunk):
@@ -89,7 +89,7 @@ def target_str_hunk(hunk):
         if not line.is_added and i >= start_buggy and i <= end_buggy:
             target += " " + line.value.strip() + " "
 
-    return " ".join(target.split())
+    return " ".join(target.split()).strip()
 
 
 def target_str(example):
@@ -118,7 +118,7 @@ def source_str_buggy(example):
         if i == end_buggy:
             source += " [END_BUGGY] "
 
-    return " ".join(source.split())
+    return " ".join(source.split()).strip()
 
 
 def target_str_buggy(example):
@@ -138,4 +138,4 @@ def target_str_buggy(example):
         if not line.is_removed and i >= start_fix and i <= end_fix:
             target += " " + line.value.strip() + " "
 
-    return " ".join(target.split())
+    return " ".join(target.split()).strip()
