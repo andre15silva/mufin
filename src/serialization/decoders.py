@@ -6,7 +6,6 @@ from models.defects4j.defects4j import Defects4J
 from models.defects4j.defects4jbug import Defects4JBug
 from models.bugsdotjar.bugsdotjar import BugsDotJar
 from models.bugsdotjar.bugsdotjar import BugsDotJarBug
-from models.defects4j.defects4jbug import Defects4JBug
 from models.bears.bears import Bears
 from models.bears.bearsbug import BearsBug
 from models.quixbugs.quixbugs import QuixBugs
@@ -20,13 +19,21 @@ class BugDecoder:
         bug = None
 
         if dataset == "bears":
-            return BearsBug(data["identifier"], Path(data["path"]), data["diff"])
+            return BearsBug(data["identifier"], Path(data["path"]), data["diff"], \
+                    data["context"] if "context" in data.keys() else "", \
+                    data["perturb_rule"] if "perturb_rule" in data.keys() else "")
         elif dataset == "bugsdotjar":
-            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["diff"])
+            return BugsDotJarBug(data["identifier"], Path(data["path"]), data["diff"], \
+                    data["context"] if "context" in data.keys() else "", \
+                    data["perturb_rule"] if "perturb_rule" in data.keys() else "")
         elif dataset == "defects4j":
-            return Defects4JBug(data["identifier"], Path(data["path"]), data["diff"])
+            return Defects4JBug(data["identifier"], Path(data["path"]), data["diff"], \
+                    data["context"] if "context" in data.keys() else "", \
+                    data["perturb_rule"] if "perturb_rule" in data.keys() else "")
         elif dataset == "quixbugs":
-            return QuixBugsBug(data["identifier"], Path(data["path"]), data["diff"])
+            return QuixBugsBug(data["identifier"], Path(data["path"]), data["diff"], \
+                    data["context"] if "context" in data.keys() else "", \
+                    data["perturb_rule"] if "perturb_rule" in data.keys() else "")
         else:
             raise NotImplementedError
 

@@ -22,7 +22,7 @@ def apply_bug(original_file, infos):
     perturbed_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
 
     action = infos[0]
-    corrupt_code =  infos[1]  
+    corrupt_code =  infos[1].strip()
     lineNo1 =  infos[2]
     lineNo2 =  infos[3]
     lineNo3 =  infos[4]
@@ -31,7 +31,7 @@ def apply_bug(original_file, infos):
 
     # read and perturb code 
     perturbed_content = ""
-    if "ADD" in action.upper() or "REPLACE" in action.upper() or "INSERT" in action.upper() or "UNWRAP" in action.upper() or "BUGLAB" in action.upper():
+    if "ADD" in action.upper() or "REPLACE" in action.upper() or "INSERT" in action.upper() or "UNWRAP" in action.upper() or "BUGLAB" in action.upper() or "MOVE" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -43,22 +43,22 @@ def apply_bug(original_file, infos):
                     if lineNo2=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
                 elif i+1==int(lineNo1)+2:
                     if lineNo3=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
                 elif i+1==int(lineNo1)+3:  
                     if lineNo4=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
                 elif i+1==int(lineNo1)+4:
                     if lineNo5=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
     elif "REMOVE" in action.upper() or "DELETE" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
@@ -66,27 +66,27 @@ def apply_bug(original_file, infos):
                 if i+1< int(lineNo1) or i+1> int(lineNo1)+4:
                     perturbed_content+=lines[i]
                 elif i+1==int(lineNo1):
-                    perturbed_content+= lines[i]+" \n" +corrupt_code
-                elif i+1==int(lineNo1)+1: 
+                    perturbed_content+=corrupt_code
+                elif i+1==int(lineNo1)+1:
                     if lineNo2=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
                 elif i+1==int(lineNo1)+2:
                     if lineNo3=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
-                elif i+1==int(lineNo1)+3:  
+                        perturbed_content+=""
+                elif i+1==int(lineNo1)+3:
                     if lineNo4=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
                 elif i+1==int(lineNo1)+4:
                     if lineNo5=='':
                         perturbed_content+=lines[i]
                     else:
-                        perturbed_content+=" \n"
+                        perturbed_content+=""
 
     # Write the perturbed code back to the tmp file
     perturbed_file.write(perturbed_content)
@@ -94,23 +94,22 @@ def apply_bug(original_file, infos):
     perturbed_file.close()
     
     diff = utils.get_diff(str(original_file), str(perturbed_file.name))
-    # TODO: there is some bug which is makes the diff return an empty diff most of the times
-    if diff == "" and corrupt_code != "":
+    if diff == "":
         print("A %s following perturbation didn't generate any diff." % (infos[0]))
     os.remove(str(pathlib.Path(perturbed_file.name).absolute()))
     return diff
 
 
-def create_bug(args, original_bug, diff) -> Bug:
+def create_bug(args, original_bug, diff, context, perturb_rule) -> Bug:
     uid = str(uuid.uuid4())
     if args.defects4j != None:
-        return Defects4JBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff)
+        return Defects4JBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff, context, perturb_rule)
     elif args.bugsdotjar != None:
-        return BugsDotJarBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff)
+        return BugsDotJarBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff, context, perturb_rule)
     elif args.bears != None:
-        return BearsBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff)
+        return BearsBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff, context, perturb_rule)
     elif args.quixbugs != None:
-        return QuixBugsBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff)
+        return QuixBugsBug(original_bug.get_identifier() + "-" + uid, original_bug.get_path(), diff, context, perturb_rule)
     else:
         return NotImplementedError("%s" % args)
 
@@ -128,10 +127,8 @@ def construct_bug(args, original_bug, original_file, perturbations_file):
                     # Create bug
                     diff = apply_bug(original_file, infos)
                     patch = PatchSet(diff)
-                    if len(patch) > 0 and (patch[0].is_added_file or patch[0].is_removed_file):
-                        print("BUGGY LINE: " + line)
                     if diff != "":
-                        bug = create_bug(args, original_bug, diff)
+                        bug = create_bug(args, original_bug, diff, infos[10], infos[0])
                         bugs.append(bug)
 
                 except Exception as e:
@@ -139,7 +136,8 @@ def construct_bug(args, original_bug, original_file, perturbations_file):
                     continue
             
                 # TODO: Debug purposes only
-                #break
+                #if len(bugs) > 0:
+                #    break
     
         os.remove(perturbations_file)
 
@@ -192,3 +190,6 @@ if __name__ == "__main__":
         # Save the dataset
         path = pathlib.Path(args.storage, args.model_output.split(".json")[0] + "_" + bug.get_identifier().lower() + ".json")
         serialization_utils.save_dataset_to_file(args, new_dataset, path)
+
+        # TODO: debug purposes only
+        #break

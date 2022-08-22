@@ -15,7 +15,7 @@ if [[ ! " ${!datasets[*]} " =~ " $2 " ]]; then
     exit 1
 fi
 
-python src/generate_bugs_from_perturbation_model.py --storage $1 --$2 ${datasets[$2]} --perturbation_model perturbation-0.0.1-SNAPSHOT-jar-with-dependencies.jar --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$3.json --$3 > $1/$2_generated_bugs_$3.out 2>&1
+python src/generate_bugs_from_pertubation_model.py --storage $1 --$2 ${datasets[$2]} --perturbation_model perturbation-0.0.1-SNAPSHOT-jar-with-dependencies.jar --model_input $2_hunk_compile_test.json --model_output $2_generated_bugs_$3.json --$3 > $1/$2_generated_bugs_$3.out 2>&1
 
 # Filter each generated dataset
 for i in  $(find $1 -type f -name "$2_generated_bugs_$3_*.json" -printf "%f\n")

@@ -12,11 +12,13 @@ class Bug(ABC):
     """
     The abstract class for representing a bug.
     """
-    
-    def __init__(self, identifier: str, path: pathlib.Path, diff: str) -> None:
+
+    def __init__(self, identifier: str, path: pathlib.Path, diff: str, context: str, perturb_rule: str) -> None:
         self.identifier = identifier
         self.path = path
         self.diff = diff
+        self.context = context
+        self.perturb_rule = perturb_rule
 
     def get_identifier(self) -> str:
         return self.identifier
@@ -26,6 +28,12 @@ class Bug(ABC):
 
     def get_diff(self) -> str:
         return self.diff
+
+    def get_context(self) -> str:
+        return self.context
+
+    def get_perturb_rule(self) -> str:
+        return self.perturb_rule
 
     @final
     def checkout(self) -> bool:
