@@ -97,10 +97,10 @@ def apply_fix(original_bug, tentative_fix):
 
 
 def preprocess_buggy_to_fixed(tokenizer, bug):
-    source = model_utils.source_str(bug.get_diff())
+    source = model_utils.source_str(bug.get_diff(), bug.get_context())
     target = model_utils.target_str(bug.get_diff())
 
-    max_input_length = 732
+    max_input_length = 768
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 

@@ -25,7 +25,7 @@ def get_type(example):
         return "ERROR"
 
 
-def source_str_hunk_targets(hunk, targets):
+def source_str_hunk_targets(hunk, targets, context):
     source = ""
     for i, line in enumerate(hunk):
         if i == targets[0]:
@@ -35,10 +35,12 @@ def source_str_hunk_targets(hunk, targets):
         if i == targets[1]:
             source += " [END_BUGGY] "
 
+    source += " [CONTEXT] " + context
+
     return " ".join(source.split()).strip()
 
 
-def source_str_hunk(hunk):
+def source_str_hunk(hunk, context):
     start_buggy = -1
     end_buggy = -1
     for i, line in enumerate(hunk):
@@ -57,12 +59,14 @@ def source_str_hunk(hunk):
         if i == end_buggy:
             source += " [END_BUGGY] "
 
+    source += " [CONTEXT] " + context
+
     return " ".join(source.split()).strip()
 
 
-def source_str(example):
+def source_str(example, context):
     diff = PatchSet(example)
-    return source_str_hunk(diff[0][0])
+    return source_str_hunk(diff[0][0], context)
 
 
 def target_str_hunk_targets(hunk, targets):
@@ -97,7 +101,7 @@ def target_str(example):
     return target_str_hunk(diff[0][0])
 
 
-def source_str_buggy(example):
+def source_str_buggy(example, context):
     diff = PatchSet(example)
 
     start_buggy = -1
@@ -117,6 +121,8 @@ def source_str_buggy(example):
             source += " " + line.value.strip() + " "
         if i == end_buggy:
             source += " [END_BUGGY] "
+
+    source += " [CONTEXT] " + context
 
     return " ".join(source.split()).strip()
 

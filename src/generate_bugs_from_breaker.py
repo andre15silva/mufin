@@ -112,7 +112,7 @@ def generate(args):
                         axis=1
                         )
 
-            max_input_length = 732
+            max_input_length = 768
             unchunked_sources = list(df["source"])
             chunk_size = 100
             chunked_sources = [unchunked_sources[i:i + chunk_size] for i in range(0, len(unchunked_sources), chunk_size)]

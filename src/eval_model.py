@@ -38,7 +38,7 @@ def create_bug(args, original_bug, diff) -> Bug:
 
 
 def extract_ground_truth(hunk, targets):
-    source = model_utils.source_str_hunk_targets(hunk, targets)
+    source = model_utils.source_str_hunk_targets(hunk, targets, "")
     target = model_utils.target_str_hunk_targets(hunk, targets)
 
     source_split_start = source.split("[START_BUGGY]")[1]
@@ -105,10 +105,11 @@ def apply_fix(original_bug, tentative_fix):
 
 
 def preprocess_buggy_to_fixed(tokenizer, hunk, targets):
-    source = model_utils.source_str_hunk_targets(hunk, targets)
+    # TODO: include context
+    source = model_utils.source_str_hunk_targets(hunk, targets, "")
     target = model_utils.target_str_hunk_targets(hunk, targets)
 
-    max_input_length = 732
+    max_input_length = 768
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
