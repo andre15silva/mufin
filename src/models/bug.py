@@ -1,7 +1,6 @@
 import pathlib
 import subprocess
 from abc import ABC, abstractmethod
-from typing import final
 import tempfile
 import time
 
@@ -35,7 +34,6 @@ class Bug(ABC):
     def get_perturb_rule(self) -> str:
         return self.perturb_rule
 
-    @final
     def checkout(self) -> bool:
         if self.diff == "": return True
         try:
@@ -51,7 +49,6 @@ class Bug(ABC):
             print(e)
             return False
 
-    @final
     def restore(self) -> bool:
         if self.diff == "": return True
         try:
@@ -67,7 +64,6 @@ class Bug(ABC):
             print(e)
             return False
 
-    @final
     def compile(self) -> CompileResult:
         if not self.checkout():
             return CompileResult(False, False)
@@ -82,7 +78,6 @@ class Bug(ABC):
             return CompileResult(False, False)
         return result
 
-    @final
     def compile_fixed(self) -> CompileResult:
         result = CompileResult(False, False)
         try:
@@ -96,7 +91,6 @@ class Bug(ABC):
     def compile_impl(self) -> CompileResult:
         pass
 
-    @final
     def test(self) -> TestResult:
         if not self.checkout():
             return TestResult(False, False)
@@ -111,7 +105,6 @@ class Bug(ABC):
             return TestResult(False, False)
         return result
 
-    @final
     def test_fixed(self) -> TestResult:
         result = TestResult(False, False)
         try:
