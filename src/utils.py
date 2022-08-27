@@ -40,6 +40,7 @@ def add_generation_args(parser):
     generation_strategy = parser.add_mutually_exclusive_group(required=True)
     generation_strategy.add_argument("--selfapr", help="Use the SelfAPR perturbation strategy", required=False, action="store_true")
     generation_strategy.add_argument("--buglab", help="Use the BugLab perturbation strategy", required=False, action="store_true")
+    generation_strategy.add_argument("--test", help="Use the test mode", required=False, action="store_true")
 
     return parser
 

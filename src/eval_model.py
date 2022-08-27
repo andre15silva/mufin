@@ -186,8 +186,6 @@ def evaluate(bugs):
             hunk_id = 0
             for hunk in file:
                 target_idxs = get_target_idxs(hunk)
-                print(hunk)
-                print(target_idxs)
 
                 for targets in target_idxs:
                     hunk_result = { "patches" : [] }
