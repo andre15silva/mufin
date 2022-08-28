@@ -56,7 +56,7 @@ def evaluate(bugs):
     
     results = {}
     for bug in bugs:
-        bug_result = {}
+        bug_result = { "hunks" : {} }
         for hunk_id, hunk in enumerate(bugs[bug]):
             hunk_result = { "patches" : [] }
 
@@ -84,7 +84,7 @@ def evaluate(bugs):
                 hunk_result["patches"].append(fix)
                 hunk_result["ground_truth"] = hunk["target"]
 
-            bug_result[hunk_id] = hunk_result
+            bug_result["hunks"][hunk_id] = hunk_result
         results[bug] = bug_result
     return results
 
