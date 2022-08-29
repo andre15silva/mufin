@@ -17,7 +17,7 @@ def train(args):
         model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
     else:
         tokenizer = AutoTokenizer.from_pretrained("uclanlp/plbart-base")
-        tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[CONTEXT]", "[CLASS]", "[METHOD]", "[PARAMETERS]", "[RETURN_TYPE]", "[VARIABLES]"])
+        tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[CONTEXT]", "[CLASS]", "[METHOD]", "[PARAMETERS]", "[RETURN_TYPE]", "[VARIABLES]", "[PATCH]"])
         model = AutoModelForSeq2SeqLM.from_config(
                 T5Config(
                     vocab_size=len(tokenizer),

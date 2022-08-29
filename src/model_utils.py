@@ -28,12 +28,14 @@ def get_type(example):
 def source_str_hunk_targets(hunk, targets, context):
     source = ""
     for i, line in enumerate(hunk):
-        if i == targets[0]:
-            source += " [START_BUGGY] "
-        if not line.is_removed:
+        #if i == targets[0]:
+        #    source += " [START_BUGGY] "
+        #if not line.is_removed:
+        #    source += " " + line.value.strip() + " "
+        #if i == targets[1]:
+        #    source += " [END_BUGGY] "
+        if i >= targets[0] and i <= targets[1]:
             source += " " + line.value.strip() + " "
-        if i == targets[1]:
-            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
@@ -52,12 +54,14 @@ def source_str_hunk(hunk, context):
     
     source = ""
     for i, line in enumerate(hunk):
-        if i == start_buggy:
-            source += " [START_BUGGY] "
-        if not line.is_removed:
+        #if i == start_buggy:
+        #    source += " [START_BUGGY] "
+        #if not line.is_removed:
+        #    source += " " + line.value.strip() + " "
+        #if i == end_buggy:
+        #    source += " [END_BUGGY] "
+        if i >= start_buggy and i <= end_buggy:
             source += " " + line.value.strip() + " "
-        if i == end_buggy:
-            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
@@ -70,7 +74,7 @@ def source_str(example, context):
 
 
 def target_str_hunk_targets(hunk, targets):
-    target = ""
+    target = " [PATCH] "
     for i, line in enumerate(hunk):
         if not line.is_added and i >= targets[0] and i <= targets[1]:
             target += " " + line.value.strip() + " "
@@ -88,7 +92,7 @@ def target_str_hunk(hunk):
             if end_buggy < i:
                 end_buggy = i
 
-    target = ""
+    target = " [PATCH] "
     for i, line in enumerate(hunk):
         if not line.is_added and i >= start_buggy and i <= end_buggy:
             target += " " + line.value.strip() + " "
@@ -115,12 +119,14 @@ def source_str_buggy(example, context):
         
     source = ""
     for i, line in enumerate(diff[0][0]):
-        if i == start_buggy:
-            source += " [START_BUGGY] "
-        if not line.is_added:
+        #if i == start_buggy:
+        #    source += " [START_BUGGY] "
+        #if not line.is_added:
+        #    source += " " + line.value.strip() + " "
+        #if i == end_buggy:
+        #    source += " [END_BUGGY] "
+        if i >= start_buggy and i <= end_buggy:
             source += " " + line.value.strip() + " "
-        if i == end_buggy:
-            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
@@ -139,7 +145,7 @@ def target_str_buggy(example):
             if end_fix < i:
                 end_fix = i
 
-    target = ""
+    target = " [PATCH] "
     for i, line in enumerate(diff[0][0]):
         if not line.is_removed and i >= start_fix and i <= end_fix:
             target += " " + line.value.strip() + " "
