@@ -34,7 +34,7 @@ def source_str_hunk_targets(hunk, targets, context):
         #    source += " " + line.value.strip() + " "
         #if i == targets[1]:
         #    source += " [END_BUGGY] "
-        if i >= targets[0] and i <= targets[1]:
+        if i >= targets[0] and i <= targets[1] and not line.is_removed:
             source += " " + line.value.strip() + " "
 
     source += " [CONTEXT] " + context
@@ -60,7 +60,7 @@ def source_str_hunk(hunk, context):
         #    source += " " + line.value.strip() + " "
         #if i == end_buggy:
         #    source += " [END_BUGGY] "
-        if i >= start_buggy and i <= end_buggy:
+        if i >= start_buggy and i <= end_buggy and not line.is_removed:
             source += " " + line.value.strip() + " "
 
     source += " [CONTEXT] " + context
@@ -125,7 +125,7 @@ def source_str_buggy(example, context):
         #    source += " " + line.value.strip() + " "
         #if i == end_buggy:
         #    source += " [END_BUGGY] "
-        if i >= start_buggy and i <= end_buggy:
+        if i >= start_buggy and i <= end_buggy and not line.is_added:
             source += " " + line.value.strip() + " "
 
     source += " [CONTEXT] " + context
