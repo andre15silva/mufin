@@ -28,14 +28,12 @@ def get_type(example):
 def source_str_hunk_targets(hunk, targets, context):
     source = ""
     for i, line in enumerate(hunk):
-        #if i == targets[0]:
-        #    source += " [START_BUGGY] "
-        #if not line.is_removed:
-        #    source += " " + line.value.strip() + " "
-        #if i == targets[1]:
-        #    source += " [END_BUGGY] "
-        if i >= targets[0] and i <= targets[1] and not line.is_removed:
+        if i == targets[0]:
+            source += " [START_BUGGY] "
+        if not line.is_removed:
             source += " " + line.value.strip() + " "
+        if i == targets[1]:
+            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
@@ -54,14 +52,12 @@ def source_str_hunk(hunk, context):
     
     source = ""
     for i, line in enumerate(hunk):
-        #if i == start_buggy:
-        #    source += " [START_BUGGY] "
-        #if not line.is_removed:
-        #    source += " " + line.value.strip() + " "
-        #if i == end_buggy:
-        #    source += " [END_BUGGY] "
-        if i >= start_buggy and i <= end_buggy and not line.is_removed:
+        if i == start_buggy:
+            source += " [START_BUGGY] "
+        if not line.is_removed:
             source += " " + line.value.strip() + " "
+        if i == end_buggy:
+            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
@@ -119,14 +115,12 @@ def source_str_buggy(example, context):
         
     source = ""
     for i, line in enumerate(diff[0][0]):
-        #if i == start_buggy:
-        #    source += " [START_BUGGY] "
-        #if not line.is_added:
-        #    source += " " + line.value.strip() + " "
-        #if i == end_buggy:
-        #    source += " [END_BUGGY] "
-        if i >= start_buggy and i <= end_buggy and not line.is_added:
+        if i == start_buggy:
+            source += " [START_BUGGY] "
+        if not line.is_added:
             source += " " + line.value.strip() + " "
+        if i == end_buggy:
+            source += " [END_BUGGY] "
 
     source += " [CONTEXT] " + context
 
