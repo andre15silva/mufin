@@ -41,26 +41,8 @@ def get_target_idxs(hunk):
     return targets
 
 
-def get_context(args, bug, file, hunk, targets):
-    try:
-        # Checkout the buggy version
-        bug.checkout()
-
-        # Get the context
-        cmd = "timeout 600 java -jar %s %s %s" % (args.perturbation_model, file, "test-" + str(targets[2]))
-        run = subprocess.run(cmd, shell=True, capture_output=True)
-
-        # Restore the fixed version
-        bug.restore()
-        
-        return run.stdout.decode("utf-8").strip()
-    except Exception as e:
-        print(e)
-        return ""
-
-
-def get_src_tgt(hunk, targets, context):
-    source = model_utils.source_str_hunk_targets(hunk, targets, context)
+def get_src_tgt(hunk, targets):
+    source = model_utils.source_str_hunk_targets(hunk, targets)
     target = model_utils.target_str_hunk_targets(hunk, targets)
     return source, target
 
@@ -86,8 +68,7 @@ if __name__ == "__main__":
             for hunk in file:
                 target_idxs = get_target_idxs(hunk)
                 for targets in target_idxs:
-                    context = get_context(args, bug, file.source_file, hunk, targets)
-                    source, target = get_src_tgt(hunk, targets, context)
+                    source, target = get_src_tgt(hunk, targets)
                     bug_hunks += [{
                         "file" : file.source_file,
                         "hunk" : str(hunk),
@@ -96,6 +77,7 @@ if __name__ == "__main__":
                         }]
         
         bugs[bug.get_identifier()] = bug_hunks
+        #break
 
     path = pathlib.Path(args.storage, args.model_output)
     with open(path, "w") as f:

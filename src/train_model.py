@@ -17,7 +17,7 @@ def train(args):
         model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
     else:
         tokenizer = AutoTokenizer.from_pretrained("uclanlp/plbart-base")
-        tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[CONTEXT]", "[CLASS]", "[METHOD]", "[PARAMETERS]", "[RETURN_TYPE]", "[VARIABLES]", "[PATCH]"])
+        tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[PATCH]"])
         model = AutoModelForSeq2SeqLM.from_config(
                 T5Config(
                     vocab_size=len(tokenizer),
@@ -32,7 +32,7 @@ def train(args):
     max_target_length = 128
 
     def preprocess_buggy_to_fixed(examples):
-        inputs = [model_utils.source_str(diff, context) for diff, context in zip(examples["diff"], examples["context"])]
+        inputs = [model_utils.source_str(diff) for diff in examples["diff"]]
         targets = [model_utils.target_str(diff) for diff in examples["diff"]]
         model_inputs = tokenizer(inputs, max_length=max_input_length, padding=True, truncation=True)
 

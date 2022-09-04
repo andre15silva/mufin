@@ -97,7 +97,7 @@ def apply_fix(original_bug, tentative_fix):
 
 
 def preprocess_buggy_to_fixed(tokenizer, bug):
-    source = model_utils.source_str(bug.get_diff(), bug.get_context())
+    source = model_utils.source_str(bug.get_diff())
     target = model_utils.target_str(bug.get_diff())
 
     max_input_length = 768
