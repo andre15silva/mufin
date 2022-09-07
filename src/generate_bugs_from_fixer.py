@@ -100,6 +100,9 @@ def preprocess_buggy_to_fixed(tokenizer, bug):
     source = model_utils.source_str(bug.get_diff())
     target = model_utils.target_str(bug.get_diff())
 
+    # Remove [PATCH]
+    target = target.replace("[PATCH]", "").strip()
+
     max_input_length = 768
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
@@ -160,6 +163,7 @@ def generate(args):
         # Generate the tentative solution
         for i, target in enumerate(target_ids):
             tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            tentative_fix = tentative_fix.replace("[PATCH]", "").strip()
             new_bug, comp, test = evaluate_fix(args, bug, tentative_fix)
             if new_bug == None:
                 continue
