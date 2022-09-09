@@ -21,7 +21,7 @@ from models.bears.bearsbug import BearsBug
 from models.quixbugs.quixbugsbug import QuixBugsBug
 
 
-def create_bug(args, original_bug, diff, perturb_rule) -> Bug:
+def create_bug(args, original_bug, diff) -> Bug:
     uid = str(uuid.uuid4())
     if args.defects4j != None:
         return Defects4JBug(original_bug.get_identifier() + "-generated_bug-" + uid, original_bug.get_path(), diff)
