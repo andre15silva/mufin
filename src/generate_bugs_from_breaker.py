@@ -39,9 +39,10 @@ def create_bugs(args, bug, original_file, df):
     bugs = []
     for index, row in df.iterrows():
         with open(original_file, "r") as f:
+            generated_str = row["generated_str"].replace("[PATCH]", "").strip()
             lines = f.readlines()
             lines = lines[:row["start_line"]-1] + \
-                    [row["generated_str"].strip()] + \
+                    [generated_str] + \
                     lines[row["end_line"]:]
 
         buggy_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8", delete=False, suffix=".java")
