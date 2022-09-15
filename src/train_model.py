@@ -18,8 +18,14 @@ def train(args):
     else:
         tokenizer = AutoTokenizer.from_pretrained("uclanlp/plbart-base")
         tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[PATCH]"])
+        # Mimics t5-base
         model = AutoModelForSeq2SeqLM.from_config(
                 T5Config(
+                    d_model=768,
+                    d_kv=64,
+                    d_ff=3072,
+                    num_layers=12,
+                    num_heads=12,
                     vocab_size=len(tokenizer),
                     bos_token_id=tokenizer.bos_token_id,
                     eos_token_id=tokenizer.eos_token_id,
