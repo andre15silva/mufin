@@ -23,22 +23,6 @@ from models.bears.bearsbug import BearsBug
 from models.quixbugs.quixbugsbug import QuixBugsBug
 
 
-def create_bug(args, original_bug, diff) -> Bug:
-    uid = str(uuid.uuid4())
-    if args.defects4j != None:
-        return Defects4JBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
-    elif args.bugsdotjar != None:
-        return BugsDotJarBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
-    elif args.bears != None:
-        return BearsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
-    elif args.quixbugs != None:
-        return QuixBugsBug(original_bug.get_identifier() + "-tentative_fix-" + uid, original_bug.get_path(), diff)
-    else:
-        return NotImplementedError("%s" % args)
-
-
-
-
 def identical(fixed_line, tentative_fix):
     return fixed_line.strip() == tentative_fix.strip() or \
             fixed_line.split() == tentative_fix.split() or \
@@ -47,6 +31,7 @@ def identical(fixed_line, tentative_fix):
 
 def evaluate_fix(args, original_bug, fixed_line, tentative_fix):
     return identical(fixed_line, tentative_fix)
+
 
 def evaluate(bugs):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
