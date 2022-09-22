@@ -135,15 +135,14 @@ def preprocess_buggy_to_fixed(tokenizer, bug):
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
-def evaluate(args):
-    dataset = serialization_utils.load_dataset(args)
+def evaluate(bugs):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
     model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
     
     results = {}
-    for bug in dataset.get_bugs():
+    for bug in bugs:
         source, target_truth = preprocess_buggy_to_fixed(tokenizer, bug)
         source = source.to(device)
             
@@ -182,8 +181,25 @@ if __name__ == '__main__':
     parser = utils.add_eval_args(parser)
     args = parser.parse_args()
 
+    # Load the dataset
+    dataset = serialization_utils.load_dataset(args)
+
+    # Separate the bugs by project
+    projects = {}
+    for bug in dataset.get_bugs():
+        if bug.get_path() in projects:
+            projects[bug.get_path()].append(bug)
+        else:
+            projects[bug.get_path()] = [bug]
+
     # Run the filter function in separate threads (one for each project)
-    results = evaluate(args)
+    results = Parallel(n_jobs=4)(delayed(evaluate)(project) for project in projects.values())
+
+    # Merge results
+    final_results = {}
+    for result in results:
+        for bug in result.keys():
+            final_results[bug] = result[bug]
 
     with open(args.results_file, "w") as f:
-        json.dump(results, f, indent=4)
+        json.dump(final_results, f, indent=4)
