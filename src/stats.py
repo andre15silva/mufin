@@ -30,7 +30,7 @@ if __name__ == "__main__":
                 }
 
         # Read bears.json
-        with open("/home/andre/Repos/mscthesis/storage/bears/Bears-1/bears.json", "r") as f:
+        with open(pathlib.Path(bug.get_path(), "bears.json"), "r") as f:
             info = json.load(f)
             bug_info["project"] = info["repository"]["name"]
             bug_info["commitid"] = info["commits"]["fixerBuild"]["sha"][:6]
@@ -38,7 +38,7 @@ if __name__ == "__main__":
             date = datetime.strptime(info["commits"]["fixerBuild"]["date"], "%b %d, %Y %I:%M:%S %p")
             bug_info["date"] = date.strftime("%Y-%m-%d")
 
-            cmd = "cd %s; find . -name '*.java' -and -not -path '*test*' -and -not -path '*Test*' | xargs cat | sed '/^\s*$/d' | wc -l"
+            cmd = "cd %s; find . -name '*.java' -and -not -path '*test*' -and -not -path '*Test*' | xargs cat | sed '/^\s*$/d' | wc -l" % (bug.get_path())
             run = subprocess.run(cmd, shell=True, capture_output=True)
             bug_info["loc"] = int(run.stdout.decode("utf-8"))
             bug_info["tests"] = info["tests"]["overallMetrics"]["numberRunning"]
