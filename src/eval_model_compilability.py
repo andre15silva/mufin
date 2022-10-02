@@ -193,7 +193,7 @@ if __name__ == '__main__':
             projects[bug.get_path()] = [bug]
 
     # Run the filter function in separate threads (one for each project)
-    results = Parallel(n_jobs=3)(delayed(evaluate)(project) for project in projects.values())
+    results = Parallel(n_jobs=2)(delayed(evaluate)(project) for project in projects.values())
 
     # Merge results
     final_results = {}
