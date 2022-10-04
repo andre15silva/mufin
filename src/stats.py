@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 if "Revision ID (fixed version):" in line:
                     bug_info["commitid"] = lines[i+1].strip()[:6]
                 if "Revision date (fixed version):" in line:
-                    date = datetime.strptime(lines[i+1], "%Y-%m-%d %H:%M:%S %z")
+                    date = datetime.strptime(lines[i+1].strip(), "%Y-%m-%d %H:%M:%S %z")
                     bug_info["date"] = date.strftime("%Y-%m-%d")
 
 
