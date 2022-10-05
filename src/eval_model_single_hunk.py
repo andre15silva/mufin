@@ -108,14 +108,17 @@ def evaluate_fix(args, original_bug, tentative_fix):
 
         # 3 - Test the bug fix
         comp = bug_fix.compile()
+        test = TestResult(False, False)
+        if comp.is_executing() and comp.is_passing():
+            test = bug_fix.test()
 
         # 4 - Revert to the fixed version
         original_bug.restore()
 
-        return diff, comp
+        return diff, comp, test
     except Exception as e:
         print(e)
-        return "", CompileResult(False, False)
+        return "", CompileResult(False, False), TestResult(False, False)
 
 
 def identical(fixed_line, tentative_fix):
@@ -160,13 +163,15 @@ def evaluate(bugs):
         for i, target in enumerate(target_ids):
             tentative_fix = tokenizer.decode(target, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             tentative_fix = tentative_fix.replace("[PATCH]", "").strip()
-            diff, comp = evaluate_fix(args, bug, tentative_fix)
+            diff, comp, test = evaluate_fix(args, bug, tentative_fix)
             fix = {}
             fix["k"] = i+1
             fix["tentative_fix"] = tentative_fix
             fix["patch"] = diff
             fix["compile_exec"] = comp.is_executing()
             fix["compile_pass"] = comp.is_passing()
+            fix["test_exec"] = test.is_executing()
+            fix["test_pass"] = test.is_passing()
             fix["identical"] = identical(target_truth, tentative_fix)
             bug_result["patches"].append(fix)
 
