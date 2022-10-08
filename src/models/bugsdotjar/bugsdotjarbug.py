@@ -12,9 +12,9 @@ class BugsDotJarBug(Bug):
     """
 
     def compile_impl(self) -> CompileResult:
-        run = subprocess.run("cd %s; timeout 600 mvn clean compile" % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; timeout 30 mvn clean compile" % self.path.absolute(), shell=True, capture_output=True)
         return CompileResult(True, run.returncode == 0)
 
     def test_impl(self) -> TestResult:
-        run = subprocess.run("cd %s; timeout 600 mvn clean test" % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; timeout 120 mvn clean test" % self.path.absolute(), shell=True, capture_output=True)
         return TestResult(True, run.returncode == 0)
