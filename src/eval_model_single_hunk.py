@@ -138,15 +138,11 @@ def preprocess_buggy_to_fixed(tokenizer, bug):
     return tokenizer(source, max_length=max_input_length, truncation=True, return_tensors='pt'), target
 
 
-def evaluate(bugs):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
-    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
-    
+def evaluate(bugs, model, tokenizer):
     results = {}
     for bug in bugs:
         source, target_truth = preprocess_buggy_to_fixed(tokenizer, bug)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         source = source.to(device)
             
         target_ids = model.generate(
@@ -196,9 +192,14 @@ if __name__ == '__main__':
             projects[bug.get_path()].append(bug)
         else:
             projects[bug.get_path()] = [bug]
+    
+    # Load model and tokenizer
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
+    model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained).to(device)
 
     # Run the filter function in separate threads (one for each project)
-    results = Parallel(n_jobs=2)(delayed(evaluate)(project) for project in projects.values())
+    results = Parallel(n_jobs=3)(delayed(evaluate)(project, model, tokenizer) for project in projects.values())
 
     # Merge results
     final_results = {}
