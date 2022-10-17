@@ -120,3 +120,13 @@ def add_generate_bugs_from_breaker_args(parser):
     parser.add_argument("--beam_width", type=int, help="Beam width", required=True, metavar="<beam_width>")
 
     return parser
+
+
+def add_manual_analysis_args(parser):
+    parser.add_argument("--results", help="Path to the results file.", required=True, metavar="<path_to_results_file>")
+    parser.add_argument("--output", help="Path to the output file.", required=True, metavar="<path_to_output_file>")
+    generation_strategy = parser.add_mutually_exclusive_group(required=True)
+    generation_strategy.add_argument("--selfapr", help="Use the SelfAPR perturbation strategy", required=False, action="store_true")
+    generation_strategy.add_argument("--buglab", help="Use the BugLab perturbation strategy", required=False, action="store_true")
+
+    return parser
