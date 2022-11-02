@@ -1,0 +1,336 @@
+{
+    "Bears-199": {
+        "patches": [],
+        "ground_truth": "private void addArrivedRecordsInput(ProcessRecordsInput processRecordsInput) throws InterruptedException {"
+    },
+    "Bears-219": {
+        "patches": [],
+        "ground_truth": "return correctJavaVersion(javaVersion); } for (Profile profile: model.getProfiles()) { if (profile.getActivation() != null && profile.getActivation().isActiveByDefault()) { javaVersion = getSourceVersion(profile.getBuild()); } } if (javaVersion != null) { return correctJavaVersion(javaVersion); } javaVersion = getProperty(\"java.version\"); if (javaVersion != null) { return correctJavaVersion(javaVersion); } javaVersion = getProperty(\"java.src.version\"); if (javaVersion != null) { return correctJavaVersion(javaVersion); } javaVersion = getProperty(\"maven.compiler.source\"); if (javaVersion != null) { return correctJavaVersion(javaVersion); } javaVersion = getProperty(\"maven.compile.source\"); if (javaVersion != null) { return correctJavaVersion(javaVersion); } // return the current compliance level of spoon return environment.getComplianceLevel(); } private int correctJavaVersion(String javaVersion) { String version = extractVariable(javaVersion); return Integer.parseInt((version.contains(\".\") ? version.substring(2) : version)); }"
+    },
+    "Bears-95": {
+        "patches": [],
+        "ground_truth": "Class<?> type = entity.getType(); return type.getClassLoader() != null && (type.getPackage() == null || !type.getPackage().getName().startsWith(\"java\"));"
+    },
+    "Bears-7": {
+        "patches": [],
+        "ground_truth": "} else if (!ctxt.isEnabled(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)) { // [databind#149]: Allow use of 'String' indexes as well -- unless prohibited (as per above) char c = name.charAt(0); if (c >= '0' && c <= '9') { try { int index = Integer.parseInt(name);"
+    },
+    "Bears-136": {
+        "patches": [],
+        "ground_truth": "result.writeShort(2 + buf.readableBytes()); // length"
+    },
+    "Bears-223": {
+        "patches": [],
+        "ground_truth": "import org.modelmapper.internal.typetools.TypeResolver; import org.modelmapper.spi.ConditionalConverter; import org.modelmapper.spi.MappingContext; import org.modelmapper.spi.PropertyInfo; import io.vavr.Value; /** * @author jstuecker * <p> * Implementation of a {@link ConditionalConverter} for {@link Value} */ class ValueConverter implements ConditionalConverter<Value, Value> { @Override public MatchResult match(Class<?> sourceType, Class<?> destinationType) { if (Value.class.isAssignableFrom(sourceType) && Value.class.isAssignableFrom(destinationType)) { return MatchResult.FULL; } else { return MatchResult.NONE; } } @Override public Value convert(MappingContext<Value, Value> context) { if (context == null || context.getSource() == null) { return null; } final Value<?> source = (Value<?>) context.getSource(); final PropertyInfo destInfo = context.getMapping().getLastDestinationProperty(); final Class<?> destinationType = TypeResolver .resolveRawArgument(destInfo.getGenericType(), destInfo.getInitialType()); return source .map(src -> context.create(src, destinationType)) .map(ctx -> context.getMappingEngine().map(ctx)); }"
+    },
+    "Bears-245": {
+        "patches": [
+            {
+                "k": 2,
+                "tentative_fix": "if (!modifier.equals(Modifier.FINAL)) { throw new IllegalStateException(\"unexpected parameter modifier: \" + modifier); }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-245/src/main/java/com/squareup/javapoet/ParameterSpec.java\t2022-10-12 16:43:44.577650803 +0200\n+++ /tmp/tmpekeoyns9.java\t2022-10-12 16:43:44.577650803 +0200\n@@ -158,10 +158,11 @@\n     }\n \n     public Builder addModifiers(Iterable<Modifier> modifiers) {\n       checkNotNull(modifiers, \"modifiers == null\");\n       for (Modifier modifier : modifiers) {\n+if (!modifier.equals(Modifier.FINAL)) { throw new IllegalStateException(\"unexpected parameter modifier: \" + modifier); }\n         this.modifiers.add(modifier);\n       }\n       return this;\n     }\n \n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule13: insert existing block"
+            }
+        ],
+        "ground_truth": "if (!modifier.equals(Modifier.FINAL)) { throw new IllegalStateException(\"unexpected parameter modifier: \" + modifier); }"
+    },
+    "Bears-138": {
+        "patches": [],
+        "ground_truth": "int mnc = BitUtil.check(mcc, 15) ? buf.readUnsignedShort() : buf.readUnsignedByte(); Network network = new Network(); for (int i = 0; i < 7; i++) { int lac = longFormat ? buf.readInt() : buf.readUnsignedShort(); int cid = longFormat ? (int) buf.readLong() : buf.readUnsignedMedium(); int rssi = -buf.readUnsignedByte(); if (lac > 0) { network.addCellTower(CellTower.from(BitUtil.to(mcc, 15), mnc, lac, cid, rssi));"
+    },
+    "Bears-159": {
+        "patches": [],
+        "ground_truth": "private static final String TS_FORMAT_PATTERN = \"yyyy-MM-dd HH:mm:ss[.S]\"; private static final DateTimeFormatter TS_FORMAT = new DateTimeFormatterBuilder() .appendPattern(\"yyyy-MM-dd HH:mm:ss\") .appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true) .toFormatter();"
+    },
+    "Bears-137": {
+        "patches": [],
+        "ground_truth": "int separatorIndex = buf.indexOf(buf.readerIndex(), buf.writerIndex(), (byte) '|'); if (separatorIndex > 0 && separatorIndex - beginIndex > 19) {"
+    },
+    "Bears-98": {
+        "patches": [
+            {
+                "k": 1,
+                "tentative_fix": "if (parser.hasNext(5)) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-98/src/org/traccar/protocol/GoSafeProtocolDecoder.java\t2022-10-12 17:09:57.073435390 +0200\n+++ /tmp/tmpb6q9jqkw.java\t2022-10-12 17:09:58.317428694 +0200\n@@ -154,11 +154,11 @@\n         position.setCourse(parser.nextDouble());\n         position.setAltitude(parser.nextDouble());\n \n         position.set(Position.KEY_HDOP, parser.next());\n \n-        if (parser.hasNext(4)) {\n+if (parser.hasNext(5)) {\n             position.setNetwork(new Network(CellTower.from(\n                     parser.nextInt(), parser.nextInt(), parser.nextInt(16), parser.nextInt(16), parser.nextInt())));\n         }\n         if (parser.hasNext()) {\n             position.set(Position.KEY_ODOMETER, parser.nextInt());\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule3: modify literal"
+            }
+        ],
+        "ground_truth": "if (parser.hasNext(5)) {"
+    },
+    "Bears-121": {
+        "patches": [],
+        "ground_truth": "if (channel != null && channel.getPipeline().get(HttpRequestDecoder.class) != null"
+    },
+    "Bears-125": {
+        "patches": [],
+        "ground_truth": "position.set(Position.PREFIX_TEMP + i, (short) Integer.parseInt(data[index++], 16) * 0.0625);"
+    },
+    "Bears-235": {
+        "patches": [],
+        "ground_truth": "if (hasAnyChildrenAccountEnabled(account)){ throw new IllegalStateException(\"Children accounts enabled\"); } account.setDisabled(true); accountRepository.save(account); } private boolean hasAnyChildrenAccountEnabled(Account account){ return account.getChildren().stream() .filter(a -> !a.isDisabled()) .findAny() .isPresent(); }"
+    },
+    "Bears-4": {
+        "patches": [],
+        "ground_truth": "@Override public void assignIndex(int index) { _delegate.assignIndex(index); } @Override public int getPropertyIndex() { return _delegate.getPropertyIndex(); } @Override public int getCreatorIndex() { return _delegate.getCreatorIndex(); }"
+    },
+    "Bears-198": {
+        "patches": [],
+        "ground_truth": "this.encryptionContext = request.getEncryptionContext();"
+    },
+    "Bears-108": {
+        "patches": [],
+        "ground_truth": ".number(\"(dd)(dd)(dd)\") // time (hhmmss) .number(\":(-?d+.d+)\") // longitude .number(\":(-?d+.d+)\") // latitude .number(\":(d+.?d*)\") // speed .number(\":(?:NAN|(d+.?d*))\") // accuracy .number(\":(?:NAN|(d+.?d*))\") // course .number(\":(?:NAN|(d+.?d*))\").optional() // altitude"
+    },
+    "Bears-100": {
+        "patches": [],
+        "ground_truth": "if (position.getAttributes().containsKey(Position.KEY_IGNITION)) { boolean ignition = position.getBoolean(Position.KEY_IGNITION); Position lastPosition = Context.getIdentityManager().getLastPosition(position.getDeviceId()); if (lastPosition != null && lastPosition.getAttributes().containsKey(Position.KEY_IGNITION)) { boolean oldIgnition = lastPosition.getBoolean(Position.KEY_IGNITION); if (ignition && !oldIgnition) { result = Collections.singleton( new Event(Event.TYPE_IGNITION_ON, position.getDeviceId(), position.getId())); } else if (!ignition && oldIgnition) { result = Collections.singleton( new Event(Event.TYPE_IGNITION_OFF, position.getDeviceId(), position.getId())); } }"
+    },
+    "Bears-22": {
+        "patches": [],
+        "ground_truth": "@Override public JavaType getSuperClass() { if (_referencedType != null) { return _referencedType.getSuperClass(); } return super.getSuperClass(); }"
+    },
+    "Bears-123": {
+        "patches": [],
+        "ground_truth": "if (startEventIndex == -1 && (trips != deviceState.getMotionState() && deviceState.getMotionPosition() != null || trips == deviceState.getMotionState() && event != null)) { startEventIndex = i; startNoEventIndex = -1; } else if (trips != deviceState.getMotionState() && startEventIndex != -1 && deviceState.getMotionPosition() == null && event == null) { startEventIndex = -1; } if (startNoEventIndex == -1 && (trips == deviceState.getMotionState() && deviceState.getMotionPosition() != null || trips != deviceState.getMotionState() && event != null)) { startNoEventIndex = i; } else if (startNoEventIndex != -1 && deviceState.getMotionPosition() == null && event == null) { startNoEventIndex = -1;"
+    },
+    "Bears-2": {
+        "patches": [],
+        "ground_truth": "if (raw == String.class || raw == Object.class || raw == CharSequence.class) {"
+    },
+    "Bears-110": {
+        "patches": [],
+        "ground_truth": ".expression(\",.*\") .or() .text(\"#\")"
+    },
+    "Bears-249": {
+        "patches": [
+            {
+                "k": 1,
+                "tentative_fix": "if (commitDepBox.dep!= null) { this.dep = new Clock<>(commitDepBox.dep); } else { this.dep = commitDepBox.dep; }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-249/src/main/java/org/imdea/vcd/queue/box/CommittedQueueBox.java\t2022-10-12 18:38:34.083754519 +0200\n+++ /tmp/tmpoxpk2zc2.java\t2022-10-12 18:38:34.127754331 +0200\n@@ -33,11 +33,11 @@\n         this.messageMap = new MessageMap(dot, message, conf);\n     }\n \n     public CommittedQueueBox(CommittedQueueBox commitDepBox) {\n         this.dots = new Dots(commitDepBox.dots);\n-        this.dep = new Clock<>(commitDepBox.dep);\n+if (commitDepBox.dep!= null) { this.dep = new Clock<>(commitDepBox.dep); } else { this.dep = commitDepBox.dep; }\n         this.messageMap = new MessageMap(commitDepBox.messageMap);\n     }\n \n     @Override\n     public Dots getDots() {\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule15: unwrap block"
+            },
+            {
+                "k": 3,
+                "tentative_fix": "if (commitDepBox.dep!= null) { this.dep = new Clock<>(commitDepBox.dep); } else { this.dep = null; }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-249/src/main/java/org/imdea/vcd/queue/box/CommittedQueueBox.java\t2022-10-12 18:39:00.795639363 +0200\n+++ /tmp/tmpylr7l_3m.java\t2022-10-12 18:39:00.795639363 +0200\n@@ -33,11 +33,11 @@\n         this.messageMap = new MessageMap(dot, message, conf);\n     }\n \n     public CommittedQueueBox(CommittedQueueBox commitDepBox) {\n         this.dots = new Dots(commitDepBox.dots);\n-        this.dep = new Clock<>(commitDepBox.dep);\n+if (commitDepBox.dep!= null) { this.dep = new Clock<>(commitDepBox.dep); } else { this.dep = null; }\n         this.messageMap = new MessageMap(commitDepBox.messageMap);\n     }\n \n     @Override\n     public Dots getDots() {\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule15: unwrap block"
+            }
+        ],
+        "ground_truth": "if (commitDepBox.dep != null) { this.dep = new Clock<>(commitDepBox.dep); } else { this.dep = null; }"
+    },
+    "Bears-130": {
+        "patches": [],
+        "ground_truth": ".number(\"(x+)?,\") // power"
+    },
+    "Bears-250": {
+        "patches": [],
+        "ground_truth": "TreeMap<Integer, ? extends Number> sortedMap = new TreeMap<>(map); int cardinality = sortedMap.size(); int[] indices = new int[cardinality]; double[] values = new double[cardinality]; int i = 0; for (Map.Entry<Integer, ? extends Number> entry : sortedMap.entrySet()) {"
+    },
+    "Bears-220": {
+        "patches": [],
+        "ground_truth": "boolean allMapItems = true; for (Object item : (List) ((Map.Entry) localMap.entrySet().iterator().next()).getValue()) { if (!(item instanceof Map)) { allMapItems = false; break; } } name = allMapItems ? String.valueOf(((Map.Entry) localMap.entrySet().iterator().next()).getKey()) : \"root\";"
+    },
+    "Bears-129": {
+        "patches": [],
+        "ground_truth": ".expression(\"(?:[0-9Ff]{20})?,\") // iccid"
+    },
+    "Bears-120": {
+        "patches": [],
+        "ground_truth": "// Skip Alive message while (buf.readable() && Character.isDigit(buf.getByte(buf.readerIndex()))) { buf.readByte(); }"
+    },
+    "Bears-21": {
+        "patches": [],
+        "ground_truth": "if (property == null) { return this; } JsonFormat.Value format = findFormatOverrides(serializers, property, handledType()); if (format == null) { return this; } // Simple case first: serialize as numeric timestamp? JsonFormat.Shape shape = format.getShape(); if (shape.isNumeric()) { return withFormat(Boolean.TRUE, null); } // 08-Jun-2017, tatu: With [databind#1648], this gets bit tricky.. // First: custom pattern will override things if (format.hasPattern()) { final Locale loc = format.hasLocale() ? format.getLocale() : serializers.getLocale(); SimpleDateFormat df = new SimpleDateFormat(format.getPattern(), loc); TimeZone tz = format.hasTimeZone() ? format.getTimeZone() : serializers.getTimeZone(); df.setTimeZone(tz); return withFormat(Boolean.FALSE, df); } // Otherwise, need one of these changes: final boolean hasLocale = format.hasLocale(); final boolean hasTZ = format.hasTimeZone(); final boolean asString = (shape == JsonFormat.Shape.STRING); if (!hasLocale && !hasTZ && !asString) { return this; } DateFormat df0 = serializers.getConfig().getDateFormat(); // Jackson's own `StdDateFormat` is quite easy to deal with... if (df0 instanceof StdDateFormat) { StdDateFormat std = (StdDateFormat) df0; if (format.hasLocale()) { std = std.withLocale(format.getLocale()); } if (format.hasTimeZone()) { std = std.withTimeZone(format.getTimeZone()); } return withFormat(Boolean.FALSE, std); } // 08-Jun-2017, tatu: Unfortunately there's no generally usable // mechanism for changing `DateFormat` instances (or even clone()ing) // So: require it be `SimpleDateFormat`; can't config other types if (!(df0 instanceof SimpleDateFormat)) { // serializers.reportBadDefinition(handledType(), String.format( serializers.reportMappingProblem( \"Configured `DateFormat` (%s) not a `SimpleDateFormat`; can not configure `Locale` or `TimeZone`\", df0.getClass().getName()); } SimpleDateFormat df = (SimpleDateFormat) df0; if (hasLocale) { // Ugh. No way to change `Locale`, create copy; must re-crete completely: df = new SimpleDateFormat(df.toPattern(), format.getLocale()); } else { df = (SimpleDateFormat) df.clone(); } TimeZone newTz = format.getTimeZone(); boolean changeTZ = (newTz != null) && !newTz.equals(df.getTimeZone()); if (changeTZ) { df.setTimeZone(newTz); } return withFormat(Boolean.FALSE, df);"
+    },
+    "Bears-246": {
+        "patches": [
+            {
+                "k": 2,
+                "tentative_fix": "return setBodyParameter(\"position_ms\", position_ms);",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-246/src/main/java/com/wrapper/spotify/requests/data/player/StartResumeUsersPlaybackRequest.java\t2022-10-12 19:25:21.431471200 +0200\n+++ /tmp/tmp3zd7rd8z.java\t2022-10-12 19:25:21.435471182 +0200\n@@ -125,11 +125,11 @@\n      * @return A {@link StartResumeUsersPlaybackRequest.Builder}.\n      */\n     public Builder position_ms(final Integer position_ms) {\n       assert (position_ms != null);\n       assert (position_ms >= 0);\n-      return setQueryParameter(\"position_ms\", position_ms);\n+return setBodyParameter(\"position_ms\", position_ms);\n     }\n \n     /**\n      * The request build method.\n      *\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule7: modify/replace invocation"
+            },
+            {
+                "k": 43,
+                "tentative_fix": "return setBodyParameter(\"position_ms\",position_ms);",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-246/src/main/java/com/wrapper/spotify/requests/data/player/StartResumeUsersPlaybackRequest.java\t2022-10-12 19:29:19.854402206 +0200\n+++ /tmp/tmpqxf4z0wm.java\t2022-10-12 19:29:19.858402188 +0200\n@@ -125,11 +125,11 @@\n      * @return A {@link StartResumeUsersPlaybackRequest.Builder}.\n      */\n     public Builder position_ms(final Integer position_ms) {\n       assert (position_ms != null);\n       assert (position_ms >= 0);\n-      return setQueryParameter(\"position_ms\", position_ms);\n+return setBodyParameter(\"position_ms\",position_ms);\n     }\n \n     /**\n      * The request build method.\n      *\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule7: modify/replace invocation"
+            }
+        ],
+        "ground_truth": "return setBodyParameter(\"position_ms\", position_ms);"
+    },
+    "Bears-102": {
+        "patches": [],
+        "ground_truth": "case 66: position.set(Position.KEY_POWER, buf.readUnsignedShort() + \"mV\"); break; case 67: position.set(Position.KEY_BATTERY, buf.readUnsignedShort() + \"mV\"); break; case 70: position.set(\"pcbTemp\", (length == 4 ? buf.readInt() : buf.readShort()) * 0.1);"
+    },
+    "Bears-239": {
+        "patches": [],
+        "ground_truth": "if (token.type != TokenType.IDENTIFIER && token.type != TokenType.YIELD && token.type != TokenType.LET && token.type != TokenType.ASYNC && token.type != TokenType.AWAIT) {"
+    },
+    "Bears-135": {
+        "patches": [],
+        "ground_truth": "if (beginIndex >= 0) { buf.readerIndex(beginIndex); int endIndex = buf.indexOf(beginIndex, buf.writerIndex(), (byte) '\\n'); if (endIndex >= 0) {"
+    },
+    "Bears-234": {
+        "patches": [],
+        "ground_truth": "if (debitedAccount.isDisabled() || creditedAccount.isDisabled()){ throw new IllegalStateException(\"Account disabled\"); }"
+    },
+    "Bears-238": {
+        "patches": [
+            {
+                "k": 65,
+                "tentative_fix": "if (field!= null) { return field.getType().isArray() || field.getType().isArray() || ignoredNames.contains(field.getName()); } else { return false; }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-238/src/main/java/com/json/ignore/JsonIgnoreFields.java\t2022-10-12 19:48:27.301258958 +0200\n+++ /tmp/tmpzbf2fw7b.java\t2022-10-12 19:48:27.373258636 +0200\n@@ -128,11 +128,11 @@\n         }\n \n     }\n \n     private boolean fieldAcceptable(Field field) {\n-        return field.getType().isPrimitive() || field.getType().isArray() || ignoredNames.contains(field.getName());\n+if (field!= null) { return field.getType().isArray() || field.getType().isArray() || ignoredNames.contains(field.getName()); } else { return false; }\n     }\n \n     public void ignoreFields(Object object) throws IllegalAccessException {\n         Class clazz = object.getClass().getDeclaredFields().length > 0 ? object.getClass() : object.getClass().getSuperclass();\n         Class currentClass = object.getClass();\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "None"
+            }
+        ],
+        "ground_truth": "return /*field.getType().isPrimitive() ||*/ field.getType().isArray() || ignoredNames.contains(field.getName());"
+    },
+    "Bears-109": {
+        "patches": [],
+        "ground_truth": "if (!type.equals(\"Alert\") || protocolType == 0) { position.set(Position.KEY_VERSION_FW, values[index++]); }"
+    },
+    "Bears-184": {
+        "patches": [],
+        "ground_truth": ".filter(it -> entity.equals(it.getJavaType())) //"
+    },
+    "Bears-202": {
+        "patches": [],
+        "ground_truth": "blacklistLibOrExtJars(JarUtils.leafName(libOrExtJar));"
+    },
+    "Bears-207": {
+        "patches": [],
+        "ground_truth": "if (content != null) { response = Response.ok().entity(content).type(mediaType).build(); } else { response = Response.status(Response.Status.NOT_FOUND).build(); } } else { String content = FileUtils.readAllTextFromResource(swaggerResource + path); if (content != null) { response = Response.ok().entity(content).type(mediaType).build(); } else { response = Response.status(Response.Status.NOT_FOUND).build(); }"
+    },
+    "Bears-232": {
+        "patches": [],
+        "ground_truth": "l = (l << 8) | a[i] & 0xFF;"
+    },
+    "Bears-163": {
+        "patches": [],
+        "ground_truth": "if (tokens.canConsume(\"CONSTRAINT\", TokenStream.ANY_VALUE, \"UNIQUE\") || tokens.canConsume(\"CONSTRAINT\", \"UNIQUE\") || tokens.canConsume(\"UNIQUE\")) {"
+    },
+    "Bears-83": {
+        "patches": [],
+        "ground_truth": "// contract: if value, then the field type must be String or CtTypeReference String fieldTypeQName = f.getType().getQualifiedName(); if (fieldTypeQName.equals(String.class.getName())) { // contract: the name of the template parameter must correspond to the name of the field // as found, by Pavel, this is not good contract because it prevents easy refactoring of templates // we remove it but keep th commented code in case somebody would come up with this bad idae // if (!f.getSimpleName().equals(\"_\" + f.getAnnotation(Parameter.class).value())) { // throw new TemplateException(\"the field name of a proxy template parameter must be called _\" + f.getSimpleName()); // } // contract: if a proxy parameter is declared and named \"x\" (@Parameter(\"x\")), then a type member named \"x\" must exist. boolean found = false; for (CtTypeMember member: c.getTypeMembers()) { if (member.getSimpleName().equals(proxyName)) { found = true; } } if (!found) { throw new TemplateException(\"if a proxy parameter is declared and named \\\"\" + proxyName + \"\\\", then a type member named \\\"\\\" + proxyName + \\\"\\\" must exist.\"); } } else if (fieldTypeQName.equals(CtTypeReference.class.getName())) { //OK it is CtTypeReference } else { throw new TemplateException(\"proxy template parameter must be typed as String or CtTypeReference, but it is \" + fieldTypeQName); }"
+    },
+    "Bears-25": {
+        "patches": [],
+        "ground_truth": "// 27-Jun-2017, tatu: [databind#1679] Need to avoid StackOverflowError... if (type == Object.class) { // basically just need to call `toString()`, easiest way: JsonSerializer<Object> ser = new Default(Default.TYPE_TO_STRING, type); _dynamicSerializers = map.newWith(type, ser); return ser; }"
+    },
+    "Bears-161": {
+        "patches": [],
+        "ground_truth": "do { parsePartitionDefinition(start, table); } while (tokens.canConsume(','));"
+    },
+    "Bears-107": {
+        "patches": [],
+        "ground_truth": "if (!data[i].isEmpty()) { lac = Integer.parseInt(data[i]); } break; case \"#CID#\": if (!data[i].isEmpty()) { cid = Integer.parseInt(data[i]); }"
+    },
+    "Bears-160": {
+        "patches": [],
+        "ground_truth": "tokens.canConsume(\"RESTRICT\");"
+    },
+    "Bears-19": {
+        "patches": [],
+        "ground_truth": "ignored = ignorals.findIgnoredForDeserialization();"
+    },
+    "Bears-24": {
+        "patches": [],
+        "ground_truth": "if (o.getClass() == getClass()) { // 16-Jun-2017, tatu: as per [databind#1658], can not do recursive call since // there is likely to be a cycle... // but... true or false? return false; /* // Do NOT ever match unresolved references if (_referencedType == null) { return false; } return (o.getClass() == getClass() && _referencedType.equals(((ResolvedRecursiveType) o).getSelfReferencedType())); */ } return false;"
+    },
+    "Bears-9": {
+        "patches": [],
+        "ground_truth": "} else if (p.getCurrentToken() == JsonToken.VALUE_STRING) { if (ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)) { String str = p.getText().trim(); if (str.isEmpty()) { return null; } }"
+    },
+    "Bears-222": {
+        "patches": [],
+        "ground_truth": "List<E> viAdj = adj.get(vi); for (int j = 1; j <= k / 2; j++) { viAdj.add(target.addEdge(vi, ring.get((i + j) % n))); } } // re-wire edges for (int r = 0; r < k / 2; r++) { for (int i = 0; i < n; i++) { if (rng.nextDouble() < p) { V v = ring.get(i); E e = adj.get(v).get(r);"
+    },
+    "Bears-119": {
+        "patches": [],
+        "ground_truth": "int typeEnd = sentence.indexOf(',', typeStart); if (typeEnd > 0) { String type = sentence.substring(typeStart, typeEnd); switch (type) { case \"NBR\": return decodeLbs(sentence, channel, remoteAddress); case \"LINK\": return decodeLink(sentence, channel, remoteAddress); default: return decodeText(sentence, channel, remoteAddress); } } else { return null;"
+    },
+    "Bears-224": {
+        "patches": [],
+        "ground_truth": "try { Object source = input; Object target = null; for (Operation p : operations) { target = p.apply(source); source = target; if (source == null) { break; } } return target != null ? Value.of((O) target) : Value.empty(); } catch (Exception ex) { return Value.empty(); }"
+    },
+    "Bears-188": {
+        "patches": [],
+        "ground_truth": "repaint();"
+    },
+    "Bears-251": {
+        "patches": [],
+        "ground_truth": "attributesMap = new ConcurrentHashMap<>();"
+    },
+    "Bears-127": {
+        "patches": [],
+        "ground_truth": "if (buf.readableBytes() >= 2) { decodeStatus(position, buf.readUnsignedShort()); }"
+    },
+    "Bears-139": {
+        "patches": [
+            {
+                "k": 44,
+                "tentative_fix": "if (data.length > 2) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval_compilability/bears/Bears-139/src/org/traccar/protocol/MeitrackProtocolDecoder.java\t2022-10-12 22:42:34.911152307 +0200\n+++ /tmp/tmp3cm77z7c.java\t2022-10-12 22:42:34.911152307 +0200\n@@ -257,11 +257,11 @@\n         if (values.length > 5 && !values[5].isEmpty()) {\n             String[] data = values[5].split(\"\\\\|\");\n             boolean started = data[0].charAt(0) == '0';\n             position.set(\"taximeterOn\", started);\n             position.set(\"taximeterStart\", data[1]);\n-            if (!started) {\n+if (data.length > 2) {\n                 position.set(\"taximeterEnd\", data[2]);\n                 position.set(\"taximeterDistance\", Integer.parseInt(data[3]));\n                 position.set(\"taximeterFare\", Integer.parseInt(data[4]));\n                 position.set(\"taximeterTrip\", data[5]);\n                 position.set(\"taximeterWait\", data[6]);\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            }
+        ],
+        "ground_truth": "if (data.length > 2) {"
+    },
+    "Bears-162": {
+        "patches": [],
+        "ground_truth": "if (Types.DECIMAL == dataType.jdbcType()) { if (dataType.length() == -1) { column.length(10); } if (dataType.scale() == -1) { column.scale(0); } }"
+    },
+    "Bears-124": {
+        "patches": [],
+        "ground_truth": ".number(\"(-?d+.d+)\").text(\"+\") // latitude .number(\"(-?d+.d+)\").text(\"+\") // longitude"
+    }
+}
