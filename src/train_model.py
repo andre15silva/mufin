@@ -2,7 +2,7 @@ import numpy as np
 import argparse
 import pathlib
 
-from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer, EarlyStoppingCallback
+from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM, T5Config, Seq2SeqTrainingArguments, Seq2SeqTrainer, EarlyStoppingCallback, RobertaTokenizer, T5ForConditionalGeneration
 from datasets import load_dataset, load_metric
 
 import utils
@@ -13,20 +13,12 @@ import model_utils
 def train(args):
     # Load the pretrained model if the argument is set, otherwise build one from the base
     if args.from_pretrained != None:
-        tokenizer = AutoTokenizer.from_pretrained(args.from_pretrained)
-        model = AutoModelForSeq2SeqLM.from_pretrained(args.from_pretrained)
+        tokenizer = RobertaTokenizer.from_pretrained(args.from_pretrained)
+        model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained)
     else:
-        tokenizer = AutoTokenizer.from_pretrained("uclanlp/plbart-base")
+        tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-base")
         tokenizer.add_tokens(["[START_BUGGY]", "[END_BUGGY]", "[PATCH]"])
-        model = AutoModelForSeq2SeqLM.from_config(
-                T5Config(
-                    vocab_size=len(tokenizer),
-                    bos_token_id=tokenizer.bos_token_id,
-                    eos_token_id=tokenizer.eos_token_id,
-                    pad_token_id=tokenizer.pad_token_id,
-                    decoder_start_token_id=tokenizer.pad_token_id,
-                    )
-                )
+        model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base')
 
     max_input_length = 768
     max_target_length = 128
