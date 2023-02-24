@@ -31,7 +31,7 @@ def apply_bug(original_file, infos):
 
     # read and perturb code 
     perturbed_content = ""
-    if "ADD" in action.upper() or "REPLACE" in action.upper() or "INSERT" in action.upper() or "UNWRAP" in action.upper() or "BUGLAB" in action.upper() or "MOVE" in action.upper():
+    if "ADD" in action.upper() or "REPLACE" in action.upper() or "INSERT" in action.upper() or "UNWRAP" in action.upper() or "BUGLAB" in action.upper() or "MOVE" in action.upper() or "MASKING" in action.upper():
         with open(original_file, "r") as f:
             lines = f.readlines()
             for i in range(0,len(lines)):
@@ -158,8 +158,10 @@ if __name__ == "__main__":
         generation_strategy = "SelfAPR"
     elif args.buglab:
         generation_strategy = "BugLab"
+    elif args.masking:
+        generation_strategy = "Masking"
     else:
-        print("You must set either SelfAPR ou BugLab as the bug generation strategy.")
+        print("You must set either SelfAPR, BugLab, or Masking as the bug generation strategy.")
         sys.exit(1)
 
 
