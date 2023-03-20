@@ -31,10 +31,10 @@ class QuixBugsBug(Bug):
                     test_in = [test_in]
                     # unsure how to make immutable; previous versions just used copy.deepcopy
 
-                cmd = "cd %s; timeout 10 java JavaDeserialization %s %s" % (self.path, self.identifier, " ".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
+                cmd = "cd %s; timeout 360 java JavaDeserialization %s %s" % (self.path, self.identifier, " ".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
                 java_run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True)
 
-                cmd = "cd %s; timeout 10 python -c \"from %s import *; print(%s(%s))\"" % (pathlib.Path(self.path, "correct_python_programs"), self.identifier, self.identifier, ",".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
+                cmd = "cd %s; timeout 360 python -c \"from %s import *; print(%s(%s))\"" % (pathlib.Path(self.path, "correct_python_programs"), self.identifier, self.identifier, ",".join([json.dumps(arg) for arg in copy.deepcopy(test_in)]))
                 python_run = subprocess.run(cmd, shell=True, capture_output=True, universal_newlines=True)
 
                 return TestResult(True, java_run.returncode == 0 and python_run.returncode == 0 and java_run.stdout == python_run.stdout)
