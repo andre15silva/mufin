@@ -31,44 +31,25 @@ class QuixBugs(Dataset):
             fixed_path.mkdir(parents=True)
 
             # Copy files to buggy path
-            # Copy java files
+            # Copy source files
             cmd = "cd %s; mkdir %s/java_programs; cp java_programs/%s.java %s/java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, buggy_path, algo, buggy_path, buggy_path, buggy_path)
             subprocess.call(cmd, shell=True)
-            if pathlib.Path(self.path, "java_testcases", algo + ".java").exists():
-                cmd = "cd %s, mkdir %s/java_testcases; cp java_testcases/%s.java %s/java_testcases/" % (self.path, buggy_path, algo, buggy_path)
-                subprocess.call(cmd, shell=True)
-            # Copy json and JavaDeserialization
-            if pathlib.Path(self.path, "json_testcases", algo.lower() + ".json").exists():
-                cmd = "cd %s; mkdir %s/json_testcases; cp -r json_testcases/%s.json %s/json_testcases/" % (self.path, buggy_path, algo.lower(), buggy_path)
-                subprocess.call(cmd, shell=True)
-                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, buggy_path)
-                subprocess.call(cmd, shell=True)
-
-            # Copy gson dependency
-            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, buggy_path, buggy_path)
+            # Copy test files
+            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, buggy_path, algo, buggy_path)
             subprocess.call(cmd, shell=True)
-            # Copy python programs
-            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s*.py %s/correct_python_programs/" % (self.path, buggy_path, algo.lower(), buggy_path)
+            # Copy build.gradle
+            cmd = "cd %s; cp build.gradle %s/" % (self.path, buggy_path)
             subprocess.call(cmd, shell=True)
 
             # Copy files to fixed path
-            # Copy java files
+            # Copy source files
             cmd = "cd %s; mkdir %s/java_programs; sed -i \"1s/.*/package java_programs;/\" correct_java_programs/%s.java; cp correct_java_programs/%s.java %s/java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, fixed_path, algo, algo, fixed_path, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
-            if pathlib.Path(self.path, "java_testcases", algo + ".java").exists():
-                cmd = "cd %s, mkdir %s/java_testcases; cp java_testcases/%s.java %s/java_testcases/" % (self.path, fixed_path, algo, fixed_path)
-                subprocess.call(cmd, shell=True)
-            # Copy json and JavaDeserialization
-            if pathlib.Path(self.path, "json_testcases", algo.lower() + ".json").exists():
-                cmd = "cd %s; mkdir %s/json_testcases; cp -r json_testcases/%s.json %s/json_testcases/" % (self.path, fixed_path, algo.lower(), fixed_path)
-                subprocess.call(cmd, shell=True)
-                cmd = "cd %s; cp JavaDeserialization.* %s/" % (self.path, fixed_path)
-                subprocess.call(cmd, shell=True)
-            # Copy gson dependency
-            cmd = "cd %s; mkdir %s/com; cp -r com/ %s/" % (self.path, fixed_path, fixed_path)
+            # Copy test files
+            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, fixed_path, algo, fixed_path)
             subprocess.call(cmd, shell=True)
-            # Copy python programs
-            cmd = "cd %s; mkdir %s/correct_python_programs; cp -r correct_python_programs/%s*.py %s/correct_python_programs/" % (self.path, fixed_path, algo.lower(), fixed_path)
+            # Copy build.gradle
+            cmd = "cd %s; cp build.gradle %s/" % (self.path, fixed_path)
             subprocess.call(cmd, shell=True)
 
             self.add_bug(QuixBugsBug(algo.lower(), fixed_path, utils.get_diff(fixed_path, buggy_path)))
