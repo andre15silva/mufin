@@ -14,9 +14,9 @@ class QuixBugsBug(Bug):
     """
 
     def compile_impl(self) -> CompileResult:
-        run = subprocess.run("cd %s; timeout 600 gradle compileJava" % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; timeout 600 mvn compile" % self.path.absolute(), shell=True, capture_output=True)
         return CompileResult(True, run.returncode == 0)
 
     def test_impl(self) -> TestResult:
-        run = subprocess.run("cd %s; timeout 600 gradle test " % self.path.absolute(), shell=True, capture_output=True)
+        run = subprocess.run("cd %s; timeout 600 mvn test" % self.path.absolute(), shell=True, capture_output=True)
         return CompileResult(True, run.returncode == 0)

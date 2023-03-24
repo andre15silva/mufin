@@ -19,17 +19,16 @@ def filter_function(bugs):
                 to_remove.add(bug)
         else:
             test_bug = bug.test()
-            #test_fixed = bug.test_fixed()
-            if not test_bug.is_executing():
-            #or not test_fixed.is_executing():
+            test_fixed = bug.test_fixed()
+            if not test_bug.is_executing() or not test_fixed.is_executing():
                 print("Bug %s tests didn't execute." % bug.get_identifier())
                 to_remove.add(bug)
             elif test_bug.is_passing():
                 print("Bug %s is buggy but the tests pass." % bug.get_identifier())
                 to_remove.add(bug)
-            #elif not test_fixed.is_passing():
-            #    print("Bug %s is fixed but the tests fail." % bug.get_identifier())
-            #    to_remove.add(bug)
+            elif not test_fixed.is_passing():
+                print("Bug %s is fixed but the tests fail." % bug.get_identifier())
+                to_remove.add(bug)
     return to_remove
 
 

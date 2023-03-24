@@ -37,8 +37,8 @@ class QuixBugs(Dataset):
             # Copy test files
             cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, buggy_path, algo, buggy_path)
             subprocess.call(cmd, shell=True)
-            # Copy build.gradle
-            cmd = "cd %s; cp build.gradle %s/" % (self.path, buggy_path)
+            # Copy pom.xml
+            cmd = "cd %s; cp pom.xml %s/" % (self.path, buggy_path)
             subprocess.call(cmd, shell=True)
 
             # Copy files to fixed path
@@ -48,8 +48,8 @@ class QuixBugs(Dataset):
             # Copy test files
             cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, fixed_path, algo, fixed_path)
             subprocess.call(cmd, shell=True)
-            # Copy build.gradle
-            cmd = "cd %s; cp build.gradle %s/" % (self.path, fixed_path)
+            # Copy pom.xml
+            cmd = "cd %s; cp pom.xml %s/" % (self.path, fixed_path)
             subprocess.call(cmd, shell=True)
 
             self.add_bug(QuixBugsBug(algo.lower(), fixed_path, utils.get_diff(fixed_path, buggy_path)))
