@@ -35,7 +35,7 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/java_programs; cp java_programs/%s.java %s/java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, buggy_path, algo, buggy_path, buggy_path, buggy_path)
             subprocess.call(cmd, shell=True)
             # Copy test files
-            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, buggy_path, algo, buggy_path)
+            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit; cp java_testcases/junit/QuixFixOracleHelper.java %s/java_testcases/junit" % (self.path, buggy_path, algo, buggy_path, buggy_path)
             subprocess.call(cmd, shell=True)
             # Copy pom.xml
             cmd = "cd %s; cp pom.xml %s/" % (self.path, buggy_path)
@@ -46,7 +46,7 @@ class QuixBugs(Dataset):
             cmd = "cd %s; mkdir %s/java_programs; sed -i \"1s/.*/package java_programs;/\" correct_java_programs/%s.java; cp correct_java_programs/%s.java %s/java_programs/; cp java_programs/Node.java %s/java_programs/; cp java_programs/WeightedEdge.java %s/java_programs/" % (self.path, fixed_path, algo, algo, fixed_path, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
             # Copy test files
-            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit" % (self.path, fixed_path, algo, fixed_path)
+            cmd = "cd %s; mkdir -p %s/java_testcases/junit; cp java_testcases/junit/%s_TEST.java %s/java_testcases/junit; cp java_testcases/junit/QuixFixOracleHelper.java %s/java_testcases/junit" % (self.path, fixed_path, algo, fixed_path, fixed_path)
             subprocess.call(cmd, shell=True)
             # Copy pom.xml
             cmd = "cd %s; cp pom.xml %s/" % (self.path, fixed_path)
