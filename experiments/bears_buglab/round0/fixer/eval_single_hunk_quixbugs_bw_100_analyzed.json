@@ -1,0 +1,184 @@
+{
+    "shortest_path_length": {
+        "patches": [],
+        "ground_truth": "distance + length_by_edge.get(Arrays.asList(node, nextnode))));"
+    },
+    "quicksort": {
+        "patches": [],
+        "ground_truth": "} else if (x >= pivot) {"
+    },
+    "hanoi": {
+        "patches": [],
+        "ground_truth": "steps.add(new Pair<Integer,Integer>(start, end));"
+    },
+    "bucketsort": {
+        "patches": [],
+        "ground_truth": "for (Integer count : counts) {"
+    },
+    "lis": {
+        "patches": [],
+        "ground_truth": "longest = Math.max(longest,length + 1);"
+    },
+    "knapsack": {
+        "patches": [],
+        "ground_truth": "else if (weight <= j) {"
+    },
+    "powerset": {
+        "patches": [],
+        "ground_truth": "for (ArrayList subset : rest_subsets) { ArrayList r = new ArrayList(); r.add(first); r.addAll(subset); to_add.add(r); } output.addAll(to_add); rest_subsets.addAll(output); return rest_subsets;"
+    },
+    "sqrt": {
+        "patches": [],
+        "ground_truth": "while (Math.abs(x-approx*approx) > epsilon) {"
+    },
+    "next_palindrome": {
+        "patches": [],
+        "ground_truth": "otherwise.addAll(Collections.nCopies(digit_list.length-1, 0));"
+    },
+    "mergesort": {
+        "patches": [],
+        "ground_truth": "if (arr.size() <= 1) { // <= 1 in correct version"
+    },
+    "find_first_in_sorted": {
+        "patches": [
+            {
+                "k": 82,
+                "tentative_fix": "while (lo < hi) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/find_first_in_sorted/java_programs/FIND_FIRST_IN_SORTED.java\t2023-03-24 11:43:58.223478666 +0100\n+++ /tmp/tmp7ec907dn.java\t2023-03-24 11:43:58.223478666 +0100\n@@ -14,11 +14,11 @@\n \n     public static int find_first_in_sorted(int[] arr, int x) {\n         int lo = 0;\n         int hi = arr.length;\n \n-        while (lo <= hi) {\n+while (lo < hi) {\n             int mid = (lo + hi) / 2; // check if this is floor division\n \n             if (x == arr[mid] && (mid == 0 || x != arr[mid-1])) {\n                 return mid;\n             } else if (x <= arr[mid]) {\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "BugLab-Rule3: wrong operator"
+            }
+        ],
+        "ground_truth": "while (lo < hi) {"
+    },
+    "find_in_sorted": {
+        "patches": [],
+        "ground_truth": "return binsearch(arr, x, mid+1, end);"
+    },
+    "detect_cycle": {
+        "patches": [],
+        "ground_truth": "if (null==hare ||hare.getSuccessor() == null)"
+    },
+    "kheapsort": {
+        "patches": [],
+        "ground_truth": "for (Integer x : arr.subList(k, arr.size())) {"
+    },
+    "pascal": {
+        "patches": [],
+        "ground_truth": "for (int c=0; c<r+1; c++) {"
+    },
+    "possible_change": {
+        "patches": [],
+        "ground_truth": "if (total < 0 ||coins.length==0) {"
+    },
+    "shortest_paths": {
+        "patches": [],
+        "ground_truth": "weight_by_node.put(edge.get(1), update_weight); } } return weight_by_node; }"
+    },
+    "lcs_length": {
+        "patches": [],
+        "ground_truth": "// dp.get(i-1).containsKey(j-1) if (dp.containsKey(i-1)&&dp.get(i-1).containsKey(j-1)) { Map<Integer, Integer> internal_map = dp.get(i); int insert_value = dp.get(i-1).get(j-1) + 1;"
+    },
+    "sieve": {
+        "patches": [],
+        "ground_truth": "if (all(list_comp(n, primes))) {"
+    },
+    "gcd": {
+        "patches": [],
+        "ground_truth": "return gcd(b, a%b);"
+    },
+    "shortest_path_lengths": {
+        "patches": [],
+        "ground_truth": "length_by_path.get(Arrays.asList(k,j))));"
+    },
+    "get_factors": {
+        "patches": [],
+        "ground_truth": "return new ArrayList<Integer>(Arrays.asList(n));"
+    },
+    "flatten": {
+        "patches": [],
+        "ground_truth": "result.add((x)); } } return result; } else { return arr;"
+    },
+    "to_base": {
+        "patches": [],
+        "ground_truth": "result = String.valueOf(alphabet.charAt(i))+result;"
+    },
+    "longest_common_subsequence": {
+        "patches": [],
+        "ground_truth": "return a.charAt(0) + longest_common_subsequence(a.substring(1), b.substring(1));"
+    },
+    "subsequences": {
+        "patches": [],
+        "ground_truth": "ArrayList empty_set = new ArrayList<ArrayList>(); empty_set.add(new ArrayList()); return empty_set;"
+    },
+    "rpn_eval": {
+        "patches": [],
+        "ground_truth": "c = bin_op.apply(b,a);"
+    },
+    "topological_ordering": {
+        "patches": [],
+        "ground_truth": "if (orderedNodes.containsAll(nextNode.getPredecessors()) && !orderedNodes.contains(nextNode)) {"
+    },
+    "shunting_yard": {
+        "patches": [],
+        "ground_truth": "precedence.put(\"+\", 1); precedence.put(\"-\", 1); precedence.put(\"*\", 2); precedence.put(\"/\", 2); ArrayList rpntokens = new ArrayList(100); ArrayDeque opstack = new ArrayDeque(); for (Object token : tokens) { if (Integer.class.isInstance(token)) { // cover also Double case I guess? rpntokens.add((Integer) token); } else { String operator = (String) token; while (!opstack.isEmpty() && precedence.get(operator) <= precedence.get(opstack.getLast())) { rpntokens.add(opstack.pop()); } opstack.push(token); }"
+    },
+    "minimum_spanning_tree": {
+        "patches": [],
+        "ground_truth": "groupByNode.put(node, groupByNode.get(vertex_u));"
+    },
+    "kth": {
+        "patches": [],
+        "ground_truth": "return kth(above, k-num_lessoreq);"
+    },
+    "wrap": {
+        "patches": [],
+        "ground_truth": "lines.add(text);"
+    },
+    "depth_first_search": {
+        "patches": [],
+        "ground_truth": "nodesvisited.add(node);"
+    },
+    "next_permutation": {
+        "patches": [
+            {
+                "k": 3,
+                "tentative_fix": "if (perm.get(j) > perm.get(i)) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/next_permutation/java_programs/NEXT_PERMUTATION.java\t2023-03-24 12:28:33.865698534 +0100\n+++ /tmp/tmpfxxp4fq4.java\t2023-03-24 12:28:33.869698518 +0100\n@@ -14,11 +14,11 @@\n public class NEXT_PERMUTATION {\n     public static ArrayList<Integer> next_permutation(ArrayList<Integer> perm) {\n         for (int i=perm.size()-2; i!=-1; i--) {\n             if (perm.get(i) < perm.get(i+1)) {\n                 for (int j=perm.size()-1; j!=i; j--) {\n-                    if (perm.get(j) < perm.get(i)) {\n+if (perm.get(j) > perm.get(i)) {\n                         ArrayList<Integer> next_perm = perm;\n                         int temp_j = perm.get(j);\n                         int temp_i = perm.get(i);\n                         next_perm.set(i,temp_j);\n                         next_perm.set(j,temp_i);\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "BugLab-Rule3: wrong operator"
+            }
+        ],
+        "ground_truth": "if (perm.get(j) > perm.get(i)) {"
+    },
+    "is_valid_parenthesization": {
+        "patches": [],
+        "ground_truth": "return depth==0;"
+    },
+    "levenshtein": {
+        "patches": [],
+        "ground_truth": "return levenshtein(source.substring(1), target.substring(1));"
+    },
+    "reverse_linked_list": {
+        "patches": [],
+        "ground_truth": "prevnode = node;"
+    },
+    "max_sublist_sum": {
+        "patches": [],
+        "ground_truth": "max_ending_here = Math.max(0,max_ending_here + x);"
+    },
+    "bitcount": {
+        "patches": [],
+        "ground_truth": "n = (n & (n - 1));"
+    }
+}
