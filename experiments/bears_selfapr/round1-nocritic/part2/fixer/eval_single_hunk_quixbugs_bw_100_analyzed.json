@@ -1,0 +1,235 @@
+{
+    "rpn_eval": {
+        "patches": [],
+        "ground_truth": "c = bin_op.apply(b,a);"
+    },
+    "sqrt": {
+        "patches": [],
+        "ground_truth": "while (Math.abs(x-approx*approx) > epsilon) {"
+    },
+    "next_palindrome": {
+        "patches": [],
+        "ground_truth": "otherwise.addAll(Collections.nCopies(digit_list.length-1, 0));"
+    },
+    "lis": {
+        "patches": [],
+        "ground_truth": "longest = Math.max(longest,length + 1);"
+    },
+    "wrap": {
+        "patches": [
+            {
+                "k": 79,
+                "tentative_fix": "lines.add(text);",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/wrap/java_programs/WRAP.java\t2023-03-24 14:59:18.904109440 +0100\n+++ /tmp/tmpland2pc5.java\t2023-03-24 14:59:18.908109426 +0100\n@@ -26,9 +26,9 @@\n             }\n             line = text.substring(0,end);\n             text = text.substring(end);\n             lines.add(line);\n         }\n-\n+lines.add(text);\n         return lines;\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule14: delete target statement"
+            }
+        ],
+        "ground_truth": "lines.add(text);"
+    },
+    "knapsack": {
+        "patches": [],
+        "ground_truth": "else if (weight <= j) {"
+    },
+    "possible_change": {
+        "patches": [],
+        "ground_truth": "if (total < 0 ||coins.length==0) {"
+    },
+    "lcs_length": {
+        "patches": [],
+        "ground_truth": "// dp.get(i-1).containsKey(j-1) if (dp.containsKey(i-1)&&dp.get(i-1).containsKey(j-1)) { Map<Integer, Integer> internal_map = dp.get(i); int insert_value = dp.get(i-1).get(j-1) + 1;"
+    },
+    "quicksort": {
+        "patches": [
+            {
+                "k": 29,
+                "tentative_fix": "} else if (x >= pivot) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/quicksort/java_programs/QUICKSORT.java\t2023-03-24 15:04:39.722939400 +0100\n+++ /tmp/tmpilhanerc.java\t2023-03-24 15:04:39.726939388 +0100\n@@ -21,11 +21,11 @@\n         ArrayList<Integer> greater = new ArrayList<Integer>();\n \n         for (Integer x : arr.subList(1, arr.size())) {\n             if (x < pivot) {\n                 lesser.add(x);\n-            } else if (x > pivot) {\n+} else if (x >= pivot) {\n                 greater.add(x);\n             }\n         }\n         ArrayList<Integer> middle = new ArrayList<Integer>();\n         middle.add(pivot);\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            }
+        ],
+        "ground_truth": "} else if (x >= pivot) {"
+    },
+    "minimum_spanning_tree": {
+        "patches": [],
+        "ground_truth": "groupByNode.put(node, groupByNode.get(vertex_u));"
+    },
+    "bitcount": {
+        "patches": [],
+        "ground_truth": "n = (n & (n - 1));"
+    },
+    "powerset": {
+        "patches": [],
+        "ground_truth": "for (ArrayList subset : rest_subsets) { ArrayList r = new ArrayList(); r.add(first); r.addAll(subset); to_add.add(r); } output.addAll(to_add); rest_subsets.addAll(output); return rest_subsets;"
+    },
+    "get_factors": {
+        "patches": [],
+        "ground_truth": "return new ArrayList<Integer>(Arrays.asList(n));"
+    },
+    "levenshtein": {
+        "patches": [],
+        "ground_truth": "return levenshtein(source.substring(1), target.substring(1));"
+    },
+    "topological_ordering": {
+        "patches": [],
+        "ground_truth": "if (orderedNodes.containsAll(nextNode.getPredecessors()) && !orderedNodes.contains(nextNode)) {"
+    },
+    "is_valid_parenthesization": {
+        "patches": [
+            {
+                "k": 6,
+                "tentative_fix": "if (depth == 0) { return true; } else { return false; }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/is_valid_parenthesization/java_programs/IS_VALID_PARENTHESIZATION.java\t2023-03-24 15:25:36.302307435 +0100\n+++ /tmp/tmpbl5z2zz1.java\t2023-03-24 15:25:36.302307435 +0100\n@@ -19,8 +19,8 @@\n             } else {\n                 depth--;\n                 if (depth < 0) { return false; }\n             }\n         }\n-        return true;\n+if (depth == 0) { return true; } else { return false; }\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule15: unwrap block"
+            }
+        ],
+        "ground_truth": "return depth==0;"
+    },
+    "shunting_yard": {
+        "patches": [],
+        "ground_truth": "precedence.put(\"+\", 1); precedence.put(\"-\", 1); precedence.put(\"*\", 2); precedence.put(\"/\", 2); ArrayList rpntokens = new ArrayList(100); ArrayDeque opstack = new ArrayDeque(); for (Object token : tokens) { if (Integer.class.isInstance(token)) { // cover also Double case I guess? rpntokens.add((Integer) token); } else { String operator = (String) token; while (!opstack.isEmpty() && precedence.get(operator) <= precedence.get(opstack.getLast())) { rpntokens.add(opstack.pop()); } opstack.push(token); }"
+    },
+    "flatten": {
+        "patches": [],
+        "ground_truth": "result.add((x)); } } return result; } else { return arr;"
+    },
+    "find_first_in_sorted": {
+        "patches": [],
+        "ground_truth": "while (lo < hi) {"
+    },
+    "shortest_path_length": {
+        "patches": [],
+        "ground_truth": "distance + length_by_edge.get(Arrays.asList(node, nextnode))));"
+    },
+    "mergesort": {
+        "patches": [
+            {
+                "k": 68,
+                "tentative_fix": "if (arr.size() <= 1) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 15:54:27.635902335 +0100\n+++ /tmp/tmpvdmntwyn.java\t2023-03-24 15:54:27.635902335 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) {\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            }
+        ],
+        "ground_truth": "if (arr.size() <= 1) { // <= 1 in correct version"
+    },
+    "shortest_paths": {
+        "patches": [],
+        "ground_truth": "weight_by_node.put(edge.get(1), update_weight); } } return weight_by_node; }"
+    },
+    "longest_common_subsequence": {
+        "patches": [],
+        "ground_truth": "return a.charAt(0) + longest_common_subsequence(a.substring(1), b.substring(1));"
+    },
+    "shortest_path_lengths": {
+        "patches": [],
+        "ground_truth": "length_by_path.get(Arrays.asList(k,j))));"
+    },
+    "find_in_sorted": {
+        "patches": [],
+        "ground_truth": "return binsearch(arr, x, mid+1, end);"
+    },
+    "next_permutation": {
+        "patches": [],
+        "ground_truth": "if (perm.get(j) > perm.get(i)) {"
+    },
+    "kth": {
+        "patches": [],
+        "ground_truth": "return kth(above, k-num_lessoreq);"
+    },
+    "subsequences": {
+        "patches": [],
+        "ground_truth": "ArrayList empty_set = new ArrayList<ArrayList>(); empty_set.add(new ArrayList()); return empty_set;"
+    },
+    "detect_cycle": {
+        "patches": [],
+        "ground_truth": "if (null==hare ||hare.getSuccessor() == null)"
+    },
+    "kheapsort": {
+        "patches": [],
+        "ground_truth": "for (Integer x : arr.subList(k, arr.size())) {"
+    },
+    "hanoi": {
+        "patches": [],
+        "ground_truth": "steps.add(new Pair<Integer,Integer>(start, end));"
+    },
+    "bucketsort": {
+        "patches": [],
+        "ground_truth": "for (Integer count : counts) {"
+    },
+    "reverse_linked_list": {
+        "patches": [
+            {
+                "k": 4,
+                "tentative_fix": "if (node!= null) { prevnode = node; }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/reverse_linked_list/java_programs/REVERSE_LINKED_LIST.java\t2023-03-24 16:30:44.040397976 +0100\n+++ /tmp/tmpqdp7umaf.java\t2023-03-24 16:30:44.040397976 +0100\n@@ -15,10 +15,11 @@\n         Node prevnode = null;\n         Node nextnode;\n         while (node != null) {\n             nextnode = node.getSuccessor();\n             node.setSuccessor(prevnode);\n+if (node!= null) { prevnode = node; }\n             node = nextnode;\n         }\n         return prevnode;\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule16: remove block"
+            },
+            {
+                "k": 66,
+                "tentative_fix": "prevnode = node;",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/reverse_linked_list/java_programs/REVERSE_LINKED_LIST.java\t2023-03-24 16:55:44.551052976 +0100\n+++ /tmp/tmpyx71y0jw.java\t2023-03-24 16:55:44.551052976 +0100\n@@ -15,10 +15,11 @@\n         Node prevnode = null;\n         Node nextnode;\n         while (node != null) {\n             nextnode = node.getSuccessor();\n             node.setSuccessor(prevnode);\n+prevnode = node;\n             node = nextnode;\n         }\n         return prevnode;\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule14: delete target statement"
+            }
+        ],
+        "ground_truth": "prevnode = node;"
+    },
+    "to_base": {
+        "patches": [],
+        "ground_truth": "result = String.valueOf(alphabet.charAt(i))+result;"
+    },
+    "gcd": {
+        "patches": [],
+        "ground_truth": "return gcd(b, a%b);"
+    },
+    "sieve": {
+        "patches": [],
+        "ground_truth": "if (all(list_comp(n, primes))) {"
+    },
+    "max_sublist_sum": {
+        "patches": [],
+        "ground_truth": "max_ending_here = Math.max(0,max_ending_here + x);"
+    },
+    "depth_first_search": {
+        "patches": [],
+        "ground_truth": "nodesvisited.add(node);"
+    },
+    "pascal": {
+        "patches": [],
+        "ground_truth": "for (int c=0; c<r+1; c++) {"
+    }
+}

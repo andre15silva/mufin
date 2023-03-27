@@ -1,0 +1,208 @@
+{
+    "topological_ordering": {
+        "patches": [],
+        "ground_truth": "if (orderedNodes.containsAll(nextNode.getPredecessors()) && !orderedNodes.contains(nextNode)) {"
+    },
+    "next_palindrome": {
+        "patches": [],
+        "ground_truth": "otherwise.addAll(Collections.nCopies(digit_list.length-1, 0));"
+    },
+    "detect_cycle": {
+        "patches": [],
+        "ground_truth": "if (null==hare ||hare.getSuccessor() == null)"
+    },
+    "quicksort": {
+        "patches": [],
+        "ground_truth": "} else if (x >= pivot) {"
+    },
+    "sqrt": {
+        "patches": [],
+        "ground_truth": "while (Math.abs(x-approx*approx) > epsilon) {"
+    },
+    "lis": {
+        "patches": [],
+        "ground_truth": "longest = Math.max(longest,length + 1);"
+    },
+    "bitcount": {
+        "patches": [],
+        "ground_truth": "n = (n & (n - 1));"
+    },
+    "shunting_yard": {
+        "patches": [],
+        "ground_truth": "precedence.put(\"+\", 1); precedence.put(\"-\", 1); precedence.put(\"*\", 2); precedence.put(\"/\", 2); ArrayList rpntokens = new ArrayList(100); ArrayDeque opstack = new ArrayDeque(); for (Object token : tokens) { if (Integer.class.isInstance(token)) { // cover also Double case I guess? rpntokens.add((Integer) token); } else { String operator = (String) token; while (!opstack.isEmpty() && precedence.get(operator) <= precedence.get(opstack.getLast())) { rpntokens.add(opstack.pop()); } opstack.push(token); }"
+    },
+    "find_in_sorted": {
+        "patches": [],
+        "ground_truth": "return binsearch(arr, x, mid+1, end);"
+    },
+    "lcs_length": {
+        "patches": [],
+        "ground_truth": "// dp.get(i-1).containsKey(j-1) if (dp.containsKey(i-1)&&dp.get(i-1).containsKey(j-1)) { Map<Integer, Integer> internal_map = dp.get(i); int insert_value = dp.get(i-1).get(j-1) + 1;"
+    },
+    "possible_change": {
+        "patches": [],
+        "ground_truth": "if (total < 0 ||coins.length==0) {"
+    },
+    "powerset": {
+        "patches": [],
+        "ground_truth": "for (ArrayList subset : rest_subsets) { ArrayList r = new ArrayList(); r.add(first); r.addAll(subset); to_add.add(r); } output.addAll(to_add); rest_subsets.addAll(output); return rest_subsets;"
+    },
+    "shortest_path_length": {
+        "patches": [],
+        "ground_truth": "distance + length_by_edge.get(Arrays.asList(node, nextnode))));"
+    },
+    "sieve": {
+        "patches": [],
+        "ground_truth": "if (all(list_comp(n, primes))) {"
+    },
+    "subsequences": {
+        "patches": [],
+        "ground_truth": "ArrayList empty_set = new ArrayList<ArrayList>(); empty_set.add(new ArrayList()); return empty_set;"
+    },
+    "gcd": {
+        "patches": [],
+        "ground_truth": "return gcd(b, a%b);"
+    },
+    "to_base": {
+        "patches": [],
+        "ground_truth": "result = String.valueOf(alphabet.charAt(i))+result;"
+    },
+    "max_sublist_sum": {
+        "patches": [],
+        "ground_truth": "max_ending_here = Math.max(0,max_ending_here + x);"
+    },
+    "reverse_linked_list": {
+        "patches": [],
+        "ground_truth": "prevnode = node;"
+    },
+    "minimum_spanning_tree": {
+        "patches": [],
+        "ground_truth": "groupByNode.put(node, groupByNode.get(vertex_u));"
+    },
+    "hanoi": {
+        "patches": [],
+        "ground_truth": "steps.add(new Pair<Integer,Integer>(start, end));"
+    },
+    "knapsack": {
+        "patches": [],
+        "ground_truth": "else if (weight <= j) {"
+    },
+    "is_valid_parenthesization": {
+        "patches": [],
+        "ground_truth": "return depth==0;"
+    },
+    "pascal": {
+        "patches": [],
+        "ground_truth": "for (int c=0; c<r+1; c++) {"
+    },
+    "levenshtein": {
+        "patches": [],
+        "ground_truth": "return levenshtein(source.substring(1), target.substring(1));"
+    },
+    "longest_common_subsequence": {
+        "patches": [],
+        "ground_truth": "return a.charAt(0) + longest_common_subsequence(a.substring(1), b.substring(1));"
+    },
+    "bucketsort": {
+        "patches": [],
+        "ground_truth": "for (Integer count : counts) {"
+    },
+    "mergesort": {
+        "patches": [
+            {
+                "k": 79,
+                "tentative_fix": "if (arr.size() <= 1) { if (arr.size() <= 1); // <= 1 in correct version }",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 14:18:17.153141584 +0100\n+++ /tmp/tmpjumph3gj.java\t2023-03-24 14:18:17.153141584 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { if (arr.size() <= 1); // <= 1 in correct version }\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            },
+            {
+                "k": 86,
+                "tentative_fix": "if (arr.size() <= 1) { if (arr.size() <= 1); // <= 1 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 14:18:37.069066970 +0100\n+++ /tmp/tmpa95j1ces.java\t2023-03-24 14:18:37.073066956 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { if (arr.size() <= 1); // <= 1 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            },
+            {
+                "k": 96,
+                "tentative_fix": "if (arr.size() <= 1) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 14:18:59.936981294 +0100\n+++ /tmp/tmplhtjh0kx.java\t2023-03-24 14:18:59.936981294 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) {\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            }
+        ],
+        "ground_truth": "if (arr.size() <= 1) { // <= 1 in correct version"
+    },
+    "depth_first_search": {
+        "patches": [],
+        "ground_truth": "nodesvisited.add(node);"
+    },
+    "shortest_paths": {
+        "patches": [],
+        "ground_truth": "weight_by_node.put(edge.get(1), update_weight); } } return weight_by_node; }"
+    },
+    "flatten": {
+        "patches": [],
+        "ground_truth": "result.add((x)); } } return result; } else { return arr;"
+    },
+    "get_factors": {
+        "patches": [],
+        "ground_truth": "return new ArrayList<Integer>(Arrays.asList(n));"
+    },
+    "wrap": {
+        "patches": [
+            {
+                "k": 94,
+                "tentative_fix": "lines.add(text);",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/wrap/java_programs/WRAP.java\t2023-03-24 14:29:20.738736112 +0100\n+++ /tmp/tmph_y6wlbx.java\t2023-03-24 14:29:20.742736096 +0100\n@@ -26,9 +26,9 @@\n             }\n             line = text.substring(0,end);\n             text = text.substring(end);\n             lines.add(line);\n         }\n-\n+lines.add(text);\n         return lines;\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule14: delete target statement"
+            }
+        ],
+        "ground_truth": "lines.add(text);"
+    },
+    "find_first_in_sorted": {
+        "patches": [],
+        "ground_truth": "while (lo < hi) {"
+    },
+    "kheapsort": {
+        "patches": [],
+        "ground_truth": "for (Integer x : arr.subList(k, arr.size())) {"
+    },
+    "kth": {
+        "patches": [],
+        "ground_truth": "return kth(above, k-num_lessoreq);"
+    },
+    "shortest_path_lengths": {
+        "patches": [],
+        "ground_truth": "length_by_path.get(Arrays.asList(k,j))));"
+    },
+    "next_permutation": {
+        "patches": [],
+        "ground_truth": "if (perm.get(j) > perm.get(i)) {"
+    },
+    "rpn_eval": {
+        "patches": [],
+        "ground_truth": "c = bin_op.apply(b,a);"
+    }
+}

@@ -1,0 +1,511 @@
+{
+    "find_first_in_sorted": {
+        "patches": [
+            {
+                "k": 22,
+                "tentative_fix": "while (lo < hi) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/find_first_in_sorted/java_programs/FIND_FIRST_IN_SORTED.java\t2023-03-24 20:38:24.289161591 +0100\n+++ /tmp/tmp6s0fdyqk.java\t2023-03-24 20:38:24.289161591 +0100\n@@ -14,11 +14,11 @@\n \n     public static int find_first_in_sorted(int[] arr, int x) {\n         int lo = 0;\n         int hi = arr.length;\n \n-        while (lo <= hi) {\n+while (lo < hi) {\n             int mid = (lo + hi) / 2; // check if this is floor division\n \n             if (x == arr[mid] && (mid == 0 || x != arr[mid-1])) {\n                 return mid;\n             } else if (x <= arr[mid]) {\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            }
+        ],
+        "ground_truth": "while (lo < hi) {"
+    },
+    "to_base": {
+        "patches": [],
+        "ground_truth": "result = String.valueOf(alphabet.charAt(i))+result;"
+    },
+    "knapsack": {
+        "patches": [
+            {
+                "k": 68,
+                "tentative_fix": "else if (weight <= j) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/knapsack/java_programs/KNAPSACK.java\t2023-03-24 20:41:37.408333143 +0100\n+++ /tmp/tmp1gu7h9tq.java\t2023-03-24 20:41:37.412333128 +0100\n@@ -25,11 +25,11 @@\n             for (int j = 0; j <= capacity; j++)\n             {\n                 if (i == 0 || j == 0) {\n                     memo[i][j] = 0;\n                 }\n-                else if (weight < j) {\n+else if (weight <= j) {\n                     memo[i][j] = Math.max(memo[i - 1][j], value + memo[i - 1][j - weight]);\n                 }\n                 else {\n                     memo[i][j] = memo [i-1][j];\n                 }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            }
+        ],
+        "ground_truth": "else if (weight <= j) {"
+    },
+    "topological_ordering": {
+        "patches": [],
+        "ground_truth": "if (orderedNodes.containsAll(nextNode.getPredecessors()) && !orderedNodes.contains(nextNode)) {"
+    },
+    "next_palindrome": {
+        "patches": [],
+        "ground_truth": "otherwise.addAll(Collections.nCopies(digit_list.length-1, 0));"
+    },
+    "get_factors": {
+        "patches": [],
+        "ground_truth": "return new ArrayList<Integer>(Arrays.asList(n));"
+    },
+    "find_in_sorted": {
+        "patches": [],
+        "ground_truth": "return binsearch(arr, x, mid+1, end);"
+    },
+    "mergesort": {
+        "patches": [
+            {
+                "k": 1,
+                "tentative_fix": "if (arr.size() <= 1) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:49:09.310485860 +0100\n+++ /tmp/tmpdlis0t5h.java\t2023-03-24 20:49:10.282481977 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) {\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 4,
+                "tentative_fix": "if (arr.size() <= 1) { // The range",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:49:28.930407520 +0100\n+++ /tmp/tmppdxdj4an.java\t2023-03-24 20:49:28.930407520 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // The range\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 6,
+                "tentative_fix": "if (arr.size() <= 1) { // / 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:49:39.346365973 +0100\n+++ /tmp/tmpjzsp1lx2.java\t2023-03-24 20:49:39.346365973 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // / 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 8,
+                "tentative_fix": "if (arr.size() <= 1) { // > 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:49:48.286330339 +0100\n+++ /tmp/tmpshp8ap9n.java\t2023-03-24 20:49:48.286330339 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // > 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 16,
+                "tentative_fix": "if (arr.size() <= 1) { // this is not in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:50:14.886224442 +0100\n+++ /tmp/tmpu9i4vrue.java\t2023-03-24 20:50:14.890224426 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // this is not in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 27,
+                "tentative_fix": "if (arr.size() <= 1) { // && c > 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:50:56.402059526 +0100\n+++ /tmp/tmp56bf1zx1.java\t2023-03-24 20:50:56.406059510 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && c > 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 28,
+                "tentative_fix": "if (arr.size() <= 1) { // <= 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:51:00.362043819 +0100\n+++ /tmp/tmp9xx2dqlx.java\t2023-03-24 20:51:00.362043819 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // <= 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 40,
+                "tentative_fix": "if (arr.size() <= 1) { // for 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:51:51.809840070 +0100\n+++ /tmp/tmpxh8d4sye.java\t2023-03-24 20:51:51.821840021 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // for 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 41,
+                "tentative_fix": "if (arr.size() <= 1) { // not in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:51:55.869824014 +0100\n+++ /tmp/tmpy3byt33z.java\t2023-03-24 20:51:55.873823999 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // not in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 47,
+                "tentative_fix": "if (arr.size() <= 1) { // at correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:52:22.997716837 +0100\n+++ /tmp/tmpl3yolz7a.java\t2023-03-24 20:52:23.025716726 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // at correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 48,
+                "tentative_fix": "if (arr.size() <= 1) { // The range range",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:52:27.805697857 +0100\n+++ /tmp/tmpevcwsw1q.java\t2023-03-24 20:52:27.809697841 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // The range range\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 50,
+                "tentative_fix": "if (arr.size() <= 1) { // && len > 2 in correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:53:14.241514783 +0100\n+++ /tmp/tmphz__ic1f.java\t2023-03-24 20:53:14.241514783 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && len > 2 in correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 52,
+                "tentative_fix": "if (arr.size() <= 1) { // {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:53:55.897350891 +0100\n+++ /tmp/tmpn_vby60o.java\t2023-03-24 20:53:55.897350891 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // {\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 57,
+                "tentative_fix": "if (arr.size() <= 1) { // len len correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:55:10.501058087 +0100\n+++ /tmp/tmp224pengf.java\t2023-03-24 20:55:10.501058087 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // len len correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 60,
+                "tentative_fix": "if (arr.size() <= 1) { // && p.getValue() > 1);",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:55:43.912927222 +0100\n+++ /tmp/tmp4v83ncoc.java\t2023-03-24 20:55:43.912927222 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && p.getValue() > 1);\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 63,
+                "tentative_fix": "if (arr.size() <= 1) { // this is at correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:56:20.104785644 +0100\n+++ /tmp/tmpzj_w8uif.java\t2023-03-24 20:56:20.104785644 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // this is at correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 67,
+                "tentative_fix": "if (arr.size() <= 1) { // candidates",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:56:50.724665992 +0100\n+++ /tmp/tmpbmyxsbj2.java\t2023-03-24 20:56:50.728665976 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // candidates\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 72,
+                "tentative_fix": "if (arr.size() <= 1) { // this is not the right range",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:57:16.948563608 +0100\n+++ /tmp/tmp652ykdfw.java\t2023-03-24 20:57:16.948563608 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // this is not the right range\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 75,
+                "tentative_fix": "if (arr.size() <= 1) { // && c.size() > 2",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:57:25.736529317 +0100\n+++ /tmp/tmpkfy4ifrz.java\t2023-03-24 20:57:25.736529317 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && c.size() > 2\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 80,
+                "tentative_fix": "if (arr.size() <= 1) { // x at least",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:57:46.436448575 +0100\n+++ /tmp/tmpf5r8f_5i.java\t2023-03-24 20:57:46.436448575 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // x at least\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 81,
+                "tentative_fix": "if (arr.size() <= 1) { // at least",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:57:51.000430778 +0100\n+++ /tmp/tmp4t5j4qm9.java\t2023-03-24 20:57:51.000430778 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // at least\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 83,
+                "tentative_fix": "if (arr.size() <= 1) { // the correct version number",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:57:59.940395928 +0100\n+++ /tmp/tmppvjpo9sr.java\t2023-03-24 20:57:59.944395912 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // the correct version number\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 85,
+                "tentative_fix": "if (arr.size() <= 1) { // && c == 2",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:58:08.284363407 +0100\n+++ /tmp/tmp4a3in63y.java\t2023-03-24 20:58:08.284363407 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && c == 2\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 88,
+                "tentative_fix": "if (arr.size() <= 1) { // && correct version",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:58:18.660322977 +0100\n+++ /tmp/tmp04i8kveo.java\t2023-03-24 20:58:18.660322977 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { // && correct version\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            },
+            {
+                "k": 89,
+                "tentative_fix": "if (arr.size() <= 1) { //",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/mergesort/java_programs/MERGESORT.java\t2023-03-24 20:58:22.660307392 +0100\n+++ /tmp/tmpc7k9j17h.java\t2023-03-24 20:58:22.664307376 +0100\n@@ -33,11 +33,11 @@\n         result.addAll(left.subList(i,left.size()).isEmpty() ? right.subList(j, right.size()) : left.subList(i, left.size()));\n         return result;\n     }\n \n     public static ArrayList<Integer> mergesort(ArrayList<Integer> arr) {\n-        if (arr.size() == 0) { // <= 1 in correct version\n+if (arr.size() <= 1) { //\n             return arr;\n         } else {\n             int middle = arr.size() / 2;\n             ArrayList<Integer> left = new ArrayList<Integer>(100);\n             left.addAll(arr.subList(0,middle));\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": false,
+                "validation": true,
+                "rule": "SelfAPR-Rule8: compoud of rules 1 to 7"
+            }
+        ],
+        "ground_truth": "if (arr.size() <= 1) { // <= 1 in correct version"
+    },
+    "longest_common_subsequence": {
+        "patches": [],
+        "ground_truth": "return a.charAt(0) + longest_common_subsequence(a.substring(1), b.substring(1));"
+    },
+    "lcs_length": {
+        "patches": [],
+        "ground_truth": "// dp.get(i-1).containsKey(j-1) if (dp.containsKey(i-1)&&dp.get(i-1).containsKey(j-1)) { Map<Integer, Integer> internal_map = dp.get(i); int insert_value = dp.get(i-1).get(j-1) + 1;"
+    },
+    "wrap": {
+        "patches": [],
+        "ground_truth": "lines.add(text);"
+    },
+    "powerset": {
+        "patches": [],
+        "ground_truth": "for (ArrayList subset : rest_subsets) { ArrayList r = new ArrayList(); r.add(first); r.addAll(subset); to_add.add(r); } output.addAll(to_add); rest_subsets.addAll(output); return rest_subsets;"
+    },
+    "shortest_path_length": {
+        "patches": [],
+        "ground_truth": "distance + length_by_edge.get(Arrays.asList(node, nextnode))));"
+    },
+    "shortest_paths": {
+        "patches": [],
+        "ground_truth": "weight_by_node.put(edge.get(1), update_weight); } } return weight_by_node; }"
+    },
+    "hanoi": {
+        "patches": [],
+        "ground_truth": "steps.add(new Pair<Integer,Integer>(start, end));"
+    },
+    "gcd": {
+        "patches": [],
+        "ground_truth": "return gcd(b, a%b);"
+    },
+    "bitcount": {
+        "patches": [],
+        "ground_truth": "n = (n & (n - 1));"
+    },
+    "is_valid_parenthesization": {
+        "patches": [],
+        "ground_truth": "return depth==0;"
+    },
+    "shortest_path_lengths": {
+        "patches": [],
+        "ground_truth": "length_by_path.get(Arrays.asList(k,j))));"
+    },
+    "max_sublist_sum": {
+        "patches": [],
+        "ground_truth": "max_ending_here = Math.max(0,max_ending_here + x);"
+    },
+    "pascal": {
+        "patches": [],
+        "ground_truth": "for (int c=0; c<r+1; c++) {"
+    },
+    "quicksort": {
+        "patches": [],
+        "ground_truth": "} else if (x >= pivot) {"
+    },
+    "depth_first_search": {
+        "patches": [],
+        "ground_truth": "nodesvisited.add(node);"
+    },
+    "rpn_eval": {
+        "patches": [],
+        "ground_truth": "c = bin_op.apply(b,a);"
+    },
+    "bucketsort": {
+        "patches": [],
+        "ground_truth": "for (Integer count : counts) {"
+    },
+    "levenshtein": {
+        "patches": [],
+        "ground_truth": "return levenshtein(source.substring(1), target.substring(1));"
+    },
+    "flatten": {
+        "patches": [],
+        "ground_truth": "result.add((x)); } } return result; } else { return arr;"
+    },
+    "subsequences": {
+        "patches": [],
+        "ground_truth": "ArrayList empty_set = new ArrayList<ArrayList>(); empty_set.add(new ArrayList()); return empty_set;"
+    },
+    "kth": {
+        "patches": [],
+        "ground_truth": "return kth(above, k-num_lessoreq);"
+    },
+    "next_permutation": {
+        "patches": [
+            {
+                "k": 5,
+                "tentative_fix": "if (perm.get(j) > perm.get(i)) {",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/next_permutation/java_programs/NEXT_PERMUTATION.java\t2023-03-24 21:50:45.140774537 +0100\n+++ /tmp/tmpw14389ob.java\t2023-03-24 21:50:45.276774077 +0100\n@@ -14,11 +14,11 @@\n public class NEXT_PERMUTATION {\n     public static ArrayList<Integer> next_permutation(ArrayList<Integer> perm) {\n         for (int i=perm.size()-2; i!=-1; i--) {\n             if (perm.get(i) < perm.get(i+1)) {\n                 for (int j=perm.size()-1; j!=i; j--) {\n-                    if (perm.get(j) < perm.get(i)) {\n+if (perm.get(j) > perm.get(i)) {\n                         ArrayList<Integer> next_perm = perm;\n                         int temp_j = perm.get(j);\n                         int temp_i = perm.get(i);\n                         next_perm.set(i,temp_j);\n                         next_perm.set(j,temp_i);\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule2: modify operator"
+            }
+        ],
+        "ground_truth": "if (perm.get(j) > perm.get(i)) {"
+    },
+    "shunting_yard": {
+        "patches": [],
+        "ground_truth": "precedence.put(\"+\", 1); precedence.put(\"-\", 1); precedence.put(\"*\", 2); precedence.put(\"/\", 2); ArrayList rpntokens = new ArrayList(100); ArrayDeque opstack = new ArrayDeque(); for (Object token : tokens) { if (Integer.class.isInstance(token)) { // cover also Double case I guess? rpntokens.add((Integer) token); } else { String operator = (String) token; while (!opstack.isEmpty() && precedence.get(operator) <= precedence.get(opstack.getLast())) { rpntokens.add(opstack.pop()); } opstack.push(token); }"
+    },
+    "possible_change": {
+        "patches": [],
+        "ground_truth": "if (total < 0 ||coins.length==0) {"
+    },
+    "sieve": {
+        "patches": [],
+        "ground_truth": "if (all(list_comp(n, primes))) {"
+    },
+    "minimum_spanning_tree": {
+        "patches": [],
+        "ground_truth": "groupByNode.put(node, groupByNode.get(vertex_u));"
+    },
+    "kheapsort": {
+        "patches": [],
+        "ground_truth": "for (Integer x : arr.subList(k, arr.size())) {"
+    },
+    "detect_cycle": {
+        "patches": [],
+        "ground_truth": "if (null==hare ||hare.getSuccessor() == null)"
+    },
+    "lis": {
+        "patches": [],
+        "ground_truth": "longest = Math.max(longest,length + 1);"
+    },
+    "reverse_linked_list": {
+        "patches": [
+            {
+                "k": 99,
+                "tentative_fix": "prevnode = node;",
+                "patch": "--- /mnt/data/andre/mscthesis/storage_for_eval/quixbugs/reverse_linked_list/java_programs/REVERSE_LINKED_LIST.java\t2023-03-24 23:04:29.680168830 +0100\n+++ /tmp/tmpzv91ffi5.java\t2023-03-24 23:04:29.680168830 +0100\n@@ -15,10 +15,11 @@\n         Node prevnode = null;\n         Node nextnode;\n         while (node != null) {\n             nextnode = node.getSuccessor();\n             node.setSuccessor(prevnode);\n+prevnode = node;\n             node = nextnode;\n         }\n         return prevnode;\n     }\n }\n",
+                "compile_exec": true,
+                "compile_pass": true,
+                "test_exec": true,
+                "test_pass": true,
+                "identical": true,
+                "validation": true,
+                "rule": "SelfAPR-Rule14: delete target statement"
+            }
+        ],
+        "ground_truth": "prevnode = node;"
+    },
+    "sqrt": {
+        "patches": [],
+        "ground_truth": "while (Math.abs(x-approx*approx) > epsilon) {"
+    }
+}
